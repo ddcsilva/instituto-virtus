@@ -20,7 +20,8 @@ public class Pessoa : BaseEntity
         ValidarNome(nome);
         Nome = nome;
         Email = email ?? throw new ArgumentNullException(nameof(email));
-        Telefone = telefone ?? throw new ArgumentNullException(nameof(telefone));
+        ValidarTelefone(telefone);
+        Telefone = telefone;
         Tipo = tipo;
     }
 
