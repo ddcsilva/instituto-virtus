@@ -144,6 +144,7 @@ public static class TestHelpers
 
     /// <summary>
     /// Aguarda um tempo mínimo para garantir diferença em DateTime.UtcNow
+    /// Exemplo de uso: await TestHelpers.AguardarTempo(10); // Substitui Thread.Sleep(10)
     /// </summary>
     /// <param name="milissegundos">Tempo em milissegundos (padrão: 10)</param>
     public static async Task AguardarTempo(int milissegundos = 10)
@@ -153,6 +154,7 @@ public static class TestHelpers
 
     /// <summary>
     /// Cria uma lista de entidades com IDs sequenciais para testes
+    /// Exemplo de uso: TestHelpers.DefinirIdsSequenciais(listaAlunos, 1);
     /// </summary>
     /// <typeparam name="T">Tipo da entidade</typeparam>
     /// <param name="entidades">Lista de entidades</param>
@@ -169,6 +171,7 @@ public static class TestHelpers
 
     /// <summary>
     /// Valida se uma entidade está em estado válido após criação
+    /// Exemplo de uso: TestHelpers.ValidarEstadoInicialEntidade(pessoa);
     /// </summary>
     /// <typeparam name="T">Tipo da entidade</typeparam>
     /// <param name="entidade">Entidade a ser validada</param>

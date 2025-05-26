@@ -3,7 +3,7 @@ namespace Virtus.Domain.Tests.Entities;
 public class PessoaTests
 {
     [Fact]
-    public void Construtor_DeveRInicializarCorretamente_QuandoParametrosValidos()
+    public void Construtor_DeveInicializarCorretamente_QuandoParametrosValidos()
     {
         // Arrange
         var nome = "João Silva";
