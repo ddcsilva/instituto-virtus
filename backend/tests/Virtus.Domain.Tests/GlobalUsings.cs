@@ -20,3 +20,4 @@ global using Virtus.Domain.Interfaces;
 // Testes - Builders e Helpers
 global using Virtus.Domain.Tests.Builders;
 global using Virtus.Domain.Tests.Helpers;
+global using Virtus.Domain.Tests.Extensions;

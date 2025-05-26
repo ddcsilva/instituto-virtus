@@ -2,8 +2,8 @@ namespace Virtus.Domain.Tests.Builders;
 
 public class MatriculaBuilder
 {
-    private Aluno _aluno = AlunoBuilder.Novo();
-    private Turma _turma = TurmaBuilder.Nova();
+    private Aluno? _aluno;
+    private Turma? _turma;
     private StatusMatricula _status = StatusMatricula.Ativa;
 
     public static MatriculaBuilder Nova() => new();
@@ -28,7 +28,11 @@ public class MatriculaBuilder
 
     public Matricula Build()
     {
-        var matricula = new Matricula(_aluno, _turma);
+        // Criar novos aluno e turma se não foram especificados
+        var aluno = _aluno ?? AlunoBuilder.Novo().Build();
+        var turma = _turma ?? TurmaBuilder.Nova().Build();
+
+        var matricula = new Matricula(aluno, turma);
 
         switch (_status)
         {
@@ -37,6 +41,9 @@ public class MatriculaBuilder
                 break;
             case StatusMatricula.Trancada:
                 matricula.Trancar();
+                break;
+            case StatusMatricula.Concluida:
+                matricula.Concluir();
                 break;
         }
 

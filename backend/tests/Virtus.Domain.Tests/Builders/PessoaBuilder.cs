@@ -2,12 +2,23 @@ namespace Virtus.Domain.Tests.Builders;
 
 public class PessoaBuilder
 {
-    private string _nome = "João Silva";
-    private Email _email = Email.Criar("joao@email.com");
-    private string _telefone = "(11) 99999-9999";
+    private string _nome = FakerExtensions.NomeCompleto();
+    private Email _email = Email.Criar(FakerExtensions.Email());
+    private string _telefone = FakerExtensions.Telefone();
     private TipoPessoa _tipo = TipoPessoa.Aluno;
 
     public static PessoaBuilder Novo() => new();
+
+    /// <summary>
+    /// Cria um builder com dados determinísticos para testes que precisam de valores específicos
+    /// </summary>
+    public static PessoaBuilder Deterministic() => new()
+    {
+        _nome = "João Silva",
+        _email = Email.Criar("joao@email.com"),
+        _telefone = "(11) 99999-9999",
+        _tipo = TipoPessoa.Aluno
+    };
 
     public PessoaBuilder ComNome(string nome)
     {

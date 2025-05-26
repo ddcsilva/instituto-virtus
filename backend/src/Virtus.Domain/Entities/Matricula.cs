@@ -77,4 +77,18 @@ public class Matricula : BaseEntity
         DataCancelamento = null;
         AtualizarData();
     }
+
+    /// <summary>
+    /// Conclui a matrícula.
+    /// </summary>
+    public void Concluir()
+    {
+        if (Status != StatusMatricula.Ativa)
+        {
+            throw new InvalidOperationException("Apenas matrículas ativas podem ser concluídas");
+        }
+
+        Status = StatusMatricula.Concluida;
+        AtualizarData();
+    }
 }

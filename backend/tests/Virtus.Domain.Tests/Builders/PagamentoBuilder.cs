@@ -2,9 +2,9 @@ namespace Virtus.Domain.Tests.Builders;
 
 public class PagamentoBuilder
 {
-    private decimal _valor = 100.00m;
-    private DateTime _dataPagamento = DateTime.UtcNow;
-    private Pessoa _pagador = PessoaBuilder.Novo();
+    private decimal _valor = FakerExtensions.ValorPagamento();
+    private DateTime _dataPagamento = FakerExtensions.DataRecente();
+    private Pessoa? _pagador;
     private string? _observacao;
 
     public static PagamentoBuilder Novo() => new();
@@ -35,7 +35,10 @@ public class PagamentoBuilder
 
     public Pagamento Build()
     {
-        return new Pagamento(_valor, _dataPagamento, _pagador, _observacao);
+        // Criar um novo pagador se não foi especificado um
+        var pagador = _pagador ?? PessoaBuilder.Novo().Build();
+
+        return new Pagamento(_valor, _dataPagamento, pagador, _observacao);
     }
 
     public static implicit operator Pagamento(PagamentoBuilder builder) => builder.Build();

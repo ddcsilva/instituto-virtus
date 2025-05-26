@@ -2,7 +2,7 @@ namespace Virtus.Domain.Tests.Builders;
 
 public class AlunoBuilder
 {
-    private Pessoa _pessoa = PessoaBuilder.Novo();
+    private Pessoa? _pessoa;
     private Pessoa? _responsavel;
     private StatusAluno _status = StatusAluno.Ativo;
 
@@ -34,7 +34,10 @@ public class AlunoBuilder
 
     public Aluno Build()
     {
-        var aluno = new Aluno(_pessoa, _responsavel);
+        // Criar uma nova pessoa se não foi especificada uma
+        var pessoa = _pessoa ?? PessoaBuilder.Novo().Build();
+
+        var aluno = new Aluno(pessoa, _responsavel);
 
         // Usar reflection para definir o status se não for Ativo
         if (_status != StatusAluno.Ativo)

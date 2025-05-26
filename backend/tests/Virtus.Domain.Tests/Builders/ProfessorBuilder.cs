@@ -2,7 +2,7 @@ namespace Virtus.Domain.Tests.Builders;
 
 public class ProfessorBuilder
 {
-    private Pessoa _pessoa = PessoaBuilder.Novo().ComTipo(TipoPessoa.Professor);
+    private Pessoa? _pessoa;
     private bool _ativo = true;
 
     public static ProfessorBuilder Novo() => new();
@@ -21,7 +21,10 @@ public class ProfessorBuilder
 
     public Professor Build()
     {
-        var professor = new Professor(_pessoa);
+        // Criar uma nova pessoa se não foi especificada uma
+        var pessoa = _pessoa ?? PessoaBuilder.Novo().ComTipo(TipoPessoa.Professor).Build();
+
+        var professor = new Professor(pessoa);
 
         if (!_ativo)
         {

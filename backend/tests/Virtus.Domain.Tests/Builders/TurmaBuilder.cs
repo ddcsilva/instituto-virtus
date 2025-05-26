@@ -2,10 +2,10 @@ namespace Virtus.Domain.Tests.Builders;
 
 public class TurmaBuilder
 {
-    private string _nome = "Turma de Violão";
-    private int _capacidade = 10;
+    private string _nome = FakerExtensions.NomeTurma();
+    private int _capacidade = FakerExtensions.CapacidadeTurma();
     private TipoCurso _tipo = TipoCurso.Violao;
-    private Professor _professor = ProfessorBuilder.Novo();
+    private Professor? _professor;
     private bool _ativa = true;
 
     public static TurmaBuilder Nova() => new();
@@ -42,7 +42,10 @@ public class TurmaBuilder
 
     public Turma Build()
     {
-        var turma = new Turma(_nome, _capacidade, _tipo, _professor);
+        // Criar um novo professor se não foi especificado um
+        var professor = _professor ?? ProfessorBuilder.Novo().Build();
+
+        var turma = new Turma(_nome, _capacidade, _tipo, professor);
 
         if (!_ativa)
         {
