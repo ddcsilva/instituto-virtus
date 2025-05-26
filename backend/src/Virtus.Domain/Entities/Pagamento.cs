@@ -5,16 +5,13 @@ namespace Virtus.Domain.Entities;
 /// <summary>
 /// Entidade que representa um pagamento.
 /// </summary>
-public class Pagamento
+public class Pagamento : BaseEntity
 {
-    public int Id { get; private set; }
     public decimal Valor { get; private set; }
     public DateTime DataPagamento { get; private set; }
     public int PagadorId { get; private set; }
     public Pessoa Pagador { get; private set; } = default!;
     public string? Observacao { get; private set; }
-    public DateTime DataCriacao { get; private set; }
-    public DateTime DataAtualizacao { get; private set; }
 
     private readonly List<PagamentoAluno> _pagamentoAlunos = [];
     public IReadOnlyCollection<PagamentoAluno> PagamentoAlunos => _pagamentoAlunos.AsReadOnly();
@@ -30,8 +27,6 @@ public class Pagamento
         Pagador = pagador ?? throw new ArgumentNullException(nameof(pagador));
         PagadorId = pagador.Id;
         Observacao = observacao;
-        DataCriacao = DateTime.UtcNow;
-        DataAtualizacao = DateTime.UtcNow;
     }
 
     private static void ValidarValor(decimal valor)
@@ -76,7 +71,7 @@ public class Pagamento
 
         var pagamentoAluno = new PagamentoAluno(this, aluno, valor);
         _pagamentoAlunos.Add(pagamentoAluno);
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 
 

@@ -5,9 +5,8 @@ namespace Virtus.Domain.Entities;
 /// <summary>
 /// Entidade que representa uma matrícula.
 /// </summary>
-public class Matricula
+public class Matricula : BaseEntity
 {
-    public int Id { get; private set; }
     public int AlunoId { get; private set; }
     public Aluno Aluno { get; private set; } = default!;
     public int TurmaId { get; private set; }
@@ -15,7 +14,6 @@ public class Matricula
     public StatusMatricula Status { get; private set; }
     public DateTime DataMatricula { get; private set; }
     public DateTime? DataCancelamento { get; private set; }
-    public DateTime DataAtualizacao { get; private set; }
 
     private Matricula() { }
 
@@ -33,7 +31,7 @@ public class Matricula
 
         Status = StatusMatricula.Ativa;
         DataMatricula = DateTime.UtcNow;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 
     /// <summary>
@@ -48,7 +46,7 @@ public class Matricula
 
         Status = StatusMatricula.Cancelada;
         DataCancelamento = DateTime.UtcNow;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 
     /// <summary>
@@ -62,7 +60,7 @@ public class Matricula
         }
 
         Status = StatusMatricula.Trancada;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 
     /// <summary>
@@ -77,6 +75,6 @@ public class Matricula
 
         Status = StatusMatricula.Ativa;
         DataCancelamento = null;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 }

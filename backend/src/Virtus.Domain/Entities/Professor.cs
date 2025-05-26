@@ -3,14 +3,11 @@ namespace Virtus.Domain.Entities;
 /// <summary>
 /// Entidade que representa um professor.
 /// </summary>
-public class Professor
+public class Professor : BaseEntity
 {
-    public int Id { get; private set; }
     public int PessoaId { get; private set; }
     public Pessoa Pessoa { get; private set; } = default!;
     public bool Ativo { get; private set; } = true;
-    public DateTime DataCriacao { get; private set; }
-    public DateTime DataAtualizacao { get; private set; }
 
     private readonly List<Turma> _turmas = [];
     public IReadOnlyCollection<Turma> Turmas => _turmas.AsReadOnly();
@@ -22,8 +19,6 @@ public class Professor
         Pessoa = pessoa ?? throw new ArgumentNullException(nameof(pessoa));
         PessoaId = pessoa.Id;
         Ativo = true;
-        DataCriacao = DateTime.UtcNow;
-        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -32,7 +27,7 @@ public class Professor
     public void Ativar()
     {
         Ativo = true;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 
     /// <summary>
@@ -41,6 +36,6 @@ public class Professor
     public void Inativar()
     {
         Ativo = false;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 }

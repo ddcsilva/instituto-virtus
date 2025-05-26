@@ -5,16 +5,13 @@ namespace Virtus.Domain.Entities;
 /// <summary>
 /// Entidade que representa um aluno.
 /// </summary>
-public class Aluno
+public class Aluno : BaseEntity
 {
-    public int Id { get; private set; }
     public int PessoaId { get; private set; }
     public Pessoa Pessoa { get; private set; } = default!;
     public int? ResponsavelId { get; private set; }
     public Pessoa? Responsavel { get; private set; }
     public StatusAluno Status { get; private set; } = StatusAluno.Ativo;
-    public DateTime DataCriacao { get; private set; }
-    public DateTime DataAtualizacao { get; private set; }
 
     private readonly List<Matricula> _matriculas = [];
     public IReadOnlyCollection<Matricula> Matriculas => _matriculas.AsReadOnly();
@@ -28,8 +25,6 @@ public class Aluno
         Responsavel = responsavel;
         ResponsavelId = responsavel?.Id;
         Status = StatusAluno.Ativo;
-        DataCriacao = DateTime.UtcNow;
-        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -53,7 +48,7 @@ public class Aluno
     public void Inativar()
     {
         Status = StatusAluno.Inativo;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 
     /// <summary>
@@ -62,7 +57,7 @@ public class Aluno
     public void Reativar()
     {
         Status = StatusAluno.Ativo;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 
     /// <summary>
@@ -71,7 +66,7 @@ public class Aluno
     public void Desistir()
     {
         Status = StatusAluno.Desistente;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 
     /// <summary>
@@ -80,6 +75,6 @@ public class Aluno
     public void AdicionarNaListaDeEspera()
     {
         Status = StatusAluno.ListaEspera;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 }

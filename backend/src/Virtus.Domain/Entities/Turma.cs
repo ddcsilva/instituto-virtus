@@ -5,17 +5,15 @@ namespace Virtus.Domain.Entities;
 /// <summary>
 /// Entidade que representa uma turma.
 /// </summary>
-public class Turma
+public class Turma : BaseEntity
 {
-    public int Id { get; private set; }
     public string Nome { get; private set; } = default!;
     public int Capacidade { get; private set; }
     public TipoCurso Tipo { get; private set; }
     public int ProfessorId { get; private set; }
     public Professor Professor { get; private set; } = default!;
     public bool Ativa { get; private set; } = true;
-    public DateTime DataCriacao { get; private set; }
-    public DateTime DataAtualizacao { get; private set; }
+
     private readonly List<Matricula> _matriculas = [];
     public IReadOnlyCollection<Matricula> Matriculas => _matriculas.AsReadOnly();
 
@@ -32,8 +30,6 @@ public class Turma
         Professor = professor ?? throw new ArgumentNullException(nameof(professor));
         ProfessorId = professor.Id;
         Ativa = true;
-        DataCriacao = DateTime.UtcNow;
-        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -96,7 +92,7 @@ public class Turma
     public void Ativar()
     {
         Ativa = true;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 
     /// <summary>
@@ -105,6 +101,6 @@ public class Turma
     public void Inativar()
     {
         Ativa = false;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 }

@@ -6,15 +6,12 @@ namespace Virtus.Domain.Entities;
 /// <summary>
 /// Entidade que representa uma pessoa.
 /// </summary>
-public class Pessoa
+public class Pessoa : BaseEntity
 {
-    public int Id { get; private set; }
     public string Nome { get; private set; } = string.Empty;
     public Email Email { get; private set; } = null!;
     public string Telefone { get; private set; } = string.Empty;
     public TipoPessoa Tipo { get; private set; }
-    public DateTime DataCriacao { get; private set; }
-    public DateTime DataAtualizacao { get; private set; }
 
     private Pessoa() { }
 
@@ -25,8 +22,6 @@ public class Pessoa
         Email = email ?? throw new ArgumentNullException(nameof(email));
         Telefone = telefone ?? throw new ArgumentNullException(nameof(telefone));
         Tipo = tipo;
-        DataCriacao = DateTime.UtcNow;
-        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -42,7 +37,7 @@ public class Pessoa
         Email = email ?? throw new ArgumentNullException(nameof(email));
         ValidarTelefone(telefone);
         Telefone = telefone;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 
     /// <summary>
@@ -52,7 +47,7 @@ public class Pessoa
     public void AlterarTipo(TipoPessoa novoTipo)
     {
         Tipo = novoTipo;
-        DataAtualizacao = DateTime.UtcNow;
+        AtualizarData();
     }
 
     private static void ValidarNome(string nome)
