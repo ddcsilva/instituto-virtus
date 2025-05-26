@@ -77,4 +77,15 @@ public class Aluno : BaseEntity
         Status = StatusAluno.ListaEspera;
         AtualizarData();
     }
+
+    /// <summary>
+    /// Atualiza o responsável pelo aluno.
+    /// </summary>
+    /// <param name="responsavel">O novo responsável ou null para remover.</param>
+    public void AtualizarResponsavel(Pessoa? responsavel)
+    {
+        Responsavel = responsavel;
+        ResponsavelId = responsavel?.Id;
+        AtualizarData();
+    }
 }
