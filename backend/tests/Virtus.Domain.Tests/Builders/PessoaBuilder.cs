@@ -1,7 +1,3 @@
-using Virtus.Domain.Entities;
-using Virtus.Domain.Enums;
-using Virtus.Domain.ValueObjects;
-
 namespace Virtus.Domain.Tests.Builders;
 
 public class PessoaBuilder

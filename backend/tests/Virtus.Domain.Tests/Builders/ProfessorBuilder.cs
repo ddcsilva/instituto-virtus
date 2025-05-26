@@ -1,6 +1,3 @@
-using Virtus.Domain.Entities;
-using Virtus.Domain.Enums;
-
 namespace Virtus.Domain.Tests.Builders;
 
 public class ProfessorBuilder

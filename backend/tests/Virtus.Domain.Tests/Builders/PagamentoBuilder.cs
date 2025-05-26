@@ -1,5 +1,3 @@
-using Virtus.Domain.Entities;
-
 namespace Virtus.Domain.Tests.Builders;
 
 public class PagamentoBuilder
