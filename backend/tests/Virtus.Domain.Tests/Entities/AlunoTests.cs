@@ -329,4 +329,108 @@ public class AlunoTests
         aluno.Desistir();
         aluno.Status.Should().Be(StatusAluno.Desistente);
     }
+
+    [Fact]
+    public void AtualizarResponsavel_DeveDefinirNovoResponsavel_QuandoResponsavelValido()
+    {
+        // Arrange
+        var aluno = AlunoBuilder.Novo().Build();
+        var novoResponsavel = PessoaBuilder.Novo()
+            .ComTipo(TipoPessoa.Responsavel)
+            .Build();
+
+        var dataAnterior = aluno.DataAtualizacao;
+        Thread.Sleep(10);
+
+        // Act
+        aluno.AtualizarResponsavel(novoResponsavel);
+
+        // Assert
+        aluno.Responsavel.Should().Be(novoResponsavel);
+        aluno.ResponsavelId.Should().Be(novoResponsavel.Id);
+        aluno.DataAtualizacao.Should().BeAfter(dataAnterior);
+    }
+
+    [Fact]
+    public void AtualizarResponsavel_DeveRemoverResponsavel_QuandoResponsavelNulo()
+    {
+        // Arrange
+        var responsavelInicial = PessoaBuilder.Novo()
+            .ComTipo(TipoPessoa.Responsavel)
+            .Build();
+
+        var aluno = AlunoBuilder.Novo()
+            .ComResponsavel(responsavelInicial)
+            .Build();
+
+        var dataAnterior = aluno.DataAtualizacao;
+        Thread.Sleep(10);
+
+        // Act
+        aluno.AtualizarResponsavel(null);
+
+        // Assert
+        aluno.Responsavel.Should().BeNull();
+        aluno.ResponsavelId.Should().BeNull();
+        aluno.DataAtualizacao.Should().BeAfter(dataAnterior);
+    }
+
+        [Fact]
+    public void AtualizarResponsavel_DeveSubstituirResponsavel_QuandoJaExisteResponsavel()
+    {
+        // Arrange
+        var responsavelInicial = PessoaBuilder.Novo()
+            .ComTipo(TipoPessoa.Responsavel)
+            .Build();
+
+        var novoResponsavel = PessoaBuilder.Novo()
+            .ComTipo(TipoPessoa.Responsavel)
+            .Build();
+
+        // Simular IDs diferentes para os responsáveis (como se fossem persistidos)
+        SetEntityId(responsavelInicial, 1);
+        SetEntityId(novoResponsavel, 2);
+
+        var aluno = AlunoBuilder.Novo()
+            .ComResponsavel(responsavelInicial)
+            .Build();
+
+        var dataAnterior = aluno.DataAtualizacao;
+        Thread.Sleep(10);
+
+        // Act
+        aluno.AtualizarResponsavel(novoResponsavel);
+
+        // Assert
+        aluno.Responsavel.Should().Be(novoResponsavel);
+        aluno.ResponsavelId.Should().Be(novoResponsavel.Id);
+        aluno.Responsavel.Should().NotBe(responsavelInicial);
+        aluno.ResponsavelId.Should().NotBe(responsavelInicial.Id);
+        aluno.DataAtualizacao.Should().BeAfter(dataAnterior);
+    }
+
+    private static void SetEntityId(BaseEntity entity, int id)
+    {
+        var idProperty = typeof(BaseEntity).GetProperty("Id");
+        idProperty?.SetValue(entity, id);
+    }
+
+    [Fact]
+    public void AtualizarResponsavel_DeveAtualizarDataAtualizacao_QuandoChamado()
+    {
+        // Arrange
+        var aluno = AlunoBuilder.Novo().Build();
+        var responsavel = PessoaBuilder.Novo()
+            .ComTipo(TipoPessoa.Responsavel)
+            .Build();
+
+        var dataAnterior = aluno.DataAtualizacao;
+        Thread.Sleep(10);
+
+        // Act
+        aluno.AtualizarResponsavel(responsavel);
+
+        // Assert
+        aluno.DataAtualizacao.Should().BeAfter(dataAnterior);
+    }
 }
