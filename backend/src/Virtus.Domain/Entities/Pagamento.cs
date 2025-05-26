@@ -1,3 +1,5 @@
+using Virtus.Domain.Entidades;
+
 namespace Virtus.Domain.Entities;
 
 /// <summary>
@@ -5,18 +7,19 @@ namespace Virtus.Domain.Entities;
 /// </summary>
 public class Pagamento
 {
-    public int Id { get; set; }
-    public decimal Valor { get; set; }
-    public DateTime DataPagamento { get; set; }
-    public int PagadorId { get; set; }
-    public Pessoa Pagador { get; set; } = default!;
-    public string? Observacao { get; set; }
-    public DateTime DataCriacao { get; set; }
+    public int Id { get; private set; }
+    public decimal Valor { get; private set; }
+    public DateTime DataPagamento { get; private set; }
+    public int PagadorId { get; private set; }
+    public Pessoa Pagador { get; private set; } = default!;
+    public string? Observacao { get; private set; }
+    public DateTime DataCriacao { get; private set; }
+    public DateTime DataAtualizacao { get; private set; }
 
-    private readonly List<PagamentoAluno> _pagamentoAlunos = new();
+    private readonly List<PagamentoAluno> _pagamentoAlunos = [];
     public IReadOnlyCollection<PagamentoAluno> PagamentoAlunos => _pagamentoAlunos.AsReadOnly();
 
-    protected Pagamento() { }
+    private Pagamento() { }
 
     public Pagamento(decimal valor, DateTime dataPagamento, Pessoa pagador, string? observacao = null)
     {
@@ -28,6 +31,7 @@ public class Pagamento
         PagadorId = pagador.Id;
         Observacao = observacao;
         DataCriacao = DateTime.UtcNow;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     private static void ValidarValor(decimal valor)
@@ -50,7 +54,7 @@ public class Pagamento
     /// <param name="valor">O valor a ser distribuído para o aluno.</param>
     public void AdicionarAluno(Aluno aluno, decimal valor)
     {
-        if (aluno == null)
+        if (aluno is null)
         {
             throw new ArgumentNullException(nameof(aluno));
         }
@@ -65,9 +69,16 @@ public class Pagamento
             throw new InvalidOperationException("Aluno já está incluído neste pagamento");
         }
 
+        if (ObterTotalDistribuido() + valor > Valor)
+        {
+            throw new InvalidOperationException("Total distribuído excede o valor do pagamento.");
+        }
+
         var pagamentoAluno = new PagamentoAluno(this, aluno, valor);
         _pagamentoAlunos.Add(pagamentoAluno);
+        DataAtualizacao = DateTime.UtcNow;
     }
+
 
     /// <summary>
     /// Obtém o total distribuído para os alunos.

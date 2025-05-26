@@ -14,7 +14,7 @@ public sealed partial class Email : IEquatable<Email>
         Endereco = string.Empty;
     }
 
-    public Email(string endereco)
+    private Email(string endereco)
     {
         if (string.IsNullOrWhiteSpace(endereco))
         {
@@ -31,7 +31,7 @@ public sealed partial class Email : IEquatable<Email>
 
     private static readonly Regex _regex = EmailRegex();
 
-    [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase)]
     private static partial Regex EmailRegex();
 
     private static bool FormatoValido(string email) => _regex.IsMatch(email);
@@ -68,4 +68,15 @@ public sealed partial class Email : IEquatable<Email>
         email = new Email(valor);
         return true;
     }
+
+    /// <summary>
+    /// Cria um novo objeto Email.
+    /// </summary>
+    /// <param name="endereco">O endereço de e-mail a ser criado.</param>
+    /// <returns>O objeto Email criado.</returns>
+    public static Email Criar(string endereco)
+    {
+        return new Email(endereco);
+    }
+
 }

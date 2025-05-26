@@ -1,3 +1,5 @@
+using Virtus.Domain.Enums;
+
 namespace Virtus.Domain.Entities;
 
 /// <summary>
@@ -5,22 +7,22 @@ namespace Virtus.Domain.Entities;
 /// </summary>
 public class Matricula
 {
-    public int Id { get; set; }
-    public int AlunoId { get; set; }
-    public Aluno Aluno { get; set; } = default!;
-    public int TurmaId { get; set; }
-    public Turma Turma { get; set; } = default!;
-    public Enums.StatusMatricula Status { get; set; }
-    public DateTime DataMatricula { get; set; }
-    public DateTime? DataCancelamento { get; set; }
+    public int Id { get; private set; }
+    public int AlunoId { get; private set; }
+    public Aluno Aluno { get; private set; } = default!;
+    public int TurmaId { get; private set; }
+    public Turma Turma { get; private set; } = default!;
+    public StatusMatricula Status { get; private set; }
+    public DateTime DataMatricula { get; private set; }
+    public DateTime? DataCancelamento { get; private set; }
+    public DateTime DataAtualizacao { get; private set; }
 
-    protected Matricula() { }
+    private Matricula() { }
 
     public Matricula(Aluno aluno, Turma turma)
     {
         Aluno = aluno ?? throw new ArgumentNullException(nameof(aluno));
         AlunoId = aluno.Id;
-
         Turma = turma ?? throw new ArgumentNullException(nameof(turma));
         TurmaId = turma.Id;
 
@@ -29,8 +31,9 @@ public class Matricula
             throw new InvalidOperationException("Aluno não pode ser matriculado nesta turma");
         }
 
-        Status = Enums.StatusMatricula.Ativa;
+        Status = StatusMatricula.Ativa;
         DataMatricula = DateTime.UtcNow;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -38,13 +41,14 @@ public class Matricula
     /// </summary>
     public void Cancelar()
     {
-        if (Status == Enums.StatusMatricula.Cancelada)
+        if (Status == StatusMatricula.Cancelada)
         {
             throw new InvalidOperationException("Matrícula já está cancelada");
         }
 
-        Status = Enums.StatusMatricula.Cancelada;
+        Status = StatusMatricula.Cancelada;
         DataCancelamento = DateTime.UtcNow;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -52,12 +56,13 @@ public class Matricula
     /// </summary>
     public void Trancar()
     {
-        if (Status != Enums.StatusMatricula.Ativa)
+        if (Status != StatusMatricula.Ativa)
         {
             throw new InvalidOperationException("Apenas matrículas ativas podem ser trancadas");
         }
 
-        Status = Enums.StatusMatricula.Trancada;
+        Status = StatusMatricula.Trancada;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -65,12 +70,13 @@ public class Matricula
     /// </summary>
     public void Reativar()
     {
-        if (Status == Enums.StatusMatricula.Ativa)
+        if (Status == StatusMatricula.Ativa)
         {
             throw new InvalidOperationException("Matrícula já está ativa");
         }
 
-        Status = Enums.StatusMatricula.Ativa;
+        Status = StatusMatricula.Ativa;
         DataCancelamento = null;
+        DataAtualizacao = DateTime.UtcNow;
     }
 }

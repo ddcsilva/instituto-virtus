@@ -11,20 +11,22 @@ public class Pessoa
     public int Id { get; private set; }
     public string Nome { get; private set; } = string.Empty;
     public Email Email { get; private set; } = null!;
-    public string? Telefone { get; private set; }
+    public string Telefone { get; private set; } = string.Empty;
     public TipoPessoa Tipo { get; private set; }
     public DateTime DataCriacao { get; private set; }
+    public DateTime DataAtualizacao { get; private set; }
 
     private Pessoa() { }
 
-    public Pessoa(string nome, Email email, string? telefone, TipoPessoa tipo)
+    public Pessoa(string nome, Email email, string telefone, TipoPessoa tipo)
     {
         ValidarNome(nome);
         Nome = nome;
         Email = email ?? throw new ArgumentNullException(nameof(email));
-        Telefone = telefone;
+        Telefone = telefone ?? throw new ArgumentNullException(nameof(telefone));
         Tipo = tipo;
         DataCriacao = DateTime.UtcNow;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -33,18 +35,26 @@ public class Pessoa
     /// <param name="nome">O novo nome da pessoa.</param>
     /// <param name="email">O novo email da pessoa.</param>
     /// <param name="telefone">O novo telefone da pessoa.</param>
-    public void AtualizarDados(string nome, Email email, string? telefone)
+    public void AtualizarDados(string nome, Email email, string telefone)
     {
         ValidarNome(nome);
         Nome = nome;
         Email = email ?? throw new ArgumentNullException(nameof(email));
+        ValidarTelefone(telefone);
         Telefone = telefone;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
-    /// Valida o nome da pessoa.
+    /// Altera o tipo de pessoa.
     /// </summary>
-    /// <param name="nome">O nome da pessoa.</param>
+    /// <param name="novoTipo">O novo tipo de pessoa.</param>
+    public void AlterarTipo(TipoPessoa novoTipo)
+    {
+        Tipo = novoTipo;
+        DataAtualizacao = DateTime.UtcNow;
+    }
+
     private static void ValidarNome(string nome)
     {
         if (string.IsNullOrWhiteSpace(nome))
@@ -60,6 +70,14 @@ public class Pessoa
         if (nome.Length > 100)
         {
             throw new ArgumentException("Nome não pode ter mais de 100 caracteres.", nameof(nome));
+        }
+    }
+
+    private static void ValidarTelefone(string telefone)
+    {
+        if (string.IsNullOrWhiteSpace(telefone))
+        {
+            throw new ArgumentException("Telefone é obrigatório.", nameof(telefone));
         }
     }
 }

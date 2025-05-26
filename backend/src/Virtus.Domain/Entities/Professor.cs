@@ -5,16 +5,17 @@ namespace Virtus.Domain.Entities;
 /// </summary>
 public class Professor
 {
-    public int Id { get; set; }
-    public int PessoaId { get; set; }
-    public Pessoa Pessoa { get; set; } = default!;
-    public bool Ativo { get; set; } = true;
-    public DateTime DataCriacao { get; set; }
+    public int Id { get; private set; }
+    public int PessoaId { get; private set; }
+    public Pessoa Pessoa { get; private set; } = default!;
+    public bool Ativo { get; private set; } = true;
+    public DateTime DataCriacao { get; private set; }
+    public DateTime DataAtualizacao { get; private set; }
 
-    private readonly List<Turma> _turmas = new();
+    private readonly List<Turma> _turmas = [];
     public IReadOnlyCollection<Turma> Turmas => _turmas.AsReadOnly();
 
-    protected Professor() { }
+    private Professor() { }
 
     public Professor(Pessoa pessoa)
     {
@@ -22,6 +23,7 @@ public class Professor
         PessoaId = pessoa.Id;
         Ativo = true;
         DataCriacao = DateTime.UtcNow;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -30,6 +32,7 @@ public class Professor
     public void Ativar()
     {
         Ativo = true;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -38,5 +41,6 @@ public class Professor
     public void Inativar()
     {
         Ativo = false;
+        DataAtualizacao = DateTime.UtcNow;
     }
 }

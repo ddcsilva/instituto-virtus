@@ -7,32 +7,29 @@ namespace Virtus.Domain.Entities;
 /// </summary>
 public class Aluno
 {
-    public int Id { get; set; }
-    public int PessoaId { get; set; }
-    public Pessoa Pessoa { get; set; } = default!;
-    public int? ResponsavelId { get; set; }
-    public Pessoa? Responsavel { get; set; }
-    public StatusAluno Status { get; set; } = StatusAluno.Ativo;
-    public DateTime DataCriacao { get; set; }
+    public int Id { get; private set; }
+    public int PessoaId { get; private set; }
+    public Pessoa Pessoa { get; private set; } = default!;
+    public int? ResponsavelId { get; private set; }
+    public Pessoa? Responsavel { get; private set; }
+    public StatusAluno Status { get; private set; } = StatusAluno.Ativo;
+    public DateTime DataCriacao { get; private set; }
+    public DateTime DataAtualizacao { get; private set; }
 
-    private readonly List<Matricula> _matriculas = new();
+    private readonly List<Matricula> _matriculas = [];
     public IReadOnlyCollection<Matricula> Matriculas => _matriculas.AsReadOnly();
 
-    protected Aluno() { }
+    private Aluno() { }
 
     public Aluno(Pessoa pessoa, Pessoa? responsavel = null)
     {
         Pessoa = pessoa ?? throw new ArgumentNullException(nameof(pessoa));
         PessoaId = pessoa.Id;
-
-        if (responsavel != null)
-        {
-            Responsavel = responsavel;
-            ResponsavelId = responsavel.Id;
-        }
-
+        Responsavel = responsavel;
+        ResponsavelId = responsavel?.Id;
         Status = StatusAluno.Ativo;
         DataCriacao = DateTime.UtcNow;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -42,12 +39,12 @@ public class Aluno
     /// <returns>true se o aluno pode ser matriculado, false caso contrário.</returns>
     public bool PodeMatricular(Turma turma)
     {
-        if (turma is null)
+        if (turma is not null)
         {
-            throw new ArgumentNullException(nameof(turma));
+            return Status == StatusAluno.Ativo && turma.TemVagasDisponiveis();
         }
 
-        return Status == StatusAluno.Ativo && turma.TemVagasDisponiveis();
+        throw new ArgumentNullException(nameof(turma));
     }
 
     /// <summary>
@@ -56,6 +53,7 @@ public class Aluno
     public void Inativar()
     {
         Status = StatusAluno.Inativo;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -64,6 +62,16 @@ public class Aluno
     public void Reativar()
     {
         Status = StatusAluno.Ativo;
+        DataAtualizacao = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Desiste do curso.
+    /// </summary>
+    public void Desistir()
+    {
+        Status = StatusAluno.Desistente;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -72,5 +80,6 @@ public class Aluno
     public void AdicionarNaListaDeEspera()
     {
         Status = StatusAluno.ListaEspera;
+        DataAtualizacao = DateTime.UtcNow;
     }
 }

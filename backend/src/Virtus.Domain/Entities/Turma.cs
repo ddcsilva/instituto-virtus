@@ -7,19 +7,19 @@ namespace Virtus.Domain.Entities;
 /// </summary>
 public class Turma
 {
-    public int Id { get; set; }
-    public string Nome { get; set; } = default!;
-    public int Capacidade { get; set; }
-    public TipoCurso Tipo { get; set; }
-    public int ProfessorId { get; set; }
-    public Professor Professor { get; set; } = default!;
-    public bool Ativa { get; set; } = true;
-    public DateTime DataCriacao { get; set; }
-
-    private readonly List<Matricula> _matriculas = new();
+    public int Id { get; private set; }
+    public string Nome { get; private set; } = default!;
+    public int Capacidade { get; private set; }
+    public TipoCurso Tipo { get; private set; }
+    public int ProfessorId { get; private set; }
+    public Professor Professor { get; private set; } = default!;
+    public bool Ativa { get; private set; } = true;
+    public DateTime DataCriacao { get; private set; }
+    public DateTime DataAtualizacao { get; private set; }
+    private readonly List<Matricula> _matriculas = [];
     public IReadOnlyCollection<Matricula> Matriculas => _matriculas.AsReadOnly();
 
-    protected Turma() { }
+    private Turma() { }
 
     public Turma(string nome, int capacidade, TipoCurso tipo, Professor professor)
     {
@@ -33,6 +33,7 @@ public class Turma
         ProfessorId = professor.Id;
         Ativa = true;
         DataCriacao = DateTime.UtcNow;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -95,6 +96,7 @@ public class Turma
     public void Ativar()
     {
         Ativa = true;
+        DataAtualizacao = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -103,5 +105,6 @@ public class Turma
     public void Inativar()
     {
         Ativa = false;
+        DataAtualizacao = DateTime.UtcNow;
     }
 }

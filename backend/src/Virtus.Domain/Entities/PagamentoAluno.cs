@@ -7,14 +7,14 @@ namespace Virtus.Domain.Entidades;
 /// </summary>
 public class PagamentoAluno
 {
-    public int Id { get; set; }
-    public int PagamentoId { get; set; }
-    public Pagamento Pagamento { get; set; } = default!;
-    public int AlunoId { get; set; }
-    public Aluno Aluno { get; set; } = default!;
-    public decimal Valor { get; set; }
+    public int Id { get; private set; }
+    public int PagamentoId { get; private set; }
+    public Pagamento Pagamento { get; private set; } = default!;
+    public int AlunoId { get; private set; }
+    public Aluno Aluno { get; private set; } = default!;
+    public decimal Valor { get; private set; }
 
-    protected PagamentoAluno() { }
+    private PagamentoAluno() { }
 
     /// <summary>
     /// Cria uma nova instância de PagamentoAluno.
