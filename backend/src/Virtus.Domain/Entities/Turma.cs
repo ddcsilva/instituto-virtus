@@ -103,4 +103,22 @@ public class Turma : BaseEntity
         Ativa = false;
         AtualizarData();
     }
+
+    /// <summary>
+    /// Atualiza os dados da turma.
+    /// </summary>
+    /// <param name="nome">O novo nome da turma.</param>
+    /// <param name="capacidade">A nova capacidade da turma.</param>
+    /// <param name="professor">O novo professor da turma.</param>
+    public void AtualizarDados(string nome, int capacidade, Professor professor)
+    {
+        ValidarNome(nome);
+        ValidarCapacidade(capacidade);
+
+        Nome = nome;
+        Capacidade = capacidade;
+        Professor = professor ?? throw new ArgumentNullException(nameof(professor));
+        ProfessorId = professor.Id;
+        AtualizarData();
+    }
 }

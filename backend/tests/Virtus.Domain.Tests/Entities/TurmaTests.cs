@@ -344,4 +344,174 @@ public class TurmaTests
         // Assert
         turma.Nome.Should().Be(nome);
     }
+
+    [Fact]
+    public void AtualizarDados_DeveAtualizarTodosOsCampos_QuandoParametrosValidos()
+    {
+        // Arrange
+        var turma = TurmaBuilder.Nova()
+            .ComNome("Nome Original")
+            .ComCapacidade(10)
+            .Build();
+
+        var novoNome = "Nome Atualizado";
+        var novaCapacidade = 20;
+        var novoProfessor = ProfessorBuilder.Novo().Build();
+        SetEntityId(novoProfessor, 2);
+
+        var dataAnterior = turma.DataAtualizacao;
+        Thread.Sleep(10);
+
+        // Act
+        turma.AtualizarDados(novoNome, novaCapacidade, novoProfessor);
+
+        // Assert
+        turma.Nome.Should().Be(novoNome);
+        turma.Capacidade.Should().Be(novaCapacidade);
+        turma.Professor.Should().Be(novoProfessor);
+        turma.ProfessorId.Should().Be(novoProfessor.Id);
+        turma.DataAtualizacao.Should().BeAfter(dataAnterior);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData(null)]
+    public void AtualizarDados_DeveLancarExcecao_QuandoNomeInvalido(string? nomeInvalido)
+    {
+        // Arrange
+        var turma = TurmaBuilder.Nova().Build();
+        var professor = ProfessorBuilder.Novo().Build();
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() =>
+            turma.AtualizarDados(nomeInvalido!, 15, professor));
+
+        exception.Message.Should().Contain("Nome da turma é obrigatório");
+    }
+
+    [Fact]
+    public void AtualizarDados_DeveLancarExcecao_QuandoNomeMuitoCurto()
+    {
+        // Arrange
+        var turma = TurmaBuilder.Nova().Build();
+        var professor = ProfessorBuilder.Novo().Build();
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() =>
+            turma.AtualizarDados("AB", 15, professor));
+
+        exception.Message.Should().Contain("Nome da turma deve ter pelo menos 3 caracteres");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(-10)]
+    public void AtualizarDados_DeveLancarExcecao_QuandoCapacidadeInvalida(int capacidadeInvalida)
+    {
+        // Arrange
+        var turma = TurmaBuilder.Nova().Build();
+        var professor = ProfessorBuilder.Novo().Build();
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() =>
+            turma.AtualizarDados("Nome Válido", capacidadeInvalida, professor));
+
+        exception.Message.Should().Contain("Capacidade deve ser maior que zero");
+    }
+
+    [Fact]
+    public void AtualizarDados_DeveLancarExcecao_QuandoCapacidadeMuitoAlta()
+    {
+        // Arrange
+        var turma = TurmaBuilder.Nova().Build();
+        var professor = ProfessorBuilder.Novo().Build();
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() =>
+            turma.AtualizarDados("Nome Válido", 51, professor));
+
+        exception.Message.Should().Contain("Capacidade não pode ser maior que 50");
+    }
+
+    [Fact]
+    public void AtualizarDados_DeveLancarExcecao_QuandoProfessorNulo()
+    {
+        // Arrange
+        var turma = TurmaBuilder.Nova().Build();
+        Professor professor = null!;
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            turma.AtualizarDados("Nome Válido", 15, professor));
+    }
+
+    [Fact]
+    public void AtualizarDados_DeveSubstituirProfessor_QuandoJaExisteProfessor()
+    {
+        // Arrange
+        var professorInicial = ProfessorBuilder.Novo().Build();
+        SetEntityId(professorInicial, 1);
+
+        var turma = TurmaBuilder.Nova()
+            .ComProfessor(professorInicial)
+            .Build();
+
+        var novoProfessor = ProfessorBuilder.Novo().Build();
+        SetEntityId(novoProfessor, 2);
+
+        var dataAnterior = turma.DataAtualizacao;
+        Thread.Sleep(10);
+
+        // Act
+        turma.AtualizarDados("Nome Atualizado", 15, novoProfessor);
+
+        // Assert
+        turma.Professor.Should().Be(novoProfessor);
+        turma.ProfessorId.Should().Be(novoProfessor.Id);
+        turma.Professor.Should().NotBe(professorInicial);
+        turma.ProfessorId.Should().NotBe(professorInicial.Id);
+        turma.DataAtualizacao.Should().BeAfter(dataAnterior);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(25)]
+    [InlineData(50)]
+    public void AtualizarDados_DeveAceitarCapacidadesValidas(int capacidade)
+    {
+        // Arrange
+        var turma = TurmaBuilder.Nova().Build();
+        var professor = ProfessorBuilder.Novo().Build();
+
+        // Act
+        turma.AtualizarDados("Nome Válido", capacidade, professor);
+
+        // Assert
+        turma.Capacidade.Should().Be(capacidade);
+    }
+
+    [Fact]
+    public void AtualizarDados_DeveAtualizarDataAtualizacao_QuandoChamado()
+    {
+        // Arrange
+        var turma = TurmaBuilder.Nova().Build();
+        var professor = ProfessorBuilder.Novo().Build();
+
+        var dataAnterior = turma.DataAtualizacao;
+        Thread.Sleep(10);
+
+        // Act
+        turma.AtualizarDados("Nome Atualizado", 20, professor);
+
+        // Assert
+        turma.DataAtualizacao.Should().BeAfter(dataAnterior);
+    }
+
+    private static void SetEntityId(BaseEntity entity, int id)
+    {
+        var idProperty = typeof(BaseEntity).GetProperty("Id");
+        idProperty?.SetValue(entity, id);
+    }
 }
