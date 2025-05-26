@@ -3,6 +3,7 @@
 ## Sistema de Gestão Acadêmica
 
 Plataforma completa para gestão de cursos de música e teologia!
+
 [.NET](https://img.shields.io/badge/.NET-8-512BD4?style=flat-square&logo=dotnet)![Angular](https://img.shields.io/badge/Angular-18-DD0031?style=flat-square&logo=angular)![License](https://img.shields.io/badge/License-Private-red?style=flat-square)
 
 ---
