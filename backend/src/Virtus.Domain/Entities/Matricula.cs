@@ -1,5 +1,8 @@
 namespace Virtus.Domain.Entities;
 
+/// <summary>
+/// Entidade que representa uma matrícula.
+/// </summary>
 public class Matricula
 {
     public int Id { get; set; }
@@ -30,6 +33,9 @@ public class Matricula
         DataMatricula = DateTime.UtcNow;
     }
 
+    /// <summary>
+    /// Cancela a matrícula.
+    /// </summary>
     public void Cancelar()
     {
         if (Status == Enums.StatusMatricula.Cancelada)
@@ -41,6 +47,9 @@ public class Matricula
         DataCancelamento = DateTime.UtcNow;
     }
 
+    /// <summary>
+    /// Tranca a matrícula.
+    /// </summary>
     public void Trancar()
     {
         if (Status != Enums.StatusMatricula.Ativa)
@@ -51,6 +60,9 @@ public class Matricula
         Status = Enums.StatusMatricula.Trancada;
     }
 
+    /// <summary>
+    /// Reativa a matrícula.
+    /// </summary>
     public void Reativar()
     {
         if (Status == Enums.StatusMatricula.Ativa)

@@ -1,5 +1,8 @@
 namespace Virtus.Domain.Entities;
 
+/// <summary>
+/// Entidade que representa um professor.
+/// </summary>
 public class Professor
 {
     public int Id { get; set; }
@@ -21,11 +24,17 @@ public class Professor
         DataCriacao = DateTime.UtcNow;
     }
 
+    /// <summary>
+    /// Ativa o professor.
+    /// </summary>
     public void Ativar()
     {
         Ativo = true;
     }
 
+    /// <summary>
+    /// Inativa o professor.
+    /// </summary>
     public void Inativar()
     {
         Ativo = false;

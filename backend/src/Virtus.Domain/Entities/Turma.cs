@@ -2,6 +2,9 @@ using Virtus.Domain.Enums;
 
 namespace Virtus.Domain.Entities;
 
+/// <summary>
+/// Entidade que representa uma turma.
+/// </summary>
 public class Turma
 {
     public int Id { get; set; }
@@ -32,6 +35,10 @@ public class Turma
         DataCriacao = DateTime.UtcNow;
     }
 
+    /// <summary>
+    /// Valida o nome da turma.
+    /// </summary>
+    /// <param name="nome">O nome da turma.</param>
     private static void ValidarNome(string nome)
     {
         if (string.IsNullOrWhiteSpace(nome))
@@ -45,6 +52,10 @@ public class Turma
         }
     }
 
+    /// <summary>
+    /// Valida a capacidade da turma.
+    /// </summary>
+    /// <param name="capacidade">A capacidade da turma.</param>
     private static void ValidarCapacidade(int capacidade)
     {
         if (capacidade < 1)
@@ -58,23 +69,37 @@ public class Turma
         }
     }
 
+    /// <summary>
+    /// Verifica se a turma tem vagas disponíveis.
+    /// </summary>
+    /// <returns>true se a turma tem vagas disponíveis, false caso contrário.</returns>
     public bool TemVagasDisponiveis()
     {
         var matriculasAtivas = _matriculas.Count(m => m.Status == Enums.StatusMatricula.Ativa);
         return matriculasAtivas < Capacidade;
     }
 
+    /// <summary>
+    /// Obtém a quantidade de vagas disponíveis na turma.
+    /// </summary>
+    /// <returns>A quantidade de vagas disponíveis.</returns>
     public int ObterQuantidadeVagasDisponiveis()
     {
         var matriculasAtivas = _matriculas.Count(m => m.Status == StatusMatricula.Ativa);
         return Capacidade - matriculasAtivas;
     }
 
+    /// <summary>
+    /// Ativa a turma.
+    /// </summary>
     public void Ativar()
     {
         Ativa = true;
     }
 
+    /// <summary>
+    /// Inativa a turma.
+    /// </summary>
     public void Inativar()
     {
         Ativa = false;

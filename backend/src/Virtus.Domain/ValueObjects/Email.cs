@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace Virtus.Domain.ValueObjects;
 
+/// <summary>
+/// Value object que representa um endereço de e-mail.
+/// </summary>
 public sealed partial class Email : IEquatable<Email>
 {
     public string Endereco { get; }
@@ -49,6 +52,12 @@ public sealed partial class Email : IEquatable<Email>
 
     public static bool operator !=(Email? a, Email? b) => !(a == b);
 
+    /// <summary>
+    /// Tenta criar um objeto Email a partir de um valor.
+    /// </summary>
+    /// <param name="valor">O valor a ser convertido para Email.</param>
+    /// <param name="email">O objeto Email criado ou null se a conversão falhar.</param>
+    /// <returns>true se a conversão for bem-sucedida, false caso contrário.</returns>
     public static bool TentarCriar(string valor, out Email? email)
     {
         email = null;

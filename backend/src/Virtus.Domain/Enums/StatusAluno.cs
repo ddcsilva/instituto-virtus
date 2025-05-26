@@ -1,5 +1,8 @@
 namespace Virtus.Domain.Enums;
 
+/// <summary>
+/// Enum que representa o status de um aluno.
+/// </summary>
 public enum StatusAluno
 {
     Ativo = 1,

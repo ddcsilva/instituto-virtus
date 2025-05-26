@@ -3,6 +3,9 @@ using Virtus.Domain.ValueObjects;
 
 namespace Virtus.Domain.Entities;
 
+/// <summary>
+/// Entidade que representa uma pessoa.
+/// </summary>
 public class Pessoa
 {
     public int Id { get; private set; }
@@ -24,6 +27,12 @@ public class Pessoa
         DataCriacao = DateTime.UtcNow;
     }
 
+    /// <summary>
+    /// Atualiza os dados da pessoa.
+    /// </summary>
+    /// <param name="nome">O novo nome da pessoa.</param>
+    /// <param name="email">O novo email da pessoa.</param>
+    /// <param name="telefone">O novo telefone da pessoa.</param>
     public void AtualizarDados(string nome, Email email, string? telefone)
     {
         ValidarNome(nome);
@@ -32,6 +41,10 @@ public class Pessoa
         Telefone = telefone;
     }
 
+    /// <summary>
+    /// Valida o nome da pessoa.
+    /// </summary>
+    /// <param name="nome">O nome da pessoa.</param>
     private static void ValidarNome(string nome)
     {
         if (string.IsNullOrWhiteSpace(nome))

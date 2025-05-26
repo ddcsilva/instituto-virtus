@@ -1,5 +1,8 @@
 namespace Virtus.Domain.Enums;
 
+/// <summary>
+/// Enum que representa o status de uma matrícula.
+/// </summary>
 public enum StatusMatricula
 {
     Ativa = 1,

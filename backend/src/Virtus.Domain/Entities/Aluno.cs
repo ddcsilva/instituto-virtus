@@ -2,6 +2,9 @@ using Virtus.Domain.Enums;
 
 namespace Virtus.Domain.Entities;
 
+/// <summary>
+/// Entidade que representa um aluno.
+/// </summary>
 public class Aluno
 {
     public int Id { get; set; }
@@ -32,6 +35,11 @@ public class Aluno
         DataCriacao = DateTime.UtcNow;
     }
 
+    /// <summary>
+    /// Verifica se o aluno pode ser matriculado em uma turma.
+    /// </summary>
+    /// <param name="turma">A turma a ser verificada.</param>
+    /// <returns>true se o aluno pode ser matriculado, false caso contrário.</returns>
     public bool PodeMatricular(Turma turma)
     {
         if (turma is null)
@@ -42,16 +50,25 @@ public class Aluno
         return Status == StatusAluno.Ativo && turma.TemVagasDisponiveis();
     }
 
+    /// <summary>
+    /// Inativa o aluno.
+    /// </summary>
     public void Inativar()
     {
         Status = StatusAluno.Inativo;
     }
 
+    /// <summary>
+    /// Reativa o aluno.
+    /// </summary>
     public void Reativar()
     {
         Status = StatusAluno.Ativo;
     }
 
+    /// <summary>
+    /// Adiciona o aluno na lista de espera.
+    /// </summary>
     public void AdicionarNaListaDeEspera()
     {
         Status = StatusAluno.ListaEspera;
