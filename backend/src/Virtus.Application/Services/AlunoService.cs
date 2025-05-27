@@ -9,12 +9,12 @@ using Virtus.Domain.ValueObjects;
 
 namespace Virtus.Application.Services;
 
-public class ServicoAluno : IServicoAluno
+public class AlunoService : IAlunoService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public ServicoAluno(IUnitOfWork unitOfWork, IMapper mapper)
+    public AlunoService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;

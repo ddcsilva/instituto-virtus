@@ -3,7 +3,7 @@ using Virtus.Application.DTOs.Common;
 
 namespace Virtus.Application.Interfaces;
 
-public interface IServicoPagamento
+public interface IPagamentoService
 {
     public Task<ResultadoDTO<PagamentoDTO>> ObterPorIdAsync(int id);
     public Task<ResultadoDTO<PagamentoDTO>> CriarAsync(CriarPagamentoDTO dto);

@@ -3,7 +3,7 @@ using Virtus.Application.DTOs.Common;
 
 namespace Virtus.Application.Interfaces;
 
-public interface IServicoAluno
+public interface IAlunoService
 {
     public Task<ResultadoDTO<AlunoDTO>> ObterPorIdAsync(int id);
     public Task<RespostaPaginadaDTO<AlunoListaDTO>> ObterTodosAsync(int pagina = 1, int itensPorPagina = 20);

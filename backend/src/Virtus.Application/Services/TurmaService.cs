@@ -8,12 +8,12 @@ using Virtus.Domain.Entities;
 
 namespace Virtus.Application.Services;
 
-public class ServicoTurma : IServicoTurma
+public class TurmaService : ITurmaService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public ServicoTurma(IUnitOfWork unitOfWork, IMapper mapper)
+    public TurmaService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;

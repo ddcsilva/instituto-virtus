@@ -4,7 +4,7 @@ using Virtus.Domain.Enums;
 
 namespace Virtus.Application.Interfaces;
 
-public interface IServicoTurma
+public interface ITurmaService
 {
     public Task<ResultadoDTO<TurmaDTO>> ObterPorIdAsync(int id);
     public Task<RespostaPaginadaDTO<TurmaListaDTO>> ObterTodasAsync(int pagina = 1, int itensPorPagina = 20);

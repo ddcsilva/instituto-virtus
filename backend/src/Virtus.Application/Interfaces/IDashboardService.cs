@@ -2,7 +2,7 @@ using Virtus.Application.DTOs.Dashboard;
 
 namespace Virtus.Application.Interfaces;
 
-public interface IServicoDashboard
+public interface IDashboardService
 {
     public Task<DashboardDTO> ObterDadosDashboardAsync();
 }

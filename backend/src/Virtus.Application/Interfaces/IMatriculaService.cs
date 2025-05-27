@@ -3,7 +3,7 @@ using Virtus.Application.DTOs.Common;
 
 namespace Virtus.Application.Interfaces;
 
-public interface IServicoMatricula
+public interface IMatriculaService
 {
     public Task<ResultadoDTO<MatriculaDTO>> CriarAsync(CriarMatriculaDTO dto);
     public Task<ResultadoDTO<bool>> CancelarAsync(int id);
