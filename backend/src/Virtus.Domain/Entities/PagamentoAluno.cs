@@ -1,6 +1,4 @@
-using Virtus.Domain.Entities;
-
-namespace Virtus.Domain.Entidades;
+namespace Virtus.Domain.Entities;
 
 /// <summary>
 /// Entidade que representa um pagamento de aluno.
