@@ -1,11 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+using Virtus.API.Middleware;
+using Virtus.Infrastructure.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Adicionar serviços ao container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// CORS
+builder.Services.AddDbContext<VirtusDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddCors(options =>
 {
   options.AddPolicy("AllowAngularApp",
@@ -19,7 +24,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Pipeline de requisição HTTP
 if (app.Environment.IsDevelopment())
 {
   app.UseSwagger();
@@ -29,6 +33,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAngularApp");
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseAuthorization();
 
