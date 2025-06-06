@@ -1,48 +1,77 @@
-# IDEs
-.vs/
+# .gitignore
+## Backend .NET
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+
+# Visual Studio Code
 .vscode/
+
+# Rider
 .idea/
+
+# User-specific files
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
 
-# .NET
-bin/
-obj/
-*.log
-*.vspscc
-[Ll]ogs/
-[Tt]est[Rr]esult*/
-[Bb]uild[Ll]og.*
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
 
-# Node
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.npm/
+# Visual Studio 2015
+.vs/
 
-# Angular
-dist/
-tmp/
-.angular/
-.sass-cache/
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+**/Properties/launchSettings.json
 
-# Ambiente
-.env
-.env.local
-*.local
+# Frontend Angular
+frontend/dist/
+frontend/tmp/
+frontend/out-tsc/
+frontend/bazel-out/
+frontend/node_modules/
+frontend/.angular/
+frontend/npm-debug.log
+frontend/yarn-error.log
+frontend/testem.log
+frontend/typings/
+frontend/.sass-cache/
+frontend/connect.lock
+frontend/coverage/
+frontend/libpeerconnection.log
 
-# OS
+# System Files
 .DS_Store
 Thumbs.db
 
-# Banco de dados local
-*.db
-*.sqlite
-*.sqlite3
+# Environment files
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
 
-# Outros
-*.swp
-*~
+# SQLite
+*.db
+*.db-shm
+*.db-wal

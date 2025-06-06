@@ -1,0 +1,57 @@
+# Dependências
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+out/
+**/dist/
+**/build/
+**/out/
+
+# Backend - .NET específicos
+backend/**/*.dll
+backend/**/*.exe
+backend/**/*.pdb
+backend/**/bin/
+backend/**/obj/
+backend/**/.vs/
+
+# Arquivos C# (formatados pelo dotnet format)
+backend/**/*.cs
+backend/**/*.csproj
+backend/**/*.sln
+
+# Cache e temporários
+.cache/
+.temp/
+*.tmp
+*.log
+
+# Git
+.git/
+
+# Arquivos de configuração do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos grandes ou binários
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+*.ico
+*.pdf
+*.zip
+*.tar
+*.gz
+
+# Arquivos de configuração específicos
+.env*
+*.config.js
+*.config.ts
+
+# Documentos gerados
+CHANGELOG.md
