@@ -1,67 +1,17 @@
-# .editorconfig específico para o projeto Angular Frontend
+# Editor configuration, see https://editorconfig.org
+root = true
 
-root = false
-
-# TypeScript e JavaScript - configurações avançadas
-[*.{ts,js}]
+[*]
+charset = utf-8
+indent_style = space
 indent_size = 2
-max_line_length = 100
-quote_type = single
-
-# Angular Templates HTML
-[*.html]
-indent_size = 2
-max_line_length = 120
-insert_final_newline = true
-
-# Angular Component Styles
-[*.{css,scss,sass,less}]
-indent_size = 2
-max_line_length = 120
-insert_final_newline = true
-
-# Angular específicos - configurações de projeto
-[{angular.json,package.json,package-lock.json}]
-indent_size = 2
-
-# TypeScript config files
-[{tsconfig*.json,tslint.json,eslint.config.js,.eslintrc*}]
-indent_size = 2
-
-# Angular testing
-[{karma.conf.js,protractor.conf.js,jest.config.js}]
-indent_size = 2
-
-# Angular environment files
-[{environment*.ts}]
-indent_size = 2
-
-# RxJS e imports
-[*.ts]
-# Preferências para imports
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-# Arquivos de especificação (testes)
-[*.spec.ts]
-indent_size = 2
-max_line_length = 120
+[*.ts]
+quote_type = single
+ij_typescript_use_double_quotes = false
 
-# Arquivos de módulo Angular
-[*.module.ts]
-indent_size = 2
-max_line_length = 100
-
-# Arquivos de componente Angular
-[*.component.{ts,html,scss,css}]
-indent_size = 2
-
-# Arquivos de serviço Angular
-[*.service.ts]
-indent_size = 2
-max_line_length = 100
-
-# Guards, Interceptors, Pipes
-[*.{guard,interceptor,pipe}.ts]
-indent_size = 2
-max_line_length = 100
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
