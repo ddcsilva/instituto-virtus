@@ -5,8 +5,6 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './turmas.component.html',
-  styleUrl: './turmas.component.css'
+  styleUrl: './turmas.component.css',
 })
-export class TurmasComponent {
-
-}
+export class TurmasComponent {}
