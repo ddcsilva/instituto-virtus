@@ -1,6 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using Virtus.API.Middleware;
-using Virtus.Infrastructure.Data;
+using Virtus.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,8 +7,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<VirtusDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
@@ -23,6 +21,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+await app.Services.ApplyMigrationsAsync();
 
 if (app.Environment.IsDevelopment())
 {
