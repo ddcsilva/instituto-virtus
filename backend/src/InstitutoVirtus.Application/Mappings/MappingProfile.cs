@@ -1,10 +1,18 @@
 namespace InstitutoVirtus.Application.Mappings;
 
 using AutoMapper;
+using InstitutoVirtus.Application.DTOs.Aula;
+using InstitutoVirtus.Application.DTOs.Avaliacao;
 using InstitutoVirtus.Application.DTOs.Curso;
+using InstitutoVirtus.Application.DTOs.Matricula;
+using InstitutoVirtus.Application.DTOs.Mensalidade;
+using InstitutoVirtus.Application.DTOs.Nota;
+using InstitutoVirtus.Application.DTOs.Pagamento;
 using InstitutoVirtus.Application.DTOs.Pessoa;
+using InstitutoVirtus.Application.DTOs.Presenca;
 using InstitutoVirtus.Application.DTOs.Turma;
 using InstitutoVirtus.Domain.Entities;
+using InstitutoVirtus.Domain.Enums;
 
 public class MappingProfile : Profile
 {
@@ -15,7 +23,7 @@ public class MappingProfile : Profile
             .ForMember(d => d.Telefone, opt => opt.MapFrom(s => s.Telefone.NumeroFormatado()))
             .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email != null ? s.Email.Endereco : null))
             .ForMember(d => d.TipoPessoa, opt => opt.MapFrom(s => s.TipoPessoa.ToString()))
-            .ForMember(d => d.Idade, opt => opt.MapFrom(s => s.CalcularIdade()));
+            .ForMember(d => d.Idade, opt => opt.MapFrom(s => s.CalcularIdade((DateTime?)null)));
 
         CreateMap<Aluno, AlunoDto>()
             .IncludeBase<Pessoa, PessoaDto>();
@@ -37,8 +45,8 @@ public class MappingProfile : Profile
             .ForMember(d => d.CursoNome, opt => opt.MapFrom(s => s.Curso != null ? s.Curso.Nome : string.Empty))
             .ForMember(d => d.ProfessorNome, opt => opt.MapFrom(s => s.Professor != null ? s.Professor.NomeCompleto : string.Empty))
             .ForMember(d => d.DiaSemana, opt => opt.MapFrom(s => s.DiaSemana.ToString()))
-            .ForMember(d => d.HorarioInicio, opt => opt.MapFrom(s => s.Horario.HoraInicio.ToString(@"hh\:mm")))
-            .ForMember(d => d.HorarioFim, opt => opt.MapFrom(s => s.Horario.HoraFim.ToString(@"hh\:mm")))
+            .ForMember(d => d.HorarioInicio, opt => opt.MapFrom(s => s.Horario.HoraInicio.ToString("hh:mm")))
+            .ForMember(d => d.HorarioFim, opt => opt.MapFrom(s => s.Horario.HoraFim.ToString("hh:mm")))
             .ForMember(d => d.AlunosMatriculados, opt => opt.MapFrom(s => s.Matriculas.Count(m => m.Status == StatusMatricula.Ativa)))
             .ForMember(d => d.VagasDisponiveis, opt => opt.MapFrom(s => s.VagasDisponiveis()));
 
