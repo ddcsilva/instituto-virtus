@@ -1,0 +1,6 @@
+@InstitutoVirtus.API_HostAddress = http://localhost:5089
+
+GET {{InstitutoVirtus.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
