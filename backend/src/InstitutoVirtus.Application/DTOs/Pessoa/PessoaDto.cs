@@ -1,3 +1,6 @@
+using InstitutoVirtus.Application.DTOs.Matricula;
+using InstitutoVirtus.Application.DTOs.Turma;
+
 namespace InstitutoVirtus.Application.DTOs.Pessoa;
 
 public class PessoaDto
