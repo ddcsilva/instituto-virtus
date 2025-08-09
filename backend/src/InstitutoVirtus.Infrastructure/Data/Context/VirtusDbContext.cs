@@ -50,12 +50,10 @@ public class VirtusDbContext : DbContext
             {
                 case EntityState.Added:
                     entry.Entity.SetCriadoPor(_currentUserService.UserName ?? "Sistema");
-                    entry.Entity.DataCriacao = _dateTime.Now;
                     break;
 
                 case EntityState.Modified:
                     entry.Entity.SetAtualizadoPor(_currentUserService.UserName ?? "Sistema");
-                    entry.Entity.DataAtualizacao = _dateTime.Now;
                     break;
             }
         }
