@@ -1,8 +1,8 @@
-namespace InstitutoVirtus.API.Middleware;
-
 using System.Net;
 using System.Text.Json;
 using InstitutoVirtus.Domain.Exceptions;
+
+namespace InstitutoVirtus.API.Middleware;
 
 public class ErrorHandlingMiddleware
 {

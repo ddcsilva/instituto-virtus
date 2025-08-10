@@ -1,11 +1,10 @@
-namespace InstitutoVirtus.API.Controllers;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using InstitutoVirtus.Application.Commands.Pessoas;
 using InstitutoVirtus.Application.Queries.Pessoas;
-using InstitutoVirtus.Application.DTOs.Pessoa;
+
+namespace InstitutoVirtus.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

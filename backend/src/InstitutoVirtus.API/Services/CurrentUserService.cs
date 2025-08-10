@@ -1,7 +1,7 @@
-namespace InstitutoVirtus.API.Services;
-
 using System.Security.Claims;
 using InstitutoVirtus.Application.Common.Interfaces;
+
+namespace InstitutoVirtus.API.Services;
 
 public class CurrentUserService : ICurrentUserService
 {

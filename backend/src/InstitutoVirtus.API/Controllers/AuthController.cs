@@ -1,9 +1,9 @@
-namespace InstitutoVirtus.API.Controllers;
-
 using Microsoft.AspNetCore.Mvc;
 using InstitutoVirtus.API.Models;
 using InstitutoVirtus.API.Services;
 using InstitutoVirtus.Domain.Interfaces.Repositories;
+
+namespace InstitutoVirtus.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

@@ -1,3 +1,4 @@
+using InstitutoVirtus.Application.Queries.Relatorios;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

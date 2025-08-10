@@ -1,3 +1,5 @@
+using InstitutoVirtus.Application.Commands.Turmas;
+using InstitutoVirtus.Application.Queries.Turmas;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,11 +1,11 @@
-namespace InstitutoVirtus.API.Services;
-
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using InstitutoVirtus.Domain.Entities;
 using InstitutoVirtus.Domain.Interfaces.Repositories;
 using System.Text;
+
+namespace InstitutoVirtus.API.Services;
 
 public interface IAuthService
 {

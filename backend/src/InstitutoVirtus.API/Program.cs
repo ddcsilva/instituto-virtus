@@ -1,4 +1,3 @@
-using InstitutoVirtus.API.Extensions;
 using InstitutoVirtus.API.HealthChecks;
 using InstitutoVirtus.API.Middleware;
 using InstitutoVirtus.API.Services;
@@ -7,7 +6,7 @@ using InstitutoVirtus.Application.Common.Interfaces;
 using InstitutoVirtus.Infrastructure;
 using InstitutoVirtus.Infrastructure.Data.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;

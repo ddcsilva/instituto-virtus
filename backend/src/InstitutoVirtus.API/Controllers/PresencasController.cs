@@ -1,4 +1,5 @@
 using InstitutoVirtus.Application.Commands.Presencas;
+using InstitutoVirtus.Application.Queries.Presencas;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

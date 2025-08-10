@@ -1,3 +1,5 @@
+using InstitutoVirtus.Application.Commands.Pagamentos;
+using InstitutoVirtus.Application.Queries.Pagamentos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

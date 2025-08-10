@@ -1,3 +1,5 @@
+using InstitutoVirtus.Application.Commands.Matriculas;
+using InstitutoVirtus.Application.Queries.Matriculas;
 using InstitutoVirtus.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

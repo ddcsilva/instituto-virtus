@@ -1,4 +1,6 @@
+using InstitutoVirtus.Application.Commands.Avaliacoes;
 using InstitutoVirtus.Application.Commands.Notas;
+using InstitutoVirtus.Application.Queries.Avaliacoes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

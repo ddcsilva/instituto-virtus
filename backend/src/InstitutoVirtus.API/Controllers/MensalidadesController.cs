@@ -1,3 +1,6 @@
+using InstitutoVirtus.Application.Commands.Mensalidades;
+using InstitutoVirtus.Application.Queries.Mensalidades;
+using InstitutoVirtus.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
