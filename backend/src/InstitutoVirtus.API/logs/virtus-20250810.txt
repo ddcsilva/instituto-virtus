@@ -4,3 +4,4 @@
 2025-08-10 02:20:20.151 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
 2025-08-10 02:20:20.334 -03:00 [INF] Migrations aplicadas com sucesso
 2025-08-10 02:20:20.336 -03:00 [INF] API Instituto Virtus iniciada
+2025-08-10 20:02:35.612 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.

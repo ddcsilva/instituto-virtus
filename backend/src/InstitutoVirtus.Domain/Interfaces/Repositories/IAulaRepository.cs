@@ -1,3 +1,5 @@
+using InstitutoVirtus.Domain.Entities;
+
 namespace InstitutoVirtus.Domain.Interfaces.Repositories;
 
 public interface IAulaRepository : IBaseRepository<Aula>

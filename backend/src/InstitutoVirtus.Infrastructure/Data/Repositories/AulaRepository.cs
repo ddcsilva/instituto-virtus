@@ -1,3 +1,4 @@
+using InstitutoVirtus.Domain.Entities;
 using InstitutoVirtus.Domain.Interfaces.Repositories;
 using InstitutoVirtus.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
