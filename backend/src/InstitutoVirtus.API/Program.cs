@@ -104,9 +104,9 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization(options =>
 {
   options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
-  options.AddPolicy("Coordenacao", policy => policy.RequireRole("Admin", "Coordenacao"));
-  options.AddPolicy("Professor", policy => policy.RequireRole("Admin", "Coordenacao", "Professor"));
-  options.AddPolicy("ResponsavelAluno", policy => policy.RequireRole("Admin", "Coordenacao", "Responsavel", "Aluno"));
+  options.AddPolicy("Coordenacao", policy => policy.RequireRole("Admin", "Coordenador"));
+  options.AddPolicy("Professor", policy => policy.RequireRole("Admin", "Coordenador", "Professor"));
+  options.AddPolicy("ResponsavelAluno", policy => policy.RequireRole("Admin", "Coordenador", "Responsavel", "Aluno"));
 });
 
 // CORS
@@ -168,16 +168,14 @@ builder.Services.AddApiVersioning(options =>
 var app = builder.Build();
 
 // Configure pipeline
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-  app.UseSwagger();
-  app.UseSwaggerUI(c =>
-  {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Instituto Virtus API V1");
-    c.RoutePrefix = string.Empty;
-  });
-}
-else
+  c.SwaggerEndpoint("/swagger/v1/swagger.json", "Instituto Virtus API V1");
+  c.RoutePrefix = "swagger"; // Para acessar o Swagger em /swagger
+});
+
+if (!app.Environment.IsDevelopment())
 {
   app.UseHsts();
 }
@@ -198,6 +196,9 @@ app.MapHealthChecks("/health");
 
 // Aplicar migrations automaticamente
 await app.ApplyMigrationsAsync();
+
+// Seed initial data
+await app.SeedDataAsync();
 
 Log.Information("API Instituto Virtus iniciada");
 await app.RunAsync();

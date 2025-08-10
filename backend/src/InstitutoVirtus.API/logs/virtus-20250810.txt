@@ -17,3 +17,35 @@
 2025-08-10 20:19:10.496 -03:00 [INF] Request 1166a8a4-f3b6-4671-ab81-be9ca7cef6bb - GET /swagger - User: Anonymous
 2025-08-10 20:19:15.427 -03:00 [INF] Request 1166a8a4-f3b6-4671-ab81-be9ca7cef6bb completed - Status: 404 - Duration: 4928ms
 2025-08-10 20:19:15.446 -03:00 [INF] HTTP GET /swagger responded 404 in 4949.1104 ms
+2025-08-10 20:20:57.217 -03:00 [INF] Aplicando migrations...
+2025-08-10 20:20:57.668 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-08-10 20:20:57.853 -03:00 [INF] Migrations aplicadas com sucesso
+2025-08-10 20:20:57.855 -03:00 [INF] API Instituto Virtus iniciada
+2025-08-10 20:21:47.096 -03:00 [INF] Aplicando migrations...
+2025-08-10 20:21:47.629 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-08-10 20:21:47.799 -03:00 [INF] Migrations aplicadas com sucesso
+2025-08-10 20:21:47.802 -03:00 [INF] API Instituto Virtus iniciada
+2025-08-10 20:22:19.288 -03:00 [INF] Request bcefcc21-9564-40e3-b64b-7153e1f00562 - POST /api/Auth/login - User: Anonymous
+2025-08-10 20:22:20.219 -03:00 [WRN] Tentativa de login com email não cadastrado: admin@institutovirtus.com.br
+2025-08-10 20:22:20.239 -03:00 [INF] Request bcefcc21-9564-40e3-b64b-7153e1f00562 completed - Status: 401 - Duration: 942ms
+2025-08-10 20:22:20.251 -03:00 [INF] HTTP POST /api/Auth/login responded 401 in 969.7566 ms
+2025-08-10 20:27:25.704 -03:00 [INF] Aplicando migrations...
+2025-08-10 20:27:26.141 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-08-10 20:27:26.327 -03:00 [INF] Migrations aplicadas com sucesso
+2025-08-10 20:27:26.502 -03:00 [ERR] Erro ao fazer seed dos dados
+System.ArgumentException: Data de nascimento inválida
+   at InstitutoVirtus.Domain.Entities.Pessoa.ValidarIdade(DateTime dataNascimento, TipoPessoa tipo) in D:\Projetos\instituto-virtus\backend\src\InstitutoVirtus.Domain\Entities\Pessoa.cs:line 123
+   at InstitutoVirtus.Domain.Entities.Pessoa..ctor(String nomeCompleto, Telefone telefone, Email email, DateTime dataNascimento, TipoPessoa tipoPessoa, String observacoes, String senha) in D:\Projetos\instituto-virtus\backend\src\InstitutoVirtus.Domain\Entities\Pessoa.cs:line 37
+   at InstitutoVirtus.API.Extensions.SeedData.InitializeAsync(VirtusDbContext context) in D:\Projetos\instituto-virtus\backend\src\InstitutoVirtus.API\Extensions\SeedData.cs:line 34
+   at InstitutoVirtus.API.Extensions.HostExtensions.SeedDataAsync(IHost host) in D:\Projetos\instituto-virtus\backend\src\InstitutoVirtus.API\Extensions\HostExtensions.cs:line 15
+2025-08-10 20:27:26.536 -03:00 [INF] API Instituto Virtus iniciada
+2025-08-10 20:29:07.075 -03:00 [INF] Aplicando migrations...
+2025-08-10 20:29:07.498 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-08-10 20:29:07.684 -03:00 [INF] Migrations aplicadas com sucesso
+2025-08-10 20:29:07.849 -03:00 [ERR] Erro ao fazer seed dos dados
+System.ArgumentException: Data de nascimento inválida
+   at InstitutoVirtus.Domain.Entities.Pessoa.ValidarIdade(DateTime dataNascimento, TipoPessoa tipo) in D:\Projetos\instituto-virtus\backend\src\InstitutoVirtus.Domain\Entities\Pessoa.cs:line 123
+   at InstitutoVirtus.Domain.Entities.Pessoa..ctor(String nomeCompleto, Telefone telefone, Email email, DateTime dataNascimento, TipoPessoa tipoPessoa, String observacoes, String senha) in D:\Projetos\instituto-virtus\backend\src\InstitutoVirtus.Domain\Entities\Pessoa.cs:line 37
+   at InstitutoVirtus.API.Extensions.SeedData.InitializeAsync(VirtusDbContext context) in D:\Projetos\instituto-virtus\backend\src\InstitutoVirtus.API\Extensions\SeedData.cs:line 34
+   at InstitutoVirtus.API.Extensions.HostExtensions.SeedDataAsync(IHost host) in D:\Projetos\instituto-virtus\backend\src\InstitutoVirtus.API\Extensions\HostExtensions.cs:line 15
+2025-08-10 20:29:07.863 -03:00 [INF] API Instituto Virtus iniciada

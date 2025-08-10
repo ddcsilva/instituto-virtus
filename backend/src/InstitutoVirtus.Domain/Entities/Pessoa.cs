@@ -114,13 +114,24 @@ public class Pessoa : AuditableEntity
 
     private void ValidarIdade(DateTime dataNascimento, TipoPessoa tipo)
     {
-        var idade = CalcularIdade(dataNascimento);
+        var idade = CalcularIdadeEstatica(dataNascimento);
 
         if (tipo == TipoPessoa.Aluno && idade < 7)
             throw new BusinessRuleValidationException("Aluno deve ter pelo menos 7 anos");
 
         if (idade > 120)
             throw new ArgumentException("Data de nascimento inválida");
+    }
+
+    private static int CalcularIdadeEstatica(DateTime dataNascimento)
+    {
+        var hoje = DateTime.Today;
+        var idade = hoje.Year - dataNascimento.Year;
+
+        if (dataNascimento.Date > hoje.AddYears(-idade))
+            idade--;
+
+        return idade;
     }
 
     public int CalcularIdade(DateTime? dataReferencia = null)

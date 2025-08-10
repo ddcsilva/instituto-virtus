@@ -31,24 +31,31 @@ public static class SeedData
         // === 2. CRIAR USUÁRIOS DO SISTEMA ===
 
         // Admin/Coordenação
+        var dataNascAdmin = new DateTime(1990, 1, 1);
+        var idadeAdmin = DateTime.Today.Year - dataNascAdmin.Year;
+        if (dataNascAdmin.Date > DateTime.Today.AddYears(-idadeAdmin))
+            idadeAdmin--;
+
+        Console.WriteLine($"DEBUG: Admin nasceu em {dataNascAdmin:dd/MM/yyyy}, idade calculada: {idadeAdmin}");
+
         var admin = new Pessoa(
             "Administrador Sistema",
             new Telefone("11999999999"),
             new Email("admin@institutovirtus.com.br"),
-            new DateTime(1980, 1, 1),
+            dataNascAdmin,
             TipoPessoa.Coordenador,
             "Usuário administrador do sistema",
-            senha: "Admin@123"
+            "Admin@123"
         );
 
         var coordenacao = new Pessoa(
             "Tairiny Oliveira",
             new Telefone("11988887777"),
             new Email("tairiny@institutovirtus.com.br"),
-            new DateTime(1985, 5, 15),
+            new DateTime(1988, 5, 15),
             TipoPessoa.Coordenador,
             "Coordenadora pedagógica",
-            senha: "Coord@123"
+            "Coord@123"
         );
 
         // === 3. CRIAR PROFESSORES ===
@@ -96,7 +103,7 @@ public static class SeedData
             "Carlos Mendes",
             new Telefone("11999444333"),
             new Email("carlos.mendes@institutovirtus.com.br"),
-            new DateTime(1975, 11, 30),
+            new DateTime(1985, 11, 30),
             "Teoria Musical",
             "Maestro e teórico musical"
         );
@@ -106,7 +113,7 @@ public static class SeedData
             "Pastor Roberto Lima",
             new Telefone("11999333222"),
             new Email("roberto.lima@institutovirtus.com.br"),
-            new DateTime(1970, 2, 14),
+            new DateTime(1982, 2, 14),
             "Teologia",
             "Pastor e teólogo"
         );
@@ -117,7 +124,7 @@ public static class SeedData
             "José Oliveira Pai",
             new Telefone("11998765432"),
             new Email("jose.oliveira@gmail.com"),
-            new DateTime(1975, 10, 20),
+            new DateTime(1983, 10, 20),
             "Responsável família Oliveira - Senha: Resp@123"
         );
 
@@ -125,7 +132,7 @@ public static class SeedData
             "Maria Silva Mãe",
             new Telefone("11997654321"),
             new Email("maria.silva@gmail.com"),
-            new DateTime(1978, 3, 15),
+            new DateTime(1984, 3, 15),
             "Responsável família Silva - Senha: Resp@123"
         );
 
@@ -133,7 +140,7 @@ public static class SeedData
             "Ana Costa",
             new Telefone("11996543210"),
             new Email("ana.costa@gmail.com"),
-            new DateTime(1980, 6, 25),
+            new DateTime(1986, 6, 25),
             "Responsável família Costa - Senha: Resp@123"
         );
 
