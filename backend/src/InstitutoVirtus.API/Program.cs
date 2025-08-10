@@ -1,25 +1,206 @@
+using InstitutoVirtus.API.Extensions;
+using InstitutoVirtus.API.HealthChecks;
+using InstitutoVirtus.API.Middleware;
+using InstitutoVirtus.API.Services;
+using InstitutoVirtus.Application;
+using InstitutoVirtus.Application.Common.Interfaces;
+using InstitutoVirtus.Infrastructure;
+using InstitutoVirtus.Infrastructure.Data.Context;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using System.Text;
+using System.Threading.RateLimiting;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configurar Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("logs/virtus-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Host.UseSerilog();
+
+// Add services
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+      options.JsonSerializerOptions.PropertyNamingPolicy = null;
+      options.JsonSerializerOptions.WriteIndented = true;
+    });
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// Swagger configuration
+builder.Services.AddSwaggerGen(c =>
+{
+  c.SwaggerDoc("v1", new OpenApiInfo
+  {
+    Title = "Instituto Virtus API",
+    Version = "v1",
+    Description = "API para gestão acadêmica e financeira do Instituto Virtus",
+    Contact = new OpenApiContact
+    {
+      Name = "Instituto Virtus",
+      Email = "contato@institutovirtus.com.br"
+    }
+  });
+
+  c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+  {
+    Description = "JWT Authorization header usando o esquema Bearer. Digite 'Bearer' [espaço] e então seu token.",
+    Name = "Authorization",
+    In = ParameterLocation.Header,
+    Type = SecuritySchemeType.ApiKey,
+    Scheme = "Bearer"
+  });
+
+  c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+// Authentication
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey não configurada");
+
+builder.Services.AddAuthentication(options =>
+{
+  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+  options.TokenValidationParameters = new TokenValidationParameters
+  {
+    ValidateIssuer = true,
+    ValidateAudience = true,
+    ValidateLifetime = true,
+    ValidateIssuerSigningKey = true,
+    ValidIssuer = jwtSettings["Issuer"],
+    ValidAudience = jwtSettings["Audience"],
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+  };
+});
+
+// Authorization
+builder.Services.AddAuthorization(options =>
+{
+  options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+  options.AddPolicy("Coordenacao", policy => policy.RequireRole("Admin", "Coordenacao"));
+  options.AddPolicy("Professor", policy => policy.RequireRole("Admin", "Coordenacao", "Professor"));
+  options.AddPolicy("ResponsavelAluno", policy => policy.RequireRole("Admin", "Coordenacao", "Responsavel", "Aluno"));
+});
+
+// CORS
+builder.Services.AddCors(options =>
+{
+  options.AddPolicy("AllowedOrigins",
+      policy =>
+      {
+        policy.WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? new[] { "*" })
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+      });
+});
+
+// Rate Limiting
+builder.Services.AddRateLimiter(options =>
+{
+  options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+      RateLimitPartition.GetFixedWindowLimiter(
+          partitionKey: httpContext.User?.Identity?.Name ?? httpContext.Request.Headers.Host.ToString(),
+          factory: partition => new FixedWindowRateLimiterOptions
+          {
+            AutoReplenishment = true,
+            PermitLimit = 100,
+            QueueLimit = 0,
+            Window = TimeSpan.FromMinutes(1)
+          }));
+
+  options.OnRejected = async (context, token) =>
+  {
+    context.HttpContext.Response.StatusCode = 429;
+    await context.HttpContext.Response.WriteAsync("Muitas requisições. Tente novamente mais tarde.", cancellationToken: token);
+  };
+});
+
+// Health Checks
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<VirtusDbContext>()
+    .AddCheck("Storage", new StorageHealthCheck());
+
+// Application services
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// Custom services
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// API Versioning
+builder.Services.AddApiVersioning(options =>
+{
+  options.DefaultApiVersion = new ApiVersion(1, 0);
+  options.AssumeDefaultVersionWhenUnspecified = true;
+  options.ReportApiVersions = true;
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure pipeline
 if (app.Environment.IsDevelopment())
 {
   app.UseSwagger();
-  app.UseSwaggerUI();
+  app.UseSwaggerUI(c =>
+  {
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Instituto Virtus API V1");
+    c.RoutePrefix = string.Empty;
+  });
+}
+else
+{
+  app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseSerilogRequestLogging();
+app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<RequestLoggingMiddleware>();
 
+app.UseCors("AllowedOrigins");
+app.UseRateLimiter();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
-app.Run();
+// Aplicar migrations automaticamente
+using (var scope = app.Services.CreateScope())
+{
+  var dbContext = scope.ServiceProvider.GetRequiredService<VirtusDbContext>();
+  await dbContext.Database.MigrateAsync();
+}
+
+Log.Information("API Instituto Virtus iniciada");
+await app.RunAsync();

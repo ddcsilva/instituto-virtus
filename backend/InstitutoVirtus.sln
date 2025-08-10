@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstitutoVirtus.Application
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstitutoVirtus.Infrastructure", "src\InstitutoVirtus.Infrastructure\InstitutoVirtus.Infrastructure.csproj", "{8ECD8748-1E7F-46D4-83F2-56BA53668DB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstitutoVirtus.API", "src\InstitutoVirtus.API\InstitutoVirtus.API.csproj", "{735715E7-A317-4A49-8F8D-7F3115B09A2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{8ECD8748-1E7F-46D4-83F2-56BA53668DB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8ECD8748-1E7F-46D4-83F2-56BA53668DB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8ECD8748-1E7F-46D4-83F2-56BA53668DB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{735715E7-A317-4A49-8F8D-7F3115B09A2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{735715E7-A317-4A49-8F8D-7F3115B09A2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{735715E7-A317-4A49-8F8D-7F3115B09A2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{735715E7-A317-4A49-8F8D-7F3115B09A2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
