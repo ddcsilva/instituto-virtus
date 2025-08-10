@@ -15,7 +15,7 @@ public class RequestLoggingMiddleware
     {
         var requestId = Guid.NewGuid().ToString();
 
-        context.Response.Headers.Add("X-Request-Id", requestId);
+        context.Response.Headers.Append("X-Request-Id", requestId);
 
         _logger.LogInformation(
             "Request {RequestId} - {Method} {Path} - User: {User}",

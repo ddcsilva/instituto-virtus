@@ -40,9 +40,9 @@ public class AtualizarTurmaCommandHandler : IRequestHandler<AtualizarTurmaComman
             if (turma == null)
                 return Result<TurmaDto>.Failure("Turma não encontrada");
 
-            // Atualizar propriedades permitidas
-            turma.Capacidade = request.Capacidade;
-            turma.Sala = request.Sala;
+            // Atualizar propriedades permitidas via métodos de domínio
+            turma.AtualizarCapacidade(request.Capacidade);
+            turma.AtualizarSala(request.Sala);
 
             if (request.Ativo)
                 turma.Ativar();

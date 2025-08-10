@@ -1,4 +1,5 @@
 using HealthChecks.UI.Client;
+using Microsoft.EntityFrameworkCore;
 using InstitutoVirtus.Infrastructure.Data.Context;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
@@ -8,10 +9,7 @@ public static class ApplicationBuilderExtensions
 {
     public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app, IWebHostEnvironment env)
     {
-        app.UseSwagger(options =>
-        {
-            options.SerializeAsV2 = false;
-        });
+        app.UseSwagger();
 
         app.UseSwaggerUI(options =>
         {
@@ -70,7 +68,7 @@ public static class ApplicationBuilderExtensions
         try
         {
             logger.LogInformation("Aplicando migrations...");
-            await dbContext.Database.MigrateAsync();
+            await dbContext.Database.MigrateAsync(cancellationToken: default);
             logger.LogInformation("Migrations aplicadas com sucesso");
         }
         catch (Exception ex)

@@ -1,6 +1,7 @@
 using InstitutoVirtus.Domain.Common;
 using InstitutoVirtus.Domain.Enums;
 using InstitutoVirtus.Domain.ValueObjects;
+using InstitutoVirtus.Domain.Exceptions;
 
 namespace InstitutoVirtus.Domain.Entities;
 
@@ -73,4 +74,22 @@ public class Turma : AuditableEntity
 
     public void Ativar() => Ativo = true;
     public void Desativar() => Ativo = false;
+
+    public void AtualizarCapacidade(int novaCapacidade)
+    {
+        if (novaCapacidade <= 0)
+            throw new ArgumentException("Capacidade deve ser maior que zero");
+
+        var matriculasAtivas = _matriculas.Count(m => m.Status == StatusMatricula.Ativa);
+        if (novaCapacidade < matriculasAtivas)
+            throw new BusinessRuleValidationException(
+                "Nova capacidade não pode ser menor que o número de matrículas ativas");
+
+        Capacidade = novaCapacidade;
+    }
+
+    public void AtualizarSala(string? sala)
+    {
+        Sala = sala;
+    }
 }

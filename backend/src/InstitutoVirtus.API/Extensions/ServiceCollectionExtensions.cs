@@ -1,6 +1,9 @@
 using System.Reflection;
 using System.Text;
 using InstitutoVirtus.API.HealthChecks;
+using HealthChecks.UI;
+using HealthChecks.UI.Configuration;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using InstitutoVirtus.Infrastructure.Data.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -106,8 +109,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddHealthChecks()
             .AddDbContextCheck<VirtusDbContext>("database")
-            .AddCheck("storage", new StorageHealthCheck())
-            .AddUrlGroup(new Uri($"{configuration["Services:ExternalApi"]}/health"), "external-api", tags: new[] { "external" });
+            .AddCheck<StorageHealthCheck>("storage")
+            .AddUrlGroup(new Uri($"{configuration["Services:ExternalApi"]}/health"), name: "external-api", tags: new[] { "external" });
 
         services.AddHealthChecksUI(options =>
         {
@@ -145,7 +148,7 @@ public static class ServiceCollectionExtensions
                     {
                         if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                         {
-                            context.Response.Headers.Add("Token-Expired", "true");
+                            context.Response.Headers.Append("Token-Expired", "true");
                         }
                         return Task.CompletedTask;
                     },

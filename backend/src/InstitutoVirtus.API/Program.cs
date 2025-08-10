@@ -7,11 +7,13 @@ using InstitutoVirtus.Infrastructure;
 using InstitutoVirtus.Infrastructure.Data.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
 using System.Threading.RateLimiting;
+using InstitutoVirtus.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -144,7 +146,7 @@ builder.Services.AddRateLimiter(options =>
 // Health Checks
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<VirtusDbContext>()
-    .AddCheck("Storage", new StorageHealthCheck());
+    .AddCheck<StorageHealthCheck>("Storage");
 
 // Application services
 builder.Services.AddApplication();
@@ -195,11 +197,7 @@ app.MapControllers();
 app.MapHealthChecks("/health");
 
 // Aplicar migrations automaticamente
-using (var scope = app.Services.CreateScope())
-{
-  var dbContext = scope.ServiceProvider.GetRequiredService<VirtusDbContext>();
-  await dbContext.Database.MigrateAsync();
-}
+await app.ApplyMigrationsAsync();
 
 Log.Information("API Instituto Virtus iniciada");
 await app.RunAsync();

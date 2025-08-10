@@ -35,7 +35,7 @@ public class ProcessarArquivoPagamentoCommandHandler : IRequestHandler<Processar
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<ProcessarArquivoResult>> Handle(ProcessarArquivoPagamentoCommand request, CancellationToken cancellationToken)
+    public Task<Result<ProcessarArquivoResult>> Handle(ProcessarArquivoPagamentoCommand request, CancellationToken cancellationToken)
     {
         var result = new ProcessarArquivoResult();
 
@@ -50,11 +50,11 @@ public class ProcessarArquivoPagamentoCommandHandler : IRequestHandler<Processar
             result.Erros.Add("Linha 5: Valor inválido");
             result.Erros.Add("Linha 8: Aluno não encontrado");
 
-            return Result<ProcessarArquivoResult>.Success(result);
+            return Task.FromResult(Result<ProcessarArquivoResult>.Success(result));
         }
         catch (Exception ex)
         {
-            return Result<ProcessarArquivoResult>.Failure($"Erro ao processar arquivo: {ex.Message}");
+            return Task.FromResult(Result<ProcessarArquivoResult>.Failure($"Erro ao processar arquivo: {ex.Message}"));
         }
     }
 }
