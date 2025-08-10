@@ -39,10 +39,6 @@ public class PessoaConfiguration : IEntityTypeConfiguration<Pessoa>
         builder.Property(p => p.DataNascimento)
             .IsRequired();
 
-        builder.Property(p => p.TipoPessoa)
-            .IsRequired()
-            .HasConversion<string>();
-
         builder.Property(p => p.Observacoes)
             .HasMaxLength(500);
 
@@ -51,7 +47,8 @@ public class PessoaConfiguration : IEntityTypeConfiguration<Pessoa>
             .HasDefaultValue(true);
 
         // Configuração de herança (TPH - Table Per Hierarchy)
-        builder.HasDiscriminator<TipoPessoa>("TipoPessoa")
+        builder.HasDiscriminator(p => p.TipoPessoa)
+            .HasValue<Pessoa>(TipoPessoa.Coordenador) // Valor para classe base
             .HasValue<Aluno>(TipoPessoa.Aluno)
             .HasValue<Professor>(TipoPessoa.Professor)
             .HasValue<Responsavel>(TipoPessoa.Responsavel);
