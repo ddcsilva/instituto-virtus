@@ -1,0 +1,103 @@
+<app-page-header [title]="'Bem-vindo, ' + nomeUsuario()" [subtitle]="tipoUsuario() + ' - Instituto Virtus'" />
+
+<!-- Cards de Resumo -->
+<div class="dashboard-grid">
+  @for (card of cardsVisiveis(); track card.title) {
+  <mat-card class="stat-card" [routerLink]="card.route">
+    <mat-card-content>
+      <div class="stat-header">
+        <mat-icon [style.color]="card.color">{{ card.icon }}</mat-icon>
+        @if (card.trend) {
+        <mat-chip [color]="card.trend > 0 ? 'primary' : 'warn'">
+          {{ card.trend > 0 ? '+' : '' }}{{ card.trend }}%
+        </mat-chip>
+        }
+      </div>
+      <div class="stat-value">{{ card.value }}</div>
+      <div class="stat-label">{{ card.title }}</div>
+    </mat-card-content>
+  </mat-card>
+  }
+</div>
+
+<!-- Ações Rápidas -->
+<h2 class="section-title">Ações Rápidas</h2>
+<div class="actions-grid">
+  @for (action of acoesVisiveis(); track action.label) {
+  <mat-card class="action-card" [routerLink]="action.route">
+    <mat-card-content>
+      <mat-icon [style.color]="action.color">{{ action.icon }}</mat-icon>
+      <span>{{ action.label }}</span>
+    </mat-card-content>
+  </mat-card>
+  }
+</div>
+
+<!-- Atividades Recentes -->
+@if (ehAdministrador() || ehCoordenador()) {
+<h2 class="section-title">Atividades Recentes</h2>
+<mat-card>
+  <mat-card-content>
+    <div class="activity-list">
+      @for (activity of atividadesRecentes(); track activity.id) {
+      <div class="activity-item">
+        <mat-icon [style.color]="activity.color">{{ activity.icon }}</mat-icon>
+        <div class="activity-content">
+          <p>{{ activity.description }}</p>
+          <small>{{ activity.timestamp | date : 'dd/MM/yyyy HH:mm' }}</small>
+        </div>
+      </div>
+      } @empty {
+      <p class="empty-state">Nenhuma atividade recente</p>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>
+}
+
+<!-- Portal do Aluno/Responsável -->
+@if (ehAluno() || ehResponsavel()) {
+<div class="portal-grid">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Minhas Turmas</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="portal-list">
+        @for (turma of minhasTurmas(); track turma.id) {
+        <div class="portal-item">
+          <strong>{{ turma.nome }}</strong>
+          <span>{{ turma.horario }}</span>
+        </div>
+        } @empty {
+        <p class="empty-state">Nenhuma turma matriculada</p>
+        }
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button color="primary" routerLink="/portal/turmas">Ver Todas</button>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Próximos Pagamentos</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="portal-list">
+        @for (pagamento of proximosPagamentos(); track pagamento.id) {
+        <div class="portal-item">
+          <strong>{{ pagamento.competencia }}</strong>
+          <span [class.warn]="pagamento.vencido"> R$ {{ pagamento.valor }} </span>
+        </div>
+        } @empty {
+        <p class="empty-state">Nenhum pagamento pendente</p>
+        }
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button color="primary" routerLink="/portal/financeiro">Ver Todos</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+}

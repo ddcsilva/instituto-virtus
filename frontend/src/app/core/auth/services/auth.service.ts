@@ -4,12 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, tap, catchError, of } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { API_CONFIG } from '../../config/api.config';
-import {
-  LoginRequest,
-  LoginResponse,
-  Session,
-  User,
-} from '../models/auth.models';
+import { LoginRequest, LoginResponse, Session, User } from '../models/auth.models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -26,34 +21,32 @@ export class AuthService {
 
   readonly session = this.sessionSignal.asReadonly();
   readonly session$ = toObservable(this.session);
-  readonly isAuthenticated = signal(false);
-  readonly currentUser = signal<User | null>(null);
+  readonly estaAutenticado = signal(false);
+  readonly usuarioAtual = signal<User | null>(null);
 
   constructor() {
-    this.loadSessionFromStorage();
+    this.carregarSessaoDoStorage();
   }
 
-  login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http
-      .post<LoginResponse>(`${this.apiConfig.baseUrl}/auth/login`, credentials)
-      .pipe(
-        tap((response) => {
-          this.setSession(response);
-          this.router.navigate(['/']);
-        }),
-        catchError((error) => {
-          console.error('Login error:', error);
-          throw error;
-        })
-      );
+  login(credenciais: LoginRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiConfig.baseUrl}/auth/login`, credenciais).pipe(
+      tap(response => {
+        this.definirSessao(response);
+        this.router.navigate(['/']);
+      }),
+      catchError(error => {
+        console.error('Erro ao realizar login:', error);
+        throw error;
+      })
+    );
   }
 
   logout(): void {
-    this.clearSession();
+    this.limparSessao();
     this.router.navigate(['/login']);
   }
 
-  refreshToken(): Observable<LoginResponse> {
+  atualizarToken(): Observable<LoginResponse> {
     const refreshToken = this.session().refreshToken;
     if (!refreshToken) {
       this.logout();
@@ -65,7 +58,7 @@ export class AuthService {
         refreshToken,
       })
       .pipe(
-        tap((response) => this.setSession(response)),
+        tap(response => this.definirSessao(response)),
         catchError(() => {
           this.logout();
           return of();
@@ -73,12 +66,12 @@ export class AuthService {
       );
   }
 
-  hasRole(roles: string[]): boolean {
-    const user = this.currentUser();
-    return user ? roles.includes(user.tipo) : false;
+  possuiPermissao(permissoes: string[]): boolean {
+    const usuario = this.usuarioAtual();
+    return usuario ? permissoes.includes(usuario.tipo) : false;
   }
 
-  private setSession(response: LoginResponse): void {
+  private definirSessao(response: LoginResponse): void {
     const session: Session = {
       user: response.user,
       token: response.token,
@@ -87,45 +80,45 @@ export class AuthService {
     };
 
     this.sessionSignal.set(session);
-    this.isAuthenticated.set(true);
-    this.currentUser.set(response.user);
+    this.estaAutenticado.set(true);
+    this.usuarioAtual.set(response.user);
 
     localStorage.setItem('token', response.token);
     localStorage.setItem('refreshToken', response.refreshToken);
     localStorage.setItem('user', JSON.stringify(response.user));
   }
 
-  private loadSessionFromStorage(): void {
+  private carregarSessaoDoStorage(): void {
     const token = localStorage.getItem('token');
     const refreshToken = localStorage.getItem('refreshToken');
-    const userStr = localStorage.getItem('user');
+    const usuarioString = localStorage.getItem('user');
 
-    if (token && userStr) {
+    if (token && usuarioString) {
       try {
-        const user = JSON.parse(userStr) as User;
+        const usuario = JSON.parse(usuarioString) as User;
         this.sessionSignal.set({
-          user,
+          user: usuario,
           token,
           refreshToken,
           isAuthenticated: true,
         });
-        this.isAuthenticated.set(true);
-        this.currentUser.set(user);
+        this.estaAutenticado.set(true);
+        this.usuarioAtual.set(usuario);
       } catch {
-        this.clearSession();
+        this.limparSessao();
       }
     }
   }
 
-  private clearSession(): void {
+  private limparSessao(): void {
     this.sessionSignal.set({
       user: null,
       token: null,
       refreshToken: null,
       isAuthenticated: false,
     });
-    this.isAuthenticated.set(false);
-    this.currentUser.set(null);
+    this.estaAutenticado.set(false);
+    this.usuarioAtual.set(null);
 
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');

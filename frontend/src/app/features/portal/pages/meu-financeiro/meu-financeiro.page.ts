@@ -11,10 +11,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { PageHeaderComponent } from '../../../../shared/ui/components/page-header/page-header.component';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { FinanceiroService } from '../../../financeiro/data-access/financeiro.service';
-import {
-  Mensalidade,
-  Pagamento,
-} from '../../../financeiro/models/financeiro.model';
+import { Mensalidade, Pagamento } from '../../../financeiro/models/financeiro.model';
 
 @Component({
   selector: 'app-meu-financeiro',
@@ -32,10 +29,7 @@ import {
     PageHeaderComponent,
   ],
   template: `
-    <app-page-header
-      title="Meu Financeiro"
-      subtitle="Acompanhe suas mensalidades e pagamentos"
-    />
+    <app-page-header title="Meu Financeiro" subtitle="Acompanhe suas mensalidades e pagamentos" />
 
     <!-- Resumo Financeiro -->
     <div class="resumo-cards">
@@ -45,9 +39,7 @@ import {
             <mat-icon color="warn">warning</mat-icon>
             <div>
               <h3>Em Aberto</h3>
-              <strong class="valor-warn">{{
-                totalAberto() | currency : 'BRL'
-              }}</strong>
+              <strong class="valor-warn">{{ totalAberto() | currency : 'BRL' }}</strong>
             </div>
           </div>
         </mat-card-content>
@@ -59,9 +51,7 @@ import {
             <mat-icon color="primary">check_circle</mat-icon>
             <div>
               <h3>Pago este Mês</h3>
-              <strong class="valor-success">{{
-                totalPagoMes() | currency : 'BRL'
-              }}</strong>
+              <strong class="valor-success">{{ totalPagoMes() | currency : 'BRL' }}</strong>
             </div>
           </div>
         </mat-card-content>
@@ -73,9 +63,7 @@ import {
             <mat-icon color="accent">account_balance_wallet</mat-icon>
             <div>
               <h3>Saldo</h3>
-              <strong class="valor-info">{{
-                saldo() | currency : 'BRL'
-              }}</strong>
+              <strong class="valor-info">{{ saldo() | currency : 'BRL' }}</strong>
             </div>
           </div>
         </mat-card-content>
@@ -95,9 +83,7 @@ import {
                 <mat-panel-title>
                   {{ aluno.nome }}
                   @if (aluno.temPendencias) {
-                  <mat-chip color="warn"
-                    >{{ aluno.pendencias }} pendência(s)</mat-chip
-                  >
+                  <mat-chip color="warn">{{ aluno.pendencias }} pendência(s)</mat-chip>
                   }
                 </mat-panel-title>
                 <mat-panel-description>
@@ -105,11 +91,7 @@ import {
                 </mat-panel-description>
               </mat-expansion-panel-header>
 
-              <table
-                mat-table
-                [dataSource]="aluno.mensalidades"
-                class="full-width"
-              >
+              <table mat-table [dataSource]="aluno.mensalidades" class="full-width">
                 <ng-container matColumnDef="competencia">
                   <th mat-header-cell *matHeaderCellDef>Competência</th>
                   <td mat-cell *matCellDef="let mensalidade">
@@ -152,10 +134,7 @@ import {
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr
-                  mat-row
-                  *matRowDef="let row; columns: displayedColumns"
-                ></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
               </table>
             </mat-expansion-panel>
             }
@@ -208,10 +187,7 @@ import {
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr
-                  mat-row
-                  *matRowDef="let row; columns: displayedColumns"
-                ></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
               </table>
             </mat-card-content>
           </mat-card>
@@ -254,10 +230,7 @@ import {
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="pagamentosColumns"></tr>
-                <tr
-                  mat-row
-                  *matRowDef="let row; columns: pagamentosColumns"
-                ></tr>
+                <tr mat-row *matRowDef="let row; columns: pagamentosColumns"></tr>
               </table>
             </mat-card-content>
           </mat-card>
@@ -341,13 +314,7 @@ export class MeuFinanceiroPage implements OnInit {
   readonly totalPagoMes = signal(0);
   readonly saldo = signal(0);
 
-  readonly displayedColumns = [
-    'competencia',
-    'vencimento',
-    'valor',
-    'status',
-    'acoes',
-  ];
+  readonly displayedColumns = ['competencia', 'vencimento', 'valor', 'status', 'acoes'];
   readonly pagamentosColumns = ['data', 'valorPago', 'meio', 'mensalidades'];
 
   ngOnInit(): void {
@@ -355,50 +322,44 @@ export class MeuFinanceiroPage implements OnInit {
   }
 
   isResponsavel(): boolean {
-    return this.authService.currentUser()?.tipo === 'Responsavel';
+    return this.authService.usuarioAtual()?.tipo === 'Responsavel';
   }
 
   loadFinanceiroData(): void {
-    const user = this.authService.currentUser();
-    if (!user || !user.pessoaId) return;
+    const usuario = this.authService.usuarioAtual();
+    if (!usuario || !usuario.pessoaId) return;
 
     if (this.isResponsavel()) {
       // Carregar mensalidades de todos os alunos vinculados
       this.financeiroService
-        .getMensalidadesResponsavel(user.pessoaId)
-        .subscribe((mensalidades) => {
+        .getMensalidadesResponsavel(usuario.pessoaId)
+        .subscribe(mensalidades => {
           this.processarMensalidadesResponsavel(mensalidades);
         });
 
       // Carregar saldo
-      this.financeiroService
-        .getSaldoResponsavel(user.pessoaId)
-        .subscribe((saldo) => {
-          this.saldo.set(saldo.saldo);
-        });
+      this.financeiroService.getSaldoResponsavel(usuario.pessoaId).subscribe(saldo => {
+        this.saldo.set(saldo.saldo);
+      });
     } else {
       // Carregar mensalidades do próprio aluno
-      this.financeiroService
-        .getMensalidades({ alunoId: user.pessoaId })
-        .subscribe((result) => {
-          this.mensalidades.set(result.items);
-          this.calcularTotais(result.items);
-        });
+      this.financeiroService.getMensalidades({ alunoId: usuario.pessoaId }).subscribe(result => {
+        this.mensalidades.set(result.items);
+        this.calcularTotais(result.items);
+      });
     }
 
     // Carregar histórico de pagamentos
-    this.financeiroService
-      .getPagamentos({ responsavelId: user.pessoaId })
-      .subscribe((result) => {
-        this.pagamentos.set(result.items);
-      });
+    this.financeiroService.getPagamentos({ responsavelId: usuario.pessoaId }).subscribe(result => {
+      this.pagamentos.set(result.items);
+    });
   }
 
   processarMensalidadesResponsavel(mensalidades: Mensalidade[]): void {
     // Agrupar por aluno
     const alunosMap = new Map<string, any>();
 
-    mensalidades.forEach((m) => {
+    mensalidades.forEach(m => {
       const alunoId = m.matricula?.aluno?.id || '';
       const alunoNome = m.matricula?.aluno?.nome || 'Aluno';
 
@@ -423,7 +384,7 @@ export class MeuFinanceiroPage implements OnInit {
       }
     });
 
-    const alunosArray = Array.from(alunosMap.values()).map((a) => ({
+    const alunosArray = Array.from(alunosMap.values()).map(a => ({
       ...a,
       turmas: Array.from(a.turmas).join(', '),
     }));
@@ -434,19 +395,17 @@ export class MeuFinanceiroPage implements OnInit {
 
   calcularTotais(mensalidades: Mensalidade[]): void {
     const aberto = mensalidades
-      .filter((m) => m.status === 'EmAberto' || m.status === 'Atrasado')
+      .filter(m => m.status === 'EmAberto' || m.status === 'Atrasado')
       .reduce((acc, m) => acc + (m.valor - m.valorPago), 0);
 
     const mesAtual = new Date().getMonth();
     const anoAtual = new Date().getFullYear();
 
     const pagoMes = mensalidades
-      .filter((m) => {
+      .filter(m => {
         if (!m.dataPagamento) return false;
         const dataPag = new Date(m.dataPagamento);
-        return (
-          dataPag.getMonth() === mesAtual && dataPag.getFullYear() === anoAtual
-        );
+        return dataPag.getMonth() === mesAtual && dataPag.getFullYear() === anoAtual;
       })
       .reduce((acc, m) => acc + m.valorPago, 0);
 

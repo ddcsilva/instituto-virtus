@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -25,145 +26,8 @@ import { AuthService } from '../../../../core/auth/services/auth.service';
     MatIconModule,
     MatProgressSpinnerModule,
   ],
-  template: `
-    <div class="login-container">
-      <mat-card class="login-card">
-        <mat-card-header>
-          <div class="logo-container">
-            <mat-icon class="logo">school</mat-icon>
-            <h1>Instituto Virtus</h1>
-          </div>
-        </mat-card-header>
-
-        <mat-card-content>
-          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>E-mail</mat-label>
-              <input
-                matInput
-                type="email"
-                formControlName="email"
-                placeholder="seu@email.com"
-              />
-              <mat-icon matSuffix>email</mat-icon>
-              @if (loginForm.get('email')?.hasError('required') &&
-              loginForm.get('email')?.touched) {
-              <mat-error>E-mail é obrigatório</mat-error>
-              } @if (loginForm.get('email')?.hasError('email') &&
-              loginForm.get('email')?.touched) {
-              <mat-error>E-mail inválido</mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Senha</mat-label>
-              <input
-                matInput
-                [type]="showPassword() ? 'text' : 'password'"
-                formControlName="senha"
-              />
-              <button
-                mat-icon-button
-                matSuffix
-                type="button"
-                (click)="showPassword.set(!showPassword())"
-              >
-                <mat-icon>{{
-                  showPassword() ? 'visibility_off' : 'visibility'
-                }}</mat-icon>
-              </button>
-              @if (loginForm.get('senha')?.hasError('required') &&
-              loginForm.get('senha')?.touched) {
-              <mat-error>Senha é obrigatória</mat-error>
-              }
-            </mat-form-field>
-
-            <button
-              mat-raised-button
-              color="primary"
-              type="submit"
-              class="full-width login-button"
-              [disabled]="loginForm.invalid || loading()"
-            >
-              @if (loading()) {
-              <mat-spinner diameter="20"></mat-spinner>
-              } @else { Entrar }
-            </button>
-          </form>
-        </mat-card-content>
-
-        <mat-card-footer>
-          <p class="footer-text">
-            © 2024 Instituto Virtus - Sistema de Gestão Acadêmica
-          </p>
-        </mat-card-footer>
-      </mat-card>
-    </div>
-  `,
-  styles: [
-    `
-      .login-container {
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      }
-
-      .login-card {
-        width: 100%;
-        max-width: 400px;
-        padding: 24px;
-      }
-
-      .logo-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 32px;
-      }
-
-      .logo {
-        font-size: 64px;
-        width: 64px;
-        height: 64px;
-        color: #667eea;
-        margin-bottom: 16px;
-      }
-
-      h1 {
-        margin: 0;
-        font-size: 24px;
-        font-weight: 500;
-        color: #333;
-      }
-
-      .full-width {
-        width: 100%;
-      }
-
-      mat-form-field {
-        margin-bottom: 16px;
-      }
-
-      .login-button {
-        height: 48px;
-        font-size: 16px;
-        margin-top: 16px;
-      }
-
-      .footer-text {
-        text-align: center;
-        color: #999;
-        font-size: 12px;
-        margin: 16px 0 0;
-      }
-
-      mat-spinner {
-        margin: 0 auto;
-      }
-    `,
-  ],
+  templateUrl: './login.page.html',
+  styleUrls: ['./login.page.scss'],
 })
 export class LoginPage {
   private readonly fb = inject(FormBuilder);
@@ -171,8 +35,9 @@ export class LoginPage {
   private readonly authService = inject(AuthService);
   private readonly snackBar = inject(MatSnackBar);
 
-  readonly loading = signal(false);
-  readonly showPassword = signal(false);
+  readonly carregando = signal(false);
+  readonly mostrarSenha = signal(false);
+  readonly anoAtual = new Date().getFullYear();
 
   readonly loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -180,25 +45,28 @@ export class LoginPage {
   });
 
   onSubmit(): void {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
-    this.loading.set(true);
-    const credentials = this.loginForm.getRawValue();
+    this.carregando.set(true);
+    const credenciais = this.loginForm.getRawValue();
 
-    this.authService.login(credentials).subscribe({
+    this.authService.login(credenciais).subscribe({
       next: () => {
         this.snackBar.open('Login realizado com sucesso!', 'Fechar', {
           duration: 3000,
         });
         this.router.navigate(['/']);
       },
-      error: (error) => {
-        this.loading.set(false);
-        const message =
+      error: (error: HttpErrorResponse) => {
+        this.carregando.set(false);
+        const mensagem =
           error.status === 401
             ? 'E-mail ou senha inválidos'
             : 'Erro ao realizar login. Tente novamente.';
-        this.snackBar.open(message, 'Fechar', { duration: 5000 });
+        this.snackBar.open(mensagem, 'Fechar', { duration: 5000 });
       },
     });
   }

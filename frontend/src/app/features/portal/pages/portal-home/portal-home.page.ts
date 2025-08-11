@@ -385,15 +385,15 @@ export class PortalHomePage implements OnInit {
   readonly avisos = signal<any[]>([]);
 
   ngOnInit(): void {
-    const user = this.authService.currentUser();
-    if (user) {
-      this.userType.set(user.tipo === 'Responsavel' ? 'Responsável' : 'Aluno');
-      this.loadPortalData(user.tipo, user.pessoaId);
+    const usuario = this.authService.usuarioAtual();
+    if (usuario) {
+      this.userType.set(usuario.tipo === 'Responsavel' ? 'Responsável' : 'Aluno');
+      this.loadPortalData(usuario.tipo, usuario.pessoaId);
     }
   }
 
   isResponsavel(): boolean {
-    return this.authService.currentUser()?.tipo === 'Responsavel';
+    return this.authService.usuarioAtual()?.tipo === 'Responsavel';
   }
 
   loadPortalData(tipo: string, pessoaId?: string): void {

@@ -34,136 +34,15 @@ interface NavItem {
     MatMenuModule,
     MatProgressBarModule,
   ],
-  template: `
-    <mat-sidenav-container class="sidenav-container">
-      <mat-sidenav
-        #drawer
-        class="sidenav"
-        [attr.role]="isHandset() ? 'dialog' : 'navigation'"
-        [mode]="isHandset() ? 'over' : 'side'"
-        [opened]="!isHandset()"
-      >
-        <mat-toolbar class="sidenav-header">
-          <span class="logo">Instituto Virtus</span>
-        </mat-toolbar>
-
-        <mat-nav-list>
-          @for (item of visibleNavItems(); track item.route) {
-          <a
-            mat-list-item
-            [routerLink]="item.route"
-            routerLinkActive="active"
-            (click)="isHandset() && drawer.close()"
-          >
-            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-            <span matListItemTitle>{{ item.label }}</span>
-          </a>
-          }
-        </mat-nav-list>
-      </mat-sidenav>
-
-      <mat-sidenav-content>
-        <mat-toolbar color="primary" class="toolbar">
-          @if (isHandset()) {
-          <button type="button" mat-icon-button (click)="drawer.toggle()">
-            <mat-icon>menu</mat-icon>
-          </button>
-          }
-
-          <span class="spacer"></span>
-
-          <button mat-icon-button [matMenuTriggerFor]="userMenu">
-            <mat-icon>account_circle</mat-icon>
-          </button>
-
-          <mat-menu #userMenu="matMenu">
-            <div class="user-info">
-              <strong>{{ currentUser()?.nome }}</strong>
-              <small>{{ currentUser()?.tipo }}</small>
-            </div>
-            <mat-divider></mat-divider>
-            <button mat-menu-item (click)="logout()">
-              <mat-icon>logout</mat-icon>
-              <span>Sair</span>
-            </button>
-          </mat-menu>
-        </mat-toolbar>
-
-        @if (isLoading()) {
-        <mat-progress-bar mode="indeterminate" />
-        }
-
-        <main class="content">
-          <router-outlet />
-        </main>
-      </mat-sidenav-content>
-    </mat-sidenav-container>
-  `,
-  styles: [
-    `
-      .sidenav-container {
-        height: 100%;
-      }
-
-      .sidenav {
-        width: 250px;
-      }
-
-      .sidenav-header {
-        background: var(--mat-primary);
-        color: white;
-      }
-
-      .logo {
-        font-size: 1.2rem;
-        font-weight: 500;
-      }
-
-      .toolbar {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
-
-      .spacer {
-        flex: 1 1 auto;
-      }
-
-      .content {
-        padding: 24px;
-        min-height: calc(100vh - 64px);
-        background: #f5f5f5;
-      }
-
-      .user-info {
-        padding: 12px 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .active {
-        background: rgba(0, 0, 0, 0.04);
-      }
-
-      @media (max-width: 768px) {
-        .sidenav {
-          width: 200px;
-        }
-
-        .content {
-          padding: 16px;
-        }
-      }
-    `,
-  ],
+  templateUrl: './shell.component.html',
+  styleUrls: ['./shell.component.scss'],
 })
 export class ShellComponent {
   private readonly authService = inject(AuthService);
   private readonly loadingService = inject(LoadingService);
 
-  readonly currentUser = this.authService.currentUser;
-  readonly isLoading = this.loadingService.isLoading;
+  readonly usuarioAtual = this.authService.usuarioAtual;
+  readonly carregando = this.loadingService.isLoading;
   readonly isHandset = signal(window.innerWidth < 768);
 
   private readonly navItems: NavItem[] = [
@@ -229,10 +108,10 @@ export class ShellComponent {
     },
   ];
 
-  readonly visibleNavItems = computed(() => {
-    const userRole = this.currentUser()?.tipo;
-    if (!userRole) return [];
-    return this.navItems.filter((item) => item.roles.includes(userRole));
+  readonly itensVisiveis = computed(() => {
+    const tipoUsuario = this.usuarioAtual()?.tipo;
+    if (!tipoUsuario) return [];
+    return this.navItems.filter(item => item.roles.includes(tipoUsuario));
   });
 
   constructor() {

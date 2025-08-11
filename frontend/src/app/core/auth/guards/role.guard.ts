@@ -7,11 +7,11 @@ export const roleGuard = (allowedRoles: string[]): CanMatchFn => {
     const authService = inject(AuthService);
     const router = inject(Router);
 
-    if (!authService.isAuthenticated()) {
+    if (!authService.estaAutenticado()) {
       return router.parseUrl('/login');
     }
 
-    if (authService.hasRole(allowedRoles)) {
+    if (authService.possuiPermissao(allowedRoles)) {
       return true;
     }
 

@@ -39,306 +39,32 @@ interface QuickAction {
     MatProgressSpinnerModule,
     PageHeaderComponent,
   ],
-  template: `
-    <app-page-header
-      [title]="'Bem-vindo, ' + userName()"
-      [subtitle]="userRole() + ' - Instituto Virtus'"
-    />
-
-    <!-- Cards de Resumo -->
-    <div class="dashboard-grid">
-      @for (card of visibleCards(); track card.title) {
-      <mat-card class="stat-card" [routerLink]="card.route">
-        <mat-card-content>
-          <div class="stat-header">
-            <mat-icon [style.color]="card.color">{{ card.icon }}</mat-icon>
-            @if (card.trend) {
-            <mat-chip [color]="card.trend > 0 ? 'primary' : 'warn'">
-              {{ card.trend > 0 ? '+' : '' }}{{ card.trend }}%
-            </mat-chip>
-            }
-          </div>
-          <div class="stat-value">{{ card.value }}</div>
-          <div class="stat-label">{{ card.title }}</div>
-        </mat-card-content>
-      </mat-card>
-      }
-    </div>
-
-    <!-- Ações Rápidas -->
-    <h2 class="section-title">Ações Rápidas</h2>
-    <div class="actions-grid">
-      @for (action of visibleActions(); track action.label) {
-      <mat-card class="action-card" [routerLink]="action.route">
-        <mat-card-content>
-          <mat-icon [style.color]="action.color">{{ action.icon }}</mat-icon>
-          <span>{{ action.label }}</span>
-        </mat-card-content>
-      </mat-card>
-      }
-    </div>
-
-    <!-- Atividades Recentes -->
-    @if (isAdmin() || isCoordinator()) {
-    <h2 class="section-title">Atividades Recentes</h2>
-    <mat-card>
-      <mat-card-content>
-        <div class="activity-list">
-          @for (activity of recentActivities(); track activity.id) {
-          <div class="activity-item">
-            <mat-icon [style.color]="activity.color">{{
-              activity.icon
-            }}</mat-icon>
-            <div class="activity-content">
-              <p>{{ activity.description }}</p>
-              <small>{{
-                activity.timestamp | date : 'dd/MM/yyyy HH:mm'
-              }}</small>
-            </div>
-          </div>
-          } @empty {
-          <p class="empty-state">Nenhuma atividade recente</p>
-          }
-        </div>
-      </mat-card-content>
-    </mat-card>
-    }
-
-    <!-- Portal do Aluno/Responsável -->
-    @if (isStudent() || isParent()) {
-    <div class="portal-grid">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>Minhas Turmas</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="portal-list">
-            @for (turma of minhasTurmas(); track turma.id) {
-            <div class="portal-item">
-              <strong>{{ turma.nome }}</strong>
-              <span>{{ turma.horario }}</span>
-            </div>
-            } @empty {
-            <p class="empty-state">Nenhuma turma matriculada</p>
-            }
-          </div>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-button color="primary" routerLink="/portal/turmas">
-            Ver Todas
-          </button>
-        </mat-card-actions>
-      </mat-card>
-
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>Próximos Pagamentos</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="portal-list">
-            @for (pagamento of proximosPagamentos(); track pagamento.id) {
-            <div class="portal-item">
-              <strong>{{ pagamento.competencia }}</strong>
-              <span [class.warn]="pagamento.vencido">
-                R$ {{ pagamento.valor }}
-              </span>
-            </div>
-            } @empty {
-            <p class="empty-state">Nenhum pagamento pendente</p>
-            }
-          </div>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-button color="primary" routerLink="/portal/financeiro">
-            Ver Todos
-          </button>
-        </mat-card-actions>
-      </mat-card>
-    </div>
-    }
-  `,
-  styles: [
-    `
-      .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 24px;
-        margin-bottom: 32px;
-      }
-
-      .stat-card {
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-
-        &:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-      }
-
-      .stat-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-      }
-
-      .stat-header mat-icon {
-        font-size: 32px;
-        width: 32px;
-        height: 32px;
-      }
-
-      .stat-value {
-        font-size: 32px;
-        font-weight: 500;
-        margin-bottom: 8px;
-      }
-
-      .stat-label {
-        color: #666;
-        font-size: 14px;
-      }
-
-      .section-title {
-        font-size: 20px;
-        font-weight: 500;
-        margin: 32px 0 16px;
-      }
-
-      .actions-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 16px;
-        margin-bottom: 32px;
-      }
-
-      .action-card {
-        cursor: pointer;
-        transition: transform 0.2s;
-
-        &:hover {
-          transform: scale(1.05);
-        }
-
-        mat-card-content {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 24px;
-
-          mat-icon {
-            font-size: 40px;
-            width: 40px;
-            height: 40px;
-            margin-bottom: 8px;
-          }
-
-          span {
-            text-align: center;
-            font-size: 14px;
-          }
-        }
-      }
-
-      .activity-list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .activity-item {
-        display: flex;
-        gap: 16px;
-        padding: 12px 0;
-        border-bottom: 1px solid #f0f0f0;
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        mat-icon {
-          flex-shrink: 0;
-        }
-
-        .activity-content {
-          flex: 1;
-
-          p {
-            margin: 0 0 4px;
-          }
-
-          small {
-            color: #999;
-          }
-        }
-      }
-
-      .portal-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-      }
-
-      .portal-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .portal-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 0;
-        border-bottom: 1px solid #f0f0f0;
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        .warn {
-          color: #f44336;
-        }
-      }
-
-      .empty-state {
-        text-align: center;
-        color: #999;
-        padding: 24px;
-        margin: 0;
-      }
-
-      @media (max-width: 768px) {
-        .portal-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-    `,
-  ],
+  templateUrl: './dashboard.page.html',
+  styleUrls: ['./dashboard.page.scss'],
 })
 export class DashboardPage implements OnInit {
   private readonly authService = inject(AuthService);
 
-  readonly userName = signal('');
-  readonly userRole = signal('');
-  readonly loading = signal(true);
+  readonly nomeUsuario = signal('');
+  readonly tipoUsuario = signal('');
+  readonly carregando = signal(true);
 
   readonly cards = signal<DashboardCard[]>([]);
   readonly actions = signal<QuickAction[]>([]);
-  readonly recentActivities = signal<any[]>([]);
+  readonly atividadesRecentes = signal<any[]>([]);
   readonly minhasTurmas = signal<any[]>([]);
   readonly proximosPagamentos = signal<any[]>([]);
 
   ngOnInit(): void {
-    const user = this.authService.currentUser();
-    if (user) {
-      this.userName.set(user.nome);
-      this.userRole.set(this.getRoleName(user.tipo));
-      this.loadDashboardData(user.tipo);
+    const usuario = this.authService.usuarioAtual();
+    if (usuario) {
+      this.nomeUsuario.set(usuario.nome);
+      this.tipoUsuario.set(this.obterNomeDoTipo(usuario.tipo));
+      this.loadDashboardData(usuario.tipo);
     }
   }
 
-  getRoleName(tipo: string): string {
+  obterNomeDoTipo(tipo: string): string {
     const roles: Record<string, string> = {
       Admin: 'Administrador',
       Coordenador: 'Coordenador',
@@ -349,28 +75,28 @@ export class DashboardPage implements OnInit {
     return roles[tipo] || tipo;
   }
 
-  isAdmin(): boolean {
-    return this.authService.currentUser()?.tipo === 'Admin';
+  ehAdministrador(): boolean {
+    return this.authService.usuarioAtual()?.tipo === 'Admin';
   }
 
-  isCoordinator(): boolean {
-    return this.authService.currentUser()?.tipo === 'Coordenador';
+  ehCoordenador(): boolean {
+    return this.authService.usuarioAtual()?.tipo === 'Coordenador';
   }
 
-  isTeacher(): boolean {
-    return this.authService.currentUser()?.tipo === 'Professor';
+  ehProfessor(): boolean {
+    return this.authService.usuarioAtual()?.tipo === 'Professor';
   }
 
-  isStudent(): boolean {
-    return this.authService.currentUser()?.tipo === 'Aluno';
+  ehAluno(): boolean {
+    return this.authService.usuarioAtual()?.tipo === 'Aluno';
   }
 
-  isParent(): boolean {
-    return this.authService.currentUser()?.tipo === 'Responsavel';
+  ehResponsavel(): boolean {
+    return this.authService.usuarioAtual()?.tipo === 'Responsavel';
   }
 
-  visibleCards(): DashboardCard[] {
-    const userType = this.authService.currentUser()?.tipo;
+  cardsVisiveis(): DashboardCard[] {
+    const userType = this.authService.usuarioAtual()?.tipo;
 
     if (userType === 'Admin' || userType === 'Coordenador') {
       return [
@@ -443,8 +169,8 @@ export class DashboardPage implements OnInit {
     return [];
   }
 
-  visibleActions(): QuickAction[] {
-    const userType = this.authService.currentUser()?.tipo;
+  acoesVisiveis(): QuickAction[] {
+    const userType = this.authService.usuarioAtual()?.tipo;
 
     if (userType === 'Admin' || userType === 'Coordenador') {
       return [
@@ -533,7 +259,7 @@ export class DashboardPage implements OnInit {
   loadDashboardData(userType: string): void {
     // Simulated data - replace with actual API calls
     if (userType === 'Admin' || userType === 'Coordenador') {
-      this.recentActivities.set([
+      this.atividadesRecentes.set([
         {
           id: 1,
           description: 'Nova matrícula: João Silva - Violão Básico',
@@ -570,6 +296,6 @@ export class DashboardPage implements OnInit {
       ]);
     }
 
-    this.loading.set(false);
+    this.carregando.set(false);
   }
 }
