@@ -20,7 +20,7 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <mat-toolbar color="primary" class="toolbar">
+    <mat-toolbar class="toolbar">
       @if (isHandset()) {
       <button type="button" mat-icon-button (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
@@ -29,11 +29,14 @@
 
       <span class="spacer"></span>
 
-      <button mat-icon-button [matMenuTriggerFor]="userMenu">
-        <div class="user-avatar">
-          {{ obterIniciais() }}
-        </div>
-      </button>
+      <div class="user-section">
+        <span class="user-name">{{ usuarioAtual()?.nome }}</span>
+        <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+          <div class="user-avatar">
+            {{ obterIniciais() }}
+          </div>
+        </button>
+      </div>
 
       <mat-menu #userMenu="matMenu">
         <div class="user-info">
