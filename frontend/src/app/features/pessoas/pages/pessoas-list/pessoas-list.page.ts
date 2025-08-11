@@ -14,7 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
-import { debounceTime } from 'rxjs';
+import { debounceTime, take } from 'rxjs';
 
 import { PageHeaderComponent } from '../../../../shared/ui/components/page-header/page-header.component';
 import { ConfirmDialogComponent } from '../../../../shared/ui/components/confirm-dialog/confirm-dialog.component';
@@ -289,7 +289,9 @@ export class PessoasListPage implements OnInit {
   }
 
   loadPessoas(): void {
-    this.store.loadPessoas(this.store.get().filter);
+    this.store.filter$.pipe(take(1)).subscribe((filter) => {
+      this.store.loadPessoas(filter);
+    });
   }
 
   onPageChange(event: PageEvent): void {
