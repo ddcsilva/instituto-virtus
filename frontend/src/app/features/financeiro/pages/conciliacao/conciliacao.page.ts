@@ -180,7 +180,7 @@ import {
             <div class="alocacao-controls">
               <mat-radio-group
                 [value]="estrategiaAlocacao()"
-                (valueChange)="estrategiaAlocacao.set($event)"
+                (valueChange)="onEstrategiaChange($event)"
               >
                 <mat-radio-button value="automatica"
                   >Alocação Automática</mat-radio-button
@@ -581,12 +581,17 @@ export class ConciliacaoPage implements OnInit {
     }
   }
 
+  onEstrategiaChange(estrategia: any): void {
+    this.estrategiaAlocacao.set(estrategia);
+  }
+
   toggleMensalidade(mensalidadeId: string): void {
     this.financeiroStore.toggleMensalidadeSelecao(mensalidadeId);
   }
 
   atualizarValorAlocado(mensalidadeId: string, event: Event): void {
-    const valor = Number((event.target as HTMLInputElement).value);
+    const target = event.target as HTMLInputElement;
+    const valor = Number(target.value);
     this.financeiroStore.atualizarValorAlocado({ mensalidadeId, valor });
   }
 
@@ -630,7 +635,11 @@ export class ConciliacaoPage implements OnInit {
     const alocacoes = this.financeiroStore.obterAlocacoes();
 
     const request: CreatePagamentoRequest = {
-      ...formValue,
+      responsavelId: formValue.responsavelId,
+      valor: formValue.valor,
+      dataPagamento: formValue.dataPagamento.toISOString(),
+      meioPagamento: formValue.meioPagamento as any,
+      observacao: formValue.observacao,
       alocacoes,
     };
 

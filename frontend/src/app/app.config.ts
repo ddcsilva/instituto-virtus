@@ -51,6 +51,5 @@ export const appConfig: ApplicationConfig = {
         version: 'v1',
       } as ApiConfig,
     },
-    provideAnimationsAsync(),
   ],
 };

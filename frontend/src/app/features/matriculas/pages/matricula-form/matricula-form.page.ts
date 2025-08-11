@@ -238,12 +238,11 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
                     [max]="50"
                     [step]="5"
                     [displayWith]="formatPercent"
-                    [value]="matriculaForm.get('descontoPercentual')?.value"
-                    (valueChange)="updateDesconto($event)"
                   >
                     <input
                       matSliderThumb
                       formControlName="descontoPercentual"
+                      (valueChange)="updateDesconto($event)"
                     />
                   </mat-slider>
 
