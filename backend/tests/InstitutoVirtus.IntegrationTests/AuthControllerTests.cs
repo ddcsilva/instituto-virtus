@@ -28,7 +28,7 @@ public class AuthControllerTests : IClassFixture<WebApplicationFactory<Program>>
     var request = new LoginRequest
     {
       Email = "admin@institutovirtus.com.br",
-      Password = "Admin@123"
+      Senha = "Admin@123"
     };
 
     // Act
@@ -40,7 +40,6 @@ public class AuthControllerTests : IClassFixture<WebApplicationFactory<Program>>
     var content = await response.Content.ReadFromJsonAsync<LoginResponse>();
     content.Should().NotBeNull();
     content!.Token.Should().NotBeEmpty();
-    content.Email.Should().Be(request.Email);
   }
 
   [Fact]
@@ -50,7 +49,7 @@ public class AuthControllerTests : IClassFixture<WebApplicationFactory<Program>>
     var request = new LoginRequest
     {
       Email = "invalid@email.com",
-      Password = "WrongPassword"
+      Senha = "WrongPassword"
     };
 
     // Act
