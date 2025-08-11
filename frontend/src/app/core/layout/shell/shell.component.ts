@@ -123,4 +123,14 @@ export class ShellComponent {
   logout(): void {
     this.authService.logout();
   }
+
+  obterIniciais(): string {
+    const nome = this.usuarioAtual()?.nome || '';
+    return nome
+      .split(' ')
+      .map(n => n.charAt(0))
+      .slice(0, 2)
+      .join('')
+      .toUpperCase();
+  }
 }

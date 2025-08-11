@@ -8,7 +8,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../core/auth/services/auth.service';
-import { PageHeaderComponent } from '../../shared/ui/components/page-header/page-header.component';
 
 interface DashboardCard {
   title: string;
@@ -37,7 +36,6 @@ interface QuickAction {
     MatButtonModule,
     MatChipsModule,
     MatProgressSpinnerModule,
-    PageHeaderComponent,
   ],
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],

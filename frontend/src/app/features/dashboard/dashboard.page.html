@@ -4,106 +4,154 @@
   <p>Carregando dados do usuário...</p>
 </div>
 } @else {
-<app-page-header [title]="'Bem-vindo, ' + nomeUsuario()" [subtitle]="tipoUsuario() + ' - Instituto Virtus'" />
+<div class="dashboard-container fade-in">
+  <!-- Seção de Boas-vindas -->
+  <div class="welcome-section">
+    <div class="welcome-content">
+      <h1>Bem-vindo, {{ nomeUsuario() }}!</h1>
+      <p>{{ tipoUsuario() }} - Instituto Virtus</p>
+    </div>
+  </div>
 
-<!-- Cards de Resumo -->
-<div class="dashboard-grid">
-  @for (card of cardsVisiveis(); track card.title) {
-  <mat-card class="stat-card" [routerLink]="card.route">
-    <mat-card-content>
-      <div class="stat-header">
-        <mat-icon [style.color]="card.color">{{ card.icon }}</mat-icon>
-        @if (card.trend) {
-        <mat-chip [color]="card.trend > 0 ? 'primary' : 'warn'">
-          {{ card.trend > 0 ? '+' : '' }}{{ card.trend }}%
-        </mat-chip>
-        }
-      </div>
-      <div class="stat-value">{{ card.value }}</div>
-      <div class="stat-label">{{ card.title }}</div>
-    </mat-card-content>
-  </mat-card>
-  }
-</div>
+  <!-- Cards de Resumo -->
+  <div class="dashboard-grid">
+    @for (card of cardsVisiveis(); track card.title) {
+    <mat-card
+      class="stat-card hover-lift"
+      [routerLink]="card.route"
+      [ngClass]="{
+               'students': card.title === 'Total de Alunos',
+               'classes': card.title === 'Turmas Ativas' || card.title === 'Minhas Turmas',
+               'revenue': card.title.includes('Mensalidades') || card.title.includes('R$'),
+               'attendance': card.title.includes('Presença') || card.title.includes('Frequência')
+             }">
+      <mat-card-content>
+        <div class="stat-header">
+          <div class="stat-icon">
+            <mat-icon>{{ card.icon }}</mat-icon>
+          </div>
+          @if (card.trend) {
+          <div class="stat-trend">
+            <mat-chip [ngClass]="card.trend > 0 ? 'positive' : 'negative'">
+              {{ card.trend > 0 ? '+' : '' }}{{ card.trend }}%
+            </mat-chip>
+          </div>
+          }
+        </div>
+        <div class="stat-value">{{ card.value }}</div>
+        <div class="stat-label">{{ card.title }}</div>
+      </mat-card-content>
+    </mat-card>
+    }
+  </div>
 
-<!-- Ações Rápidas -->
-<h2 class="section-title">Ações Rápidas</h2>
-<div class="actions-grid">
-  @for (action of acoesVisiveis(); track action.label) {
-  <mat-card class="action-card" [routerLink]="action.route">
-    <mat-card-content>
-      <mat-icon [style.color]="action.color">{{ action.icon }}</mat-icon>
-      <span>{{ action.label }}</span>
-    </mat-card-content>
-  </mat-card>
-  }
-</div>
+  <!-- Ações Rápidas -->
+  <h2 class="section-title">Ações Rápidas</h2>
+  <div class="actions-grid">
+    @for (action of acoesVisiveis(); track action.label; let i = $index) {
+    <mat-card class="action-card hover-lift" [routerLink]="action.route">
+      <mat-card-content>
+        <div
+          class="action-icon"
+          [ngClass]="{
+               'primary': i % 4 === 0,
+               'secondary': i % 4 === 1,
+               'accent': i % 4 === 2,
+               'teal': i % 4 === 3
+             }">
+          <mat-icon>{{ action.icon }}</mat-icon>
+        </div>
+        <p class="action-label">{{ action.label }}</p>
+      </mat-card-content>
+    </mat-card>
+    }
+  </div>
 
-<!-- Atividades Recentes -->
-@if (ehAdministrador() || ehCoordenador()) {
-<h2 class="section-title">Atividades Recentes</h2>
-<mat-card>
-  <mat-card-content>
+  <!-- Atividades Recentes -->
+  @if (ehAdministrador() || ehCoordenador()) {
+  <div class="content-section">
+    <div class="section-header">
+      <mat-icon>history</mat-icon>
+      <h3>Atividades Recentes</h3>
+    </div>
     <div class="activity-list">
-      @for (activity of atividadesRecentes(); track activity.id) {
+      @for (activity of atividadesRecentes(); track activity.id; let i = $index) {
       <div class="activity-item">
-        <mat-icon [style.color]="activity.color">{{ activity.icon }}</mat-icon>
+        <div
+          class="activity-icon"
+          [ngClass]="{
+               'success': i % 3 === 0,
+               'info': i % 3 === 1,
+               'warning': i % 3 === 2
+             }">
+          <mat-icon>{{ activity.icon }}</mat-icon>
+        </div>
         <div class="activity-content">
           <p>{{ activity.description }}</p>
           <small>{{ activity.timestamp | date : 'dd/MM/yyyy HH:mm' }}</small>
         </div>
       </div>
       } @empty {
-      <p class="empty-state">Nenhuma atividade recente</p>
+      <div class="empty-state">
+        <mat-icon>inbox</mat-icon>
+        <p>Nenhuma atividade recente</p>
+      </div>
       }
     </div>
-  </mat-card-content>
-</mat-card>
-}
+  </div>
+  }
 
-<!-- Portal do Aluno/Responsável -->
-@if (ehAluno() || ehResponsavel()) {
-<div class="portal-grid">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Minhas Turmas</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="portal-list">
-        @for (turma of minhasTurmas(); track turma.id) {
-        <div class="portal-item">
-          <strong>{{ turma.nome }}</strong>
-          <span>{{ turma.horario }}</span>
-        </div>
-        } @empty {
-        <p class="empty-state">Nenhuma turma matriculada</p>
-        }
+  <!-- Portal do Aluno/Responsável -->
+  @if (ehAluno() || ehResponsavel()) {
+  <div class="portal-grid">
+    <div class="portal-card">
+      <div class="portal-header">
+        <h4>Minhas Turmas</h4>
       </div>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button color="primary" routerLink="/portal/turmas">Ver Todas</button>
-    </mat-card-actions>
-  </mat-card>
+      <div class="portal-content">
+        <div class="portal-list">
+          @for (turma of minhasTurmas(); track turma.id) {
+          <div class="portal-item">
+            <strong>{{ turma.nome }}</strong>
+            <span>{{ turma.horario }}</span>
+          </div>
+          } @empty {
+          <div class="empty-state">
+            <mat-icon>school</mat-icon>
+            <p>Nenhuma turma matriculada</p>
+          </div>
+          }
+        </div>
+      </div>
+      <div class="portal-actions">
+        <button mat-raised-button color="primary" routerLink="/portal/turmas">Ver Todas</button>
+      </div>
+    </div>
 
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Próximos Pagamentos</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="portal-list">
-        @for (pagamento of proximosPagamentos(); track pagamento.id) {
-        <div class="portal-item">
-          <strong>{{ pagamento.competencia }}</strong>
-          <span [class.warn]="pagamento.vencido"> R$ {{ pagamento.valor }} </span>
-        </div>
-        } @empty {
-        <p class="empty-state">Nenhum pagamento pendente</p>
-        }
+    <div class="portal-card">
+      <div class="portal-header">
+        <h4>Próximos Pagamentos</h4>
       </div>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button color="primary" routerLink="/portal/financeiro">Ver Todos</button>
-    </mat-card-actions>
-  </mat-card>
+      <div class="portal-content">
+        <div class="portal-list">
+          @for (pagamento of proximosPagamentos(); track pagamento.id) {
+          <div class="portal-item">
+            <strong>{{ pagamento.competencia }}</strong>
+            <span [class.warn]="pagamento.vencido">R$ {{ pagamento.valor }}</span>
+          </div>
+          } @empty {
+          <div class="empty-state">
+            <mat-icon>account_balance_wallet</mat-icon>
+            <p>Nenhum pagamento pendente</p>
+          </div>
+          }
+        </div>
+      </div>
+      <div class="portal-actions">
+        <button mat-raised-button color="primary" routerLink="/portal/financeiro">Ver Todos</button>
+      </div>
+    </div>
+  </div>
+  }
 </div>
-} }
+}

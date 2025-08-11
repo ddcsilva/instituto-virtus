@@ -30,7 +30,9 @@
       <span class="spacer"></span>
 
       <button mat-icon-button [matMenuTriggerFor]="userMenu">
-        <mat-icon>account_circle</mat-icon>
+        <div class="user-avatar">
+          {{ obterIniciais() }}
+        </div>
       </button>
 
       <mat-menu #userMenu="matMenu">
