@@ -109,18 +109,8 @@ builder.Services.AddAuthorization(options =>
   options.AddPolicy("ResponsavelAluno", policy => policy.RequireRole("Admin", "Coordenador", "Responsavel", "Aluno"));
 });
 
-// CORS
-builder.Services.AddCors(options =>
-{
-  options.AddPolicy("AllowedOrigins",
-      policy =>
-      {
-        policy.WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? new[] { "*" })
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
-      });
-});
+// CORS - usando extensão personalizada
+builder.Services.AddCustomCors(builder.Configuration);
 
 // Rate Limiting
 builder.Services.AddRateLimiter(options =>
@@ -178,14 +168,13 @@ app.UseSwaggerUI(c =>
 if (!app.Environment.IsDevelopment())
 {
   app.UseHsts();
+  app.UseHttpsRedirection(); // Só redireciona para HTTPS em produção
 }
-
-app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseMiddleware<RequestLoggingMiddleware>();
 
-app.UseCors("AllowedOrigins");
+app.UseCors("DefaultPolicy");
 app.UseRateLimiter();
 
 app.UseAuthentication();

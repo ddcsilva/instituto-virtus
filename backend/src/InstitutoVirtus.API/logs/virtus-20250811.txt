@@ -2,3 +2,88 @@
 2025-08-11 16:01:11.977 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
 2025-08-11 16:01:12.184 -03:00 [INF] Migrations aplicadas com sucesso
 2025-08-11 16:01:12.331 -03:00 [INF] API Instituto Virtus iniciada
+2025-08-11 16:05:37.795 -03:00 [INF] Aplicando migrations...
+2025-08-11 16:05:38.267 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-08-11 16:05:38.467 -03:00 [INF] Migrations aplicadas com sucesso
+2025-08-11 16:05:38.604 -03:00 [INF] API Instituto Virtus iniciada
+2025-08-11 16:06:51.010 -03:00 [INF] Aplicando migrations...
+2025-08-11 16:06:51.474 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-08-11 16:06:51.672 -03:00 [INF] Migrations aplicadas com sucesso
+2025-08-11 16:06:51.796 -03:00 [INF] API Instituto Virtus iniciada
+2025-08-11 16:07:18.125 -03:00 [WRN] Failed to determine the https port for redirect.
+2025-08-11 16:07:18.132 -03:00 [INF] Request 8f5870dd-1db9-4d94-a3ef-ccd27114f4ba - OPTIONS /api/auth/login - User: Anonymous
+2025-08-11 16:07:18.135 -03:00 [INF] Request 8f5870dd-1db9-4d94-a3ef-ccd27114f4ba completed - Status: 204 - Duration: 1ms
+2025-08-11 16:07:18.139 -03:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 10.9668 ms
+2025-08-11 16:07:48.637 -03:00 [INF] Aplicando migrations...
+2025-08-11 16:07:49.089 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-08-11 16:07:49.280 -03:00 [INF] Migrations aplicadas com sucesso
+2025-08-11 16:07:49.396 -03:00 [INF] API Instituto Virtus iniciada
+2025-08-11 16:08:50.048 -03:00 [INF] Aplicando migrations...
+2025-08-11 16:08:50.563 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-08-11 16:08:50.748 -03:00 [INF] Migrations aplicadas com sucesso
+2025-08-11 16:08:50.926 -03:00 [INF] API Instituto Virtus iniciada
+2025-08-11 16:08:57.410 -03:00 [INF] Request fd5945e5-6d7f-4dab-b01d-b12da04736b3 - OPTIONS /api/auth/login - User: Anonymous
+2025-08-11 16:08:57.497 -03:00 [INF] Request fd5945e5-6d7f-4dab-b01d-b12da04736b3 completed - Status: 204 - Duration: 3ms
+2025-08-11 16:08:57.513 -03:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 121.7529 ms
+2025-08-11 16:08:57.590 -03:00 [INF] Request 0feb10b0-0eab-4254-9413-c46dc030d9cb - POST /api/auth/login - User: Anonymous
+2025-08-11 16:09:02.793 -03:00 [WRN] Senha incorreta para: admin@institutovirtus.com.br
+2025-08-11 16:09:02.828 -03:00 [INF] Request 0feb10b0-0eab-4254-9413-c46dc030d9cb completed - Status: 401 - Duration: 5233ms
+2025-08-11 16:09:02.833 -03:00 [INF] HTTP POST /api/auth/login responded 401 in 5242.5856 ms
+2025-08-11 16:14:19.916 -03:00 [INF] Aplicando migrations...
+2025-08-11 16:14:20.440 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-08-11 16:14:20.637 -03:00 [INF] Migrations aplicadas com sucesso
+2025-08-11 16:14:20.760 -03:00 [INF] API Instituto Virtus iniciada
+2025-08-11 16:14:39.620 -03:00 [INF] Request 94c4ef8c-55bd-485b-8c0e-e748a9bf4f1e - OPTIONS /api/auth/login - User: Anonymous
+2025-08-11 16:14:39.659 -03:00 [INF] Request 94c4ef8c-55bd-485b-8c0e-e748a9bf4f1e completed - Status: 204 - Duration: 3ms
+2025-08-11 16:14:39.684 -03:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 74.9545 ms
+2025-08-11 16:14:39.734 -03:00 [INF] Request 9057b45b-ed23-4ec2-ba9a-d05526980ddb - POST /api/auth/login - User: Anonymous
+2025-08-11 16:14:40.521 -03:00 [WRN] Senha incorreta para: admin@institutovirtus.com.br
+2025-08-11 16:14:40.547 -03:00 [INF] Request 9057b45b-ed23-4ec2-ba9a-d05526980ddb completed - Status: 401 - Duration: 809ms
+2025-08-11 16:14:40.556 -03:00 [INF] HTTP POST /api/auth/login responded 401 in 822.1609 ms
+2025-08-11 16:15:05.879 -03:00 [INF] Request 7a14d91f-be43-40d5-adc4-e2f63d4943b0 - OPTIONS /api/auth/login - User: Anonymous
+2025-08-11 16:15:05.883 -03:00 [INF] Request 7a14d91f-be43-40d5-adc4-e2f63d4943b0 completed - Status: 204 - Duration: 0ms
+2025-08-11 16:15:05.886 -03:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 7.5628 ms
+2025-08-11 16:15:05.892 -03:00 [INF] Request 6ecc176e-3286-431f-8683-fe2830185832 - POST /api/auth/login - User: Anonymous
+2025-08-11 16:15:05.900 -03:00 [WRN] Senha incorreta para: admin@institutovirtus.com.br
+2025-08-11 16:15:05.902 -03:00 [INF] Request 6ecc176e-3286-431f-8683-fe2830185832 completed - Status: 401 - Duration: 7ms
+2025-08-11 16:15:05.904 -03:00 [INF] HTTP POST /api/auth/login responded 401 in 12.0965 ms
+2025-08-11 16:26:03.695 -03:00 [INF] Request 0c6b550d-46e4-454a-a385-9894a76037af - OPTIONS /api/auth/login - User: Anonymous
+2025-08-11 16:26:03.701 -03:00 [INF] Request 0c6b550d-46e4-454a-a385-9894a76037af completed - Status: 204 - Duration: 0ms
+2025-08-11 16:26:03.706 -03:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 11.0645 ms
+2025-08-11 16:26:03.712 -03:00 [INF] Request 259bc455-b41f-4ded-bc23-d0b473e9e800 - POST /api/auth/login - User: Anonymous
+2025-08-11 16:26:03.734 -03:00 [WRN] Senha incorreta para: admin@institutovirtus.com.br
+2025-08-11 16:26:03.737 -03:00 [INF] Request 259bc455-b41f-4ded-bc23-d0b473e9e800 completed - Status: 401 - Duration: 19ms
+2025-08-11 16:26:03.741 -03:00 [INF] HTTP POST /api/auth/login responded 401 in 28.9820 ms
+2025-08-11 16:26:08.384 -03:00 [INF] Request 845080b1-458c-4cc6-a3e3-31b0d7032e13 - POST /api/auth/login - User: Anonymous
+2025-08-11 16:26:08.389 -03:00 [WRN] Senha incorreta para: admin@institutovirtus.com.br
+2025-08-11 16:26:08.390 -03:00 [INF] Request 845080b1-458c-4cc6-a3e3-31b0d7032e13 completed - Status: 401 - Duration: 2ms
+2025-08-11 16:26:08.395 -03:00 [INF] HTTP POST /api/auth/login responded 401 in 10.8417 ms
+2025-08-11 16:26:29.406 -03:00 [INF] Aplicando migrations...
+2025-08-11 16:26:29.995 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-08-11 16:26:30.195 -03:00 [INF] Migrations aplicadas com sucesso
+2025-08-11 16:26:30.342 -03:00 [INF] API Instituto Virtus iniciada
+2025-08-11 16:27:11.031 -03:00 [INF] Request 91824393-4023-4623-9a3f-bcddf4e70a29 - OPTIONS /api/auth/login - User: Anonymous
+2025-08-11 16:27:11.043 -03:00 [INF] Request 91824393-4023-4623-9a3f-bcddf4e70a29 completed - Status: 204 - Duration: 2ms
+2025-08-11 16:27:11.054 -03:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 30.1228 ms
+2025-08-11 16:27:11.099 -03:00 [INF] Request 4638569a-f240-430a-8250-ce11e0398e53 - POST /api/auth/login - User: Anonymous
+2025-08-11 16:27:12.453 -03:00 [INF] Login bem-sucedido: admin@institutovirtus.com.br
+2025-08-11 16:27:12.461 -03:00 [INF] Request 4638569a-f240-430a-8250-ce11e0398e53 completed - Status: 200 - Duration: 1358ms
+2025-08-11 16:27:12.464 -03:00 [INF] HTTP POST /api/auth/login responded 200 in 1365.6565 ms
+2025-08-11 16:27:33.188 -03:00 [INF] Request 6ea8d0cf-177b-4c81-a04e-815bb650eeb5 - OPTIONS /api/auth/login - User: Anonymous
+2025-08-11 16:27:33.192 -03:00 [INF] Request 6ea8d0cf-177b-4c81-a04e-815bb650eeb5 completed - Status: 204 - Duration: 0ms
+2025-08-11 16:27:33.199 -03:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 11.7845 ms
+2025-08-11 16:27:33.208 -03:00 [INF] Request 3547579f-de10-4894-93f8-4201bd62a725 - POST /api/auth/login - User: Anonymous
+2025-08-11 16:27:33.236 -03:00 [INF] Login bem-sucedido: admin@institutovirtus.com.br
+2025-08-11 16:27:33.238 -03:00 [INF] Request 3547579f-de10-4894-93f8-4201bd62a725 completed - Status: 200 - Duration: 16ms
+2025-08-11 16:27:33.245 -03:00 [INF] HTTP POST /api/auth/login responded 200 in 37.0625 ms
+2025-08-11 16:54:33.727 -03:00 [INF] Aplicando migrations...
+2025-08-11 16:54:34.338 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-08-11 16:54:34.543 -03:00 [INF] Migrations aplicadas com sucesso
+2025-08-11 16:54:34.685 -03:00 [INF] API Instituto Virtus iniciada
+2025-08-11 16:54:38.302 -03:00 [INF] Request 75d0fefe-40d0-4dc7-bbb3-bb87c5147146 - OPTIONS /api/auth/login - User: Anonymous
+2025-08-11 16:54:38.312 -03:00 [INF] Request 75d0fefe-40d0-4dc7-bbb3-bb87c5147146 completed - Status: 204 - Duration: 1ms
+2025-08-11 16:54:38.320 -03:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 19.6653 ms
+2025-08-11 16:54:38.341 -03:00 [INF] Request 4a865071-8807-4381-ad0b-8074d762f602 - POST /api/auth/login - User: Anonymous
+2025-08-11 16:54:38.684 -03:00 [INF] Login bem-sucedido: admin@institutovirtus.com.br
+2025-08-11 16:54:38.692 -03:00 [INF] Request 4a865071-8807-4381-ad0b-8074d762f602 completed - Status: 200 - Duration: 348ms
+2025-08-11 16:54:38.703 -03:00 [INF] HTTP POST /api/auth/login responded 200 in 362.1376 ms

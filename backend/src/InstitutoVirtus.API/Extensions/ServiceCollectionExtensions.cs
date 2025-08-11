@@ -86,19 +86,12 @@ public static class ServiceCollectionExtensions
         {
             options.AddPolicy("DefaultPolicy", builder =>
             {
-                if (allowedOrigins.Contains("*"))
-                {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
-                }
-                else
-                {
-                    builder.WithOrigins(allowedOrigins)
-                           .AllowAnyMethod()
-                           .AllowAnyHeader()
-                           .AllowCredentials();
-                }
+                // Em desenvolvimento, permite origens específicas com credenciais
+                // Em produção, deve sempre especificar as origens exatas
+                builder.WithOrigins(allowedOrigins)
+                       .AllowAnyMethod()
+                       .AllowAnyHeader()
+                       .AllowCredentials();
             });
         });
 

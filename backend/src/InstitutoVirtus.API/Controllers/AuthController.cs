@@ -45,7 +45,7 @@ public class AuthController : ControllerBase
 
             try
             {
-                if (!pessoa.VerificarSenha(request.Password))
+                if (!pessoa.VerificarSenha(request.Senha))
                 {
                     _logger.LogWarning($"Senha incorreta para: {request.Email}");
                     return Unauthorized(new { message = "Credenciais inválidas" });
@@ -64,9 +64,16 @@ public class AuthController : ControllerBase
             return Ok(new LoginResponse
             {
                 Token = token,
-                Email = pessoa.Email?.Endereco,
-                Nome = pessoa.NomeCompleto,
-                Tipo = pessoa.TipoPessoa.ToString(),
+                RefreshToken = Guid.NewGuid().ToString(), // TODO: Implementar refresh token real
+                User = new UserDto
+                {
+                    Id = pessoa.Id.ToString(),
+                    Nome = pessoa.NomeCompleto,
+                    Email = pessoa.Email?.Endereco ?? string.Empty,
+                    Tipo = pessoa.TipoPessoa.ToString(),
+                    PessoaId = pessoa.Id.ToString(),
+                    Ativo = pessoa.Ativo
+                },
                 ExpiresIn = 3600
             });
         }
@@ -96,7 +103,7 @@ public class AuthController : ControllerBase
                 telefone,
                 email,
                 request.DataNascimento,
-                $"Usuário registrado via API - Password: {request.Password}"
+                $"Usuário registrado via API - Senha: {request.Senha}"
             );
 
             await _pessoaRepository.AddAsync(pessoa);
