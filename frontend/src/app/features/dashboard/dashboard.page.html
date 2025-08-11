@@ -1,3 +1,9 @@
+@if (carregando()) {
+<div class="loading-container">
+  <mat-spinner></mat-spinner>
+  <p>Carregando dados do usuário...</p>
+</div>
+} @else {
 <app-page-header [title]="'Bem-vindo, ' + nomeUsuario()" [subtitle]="tipoUsuario() + ' - Instituto Virtus'" />
 
 <!-- Cards de Resumo -->
@@ -100,4 +106,4 @@
     </mat-card-actions>
   </mat-card>
 </div>
-}
+} }

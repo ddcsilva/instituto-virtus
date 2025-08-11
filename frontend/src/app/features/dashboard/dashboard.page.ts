@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -49,6 +49,24 @@ export class DashboardPage implements OnInit {
   readonly tipoUsuario = signal('');
   readonly carregando = signal(true);
 
+  constructor() {
+    // Reage às mudanças no usuário autenticado
+    effect(
+      () => {
+        const usuario = this.authService.usuarioAtual();
+        const estaAutenticado = this.authService.estaAutenticado();
+
+        if (estaAutenticado && usuario && usuario.nome) {
+          this.nomeUsuario.set(usuario.nome);
+          this.tipoUsuario.set(this.obterNomeDoTipo(usuario.tipo));
+          this.loadDashboardData(usuario.tipo);
+          this.carregando.set(false);
+        }
+      },
+      { allowSignalWrites: true }
+    );
+  }
+
   readonly cards = signal<DashboardCard[]>([]);
   readonly actions = signal<QuickAction[]>([]);
   readonly atividadesRecentes = signal<any[]>([]);
@@ -56,12 +74,7 @@ export class DashboardPage implements OnInit {
   readonly proximosPagamentos = signal<any[]>([]);
 
   ngOnInit(): void {
-    const usuario = this.authService.usuarioAtual();
-    if (usuario) {
-      this.nomeUsuario.set(usuario.nome);
-      this.tipoUsuario.set(this.obterNomeDoTipo(usuario.tipo));
-      this.loadDashboardData(usuario.tipo);
-    }
+    // O effect no constructor já cuida do carregamento dos dados
   }
 
   obterNomeDoTipo(tipo: string): string {

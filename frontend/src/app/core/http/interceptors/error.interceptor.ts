@@ -13,8 +13,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       let message = 'Ocorreu um erro inesperado';
 
       if (error.status === 401) {
-        message = 'Sessão expirada. Faça login novamente.';
-        authService.logout();
+        // Só faz logout se não for uma requisição de login
+        if (!req.url.includes('/auth/login')) {
+          message = 'Sessão expirada. Faça login novamente.';
+          authService.logout();
+        }
       } else if (error.status === 403) {
         message = 'Você não tem permissão para realizar esta ação';
       } else if (error.status === 404) {
