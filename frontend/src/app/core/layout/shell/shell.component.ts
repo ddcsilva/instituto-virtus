@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
@@ -40,7 +40,6 @@ interface QuickAction {
     CommonModule,
     RouterOutlet,
     RouterLink,
-    RouterLinkActive,
     MatSidenavModule,
     MatToolbarModule,
     MatListModule,
@@ -59,7 +58,7 @@ interface QuickAction {
 export class ShellComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly loadingService = inject(LoadingService);
-  private readonly router = inject(Router);
+  readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
   readonly usuarioAtual = this.authService.usuarioAtual;
@@ -90,8 +89,6 @@ export class ShellComponent implements OnInit, OnDestroy {
       icon: 'school',
       route: '/cursos',
       roles: ['Admin', 'Coordenador'],
-      badge: 2,
-      badgeColor: 'accent',
     },
     {
       label: 'Turmas',
@@ -104,8 +101,6 @@ export class ShellComponent implements OnInit, OnDestroy {
       icon: 'assignment',
       route: '/matriculas',
       roles: ['Admin', 'Coordenador'],
-      badge: 5,
-      badgeColor: 'warn',
     },
     {
       label: 'Financeiro',

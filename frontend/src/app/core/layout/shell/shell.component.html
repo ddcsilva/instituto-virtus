@@ -23,30 +23,31 @@
     </div>
 
     <!-- Menu de Navegação -->
-    <mat-nav-list class="nav-list">
+    <nav class="nav-list">
       @for (item of itensVisiveis(); track item.route) {
       <a
-        mat-list-item
+        class="nav-item"
+        [class.active]="
+          router.isActive(item.route, {
+            paths: 'exact',
+            queryParams: 'ignored',
+            fragment: 'ignored',
+            matrixParams: 'ignored'
+          })
+        "
         [routerLink]="item.route"
-        routerLinkActive="active"
         [matTooltip]="isCollapsed() ? item.label : ''"
         matTooltipPosition="right"
         (click)="isHandset() && drawer.close()">
-        <div class="nav-item-content">
-          <mat-icon
-            matListItemIcon
-            [matBadge]="item.badge"
-            [matBadgeColor]="item.badgeColor || 'primary'"
-            [matBadgeHidden]="!item.badge">
-            {{ item.icon }}
-          </mat-icon>
-          @if (!isCollapsed()) {
-          <span matListItemTitle>{{ item.label }}</span>
-          }
-        </div>
+        <mat-icon [matBadge]="item.badge" [matBadgeColor]="item.badgeColor || 'primary'" [matBadgeHidden]="!item.badge">
+          {{ item.icon }}
+        </mat-icon>
+        @if (!isCollapsed()) {
+        <span class="nav-label">{{ item.label }}</span>
+        }
       </a>
       }
-    </mat-nav-list>
+    </nav>
 
     <!-- Footer do Sidenav (apenas desktop) -->
     @if (!isHandset()) {
@@ -103,13 +104,6 @@
           <div class="user-avatar">
             {{ obterIniciais() }}
           </div>
-          @if (!isHandset()) {
-          <div class="user-info-inline">
-            <span class="user-name">{{ usuarioAtual()?.nome }}</span>
-            <span class="user-role">{{ userRole() }}</span>
-          </div>
-          }
-          <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
         </button>
 
         <!-- Menu Dropdown do Usuário -->
