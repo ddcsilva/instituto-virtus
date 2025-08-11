@@ -1,4 +1,6 @@
-export const RELATORIOS_ROUTES_UPDATED: Routes = [
+import { Routes } from '@angular/router';
+
+export const RELATORIOS_ROUTES: Routes = [
   {
     path: '',
     loadComponent: () =>

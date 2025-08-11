@@ -1,3 +1,5 @@
+import { Curso } from '../../cursos/models/curso.model';
+
 export interface Turma {
   id: string;
   cursoId: string;
