@@ -1,62 +1,175 @@
 <mat-sidenav-container class="sidenav-container">
+  <!-- Sidenav Lateral -->
   <mat-sidenav
     #drawer
     class="sidenav"
+    [class.sidenav-collapsed]="isCollapsed()"
     [attr.role]="isHandset() ? 'dialog' : 'navigation'"
     [mode]="isHandset() ? 'over' : 'side'"
     [opened]="!isHandset()">
-    <mat-toolbar class="sidenav-header">
-      <span class="logo">Instituto Virtus</span>
-    </mat-toolbar>
+    <!-- Header do Sidenav com Logo -->
+    <div class="sidenav-header">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <span class="logo-cross">✝</span>
+        </div>
+        @if (!isCollapsed()) {
+        <div class="logo-text">
+          <span class="logo-name">Instituto Virtus</span>
+          <span class="logo-tagline">Bethesda</span>
+        </div>
+        }
+      </div>
+    </div>
 
-    <mat-nav-list>
+    <!-- Menu de Navegação -->
+    <mat-nav-list class="nav-list">
       @for (item of itensVisiveis(); track item.route) {
-      <a mat-list-item [routerLink]="item.route" routerLinkActive="active" (click)="isHandset() && drawer.close()">
-        <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-        <span matListItemTitle>{{ item.label }}</span>
+      <a
+        mat-list-item
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [matTooltip]="isCollapsed() ? item.label : ''"
+        matTooltipPosition="right"
+        (click)="isHandset() && drawer.close()">
+        <div class="nav-item-content">
+          <mat-icon
+            matListItemIcon
+            [matBadge]="item.badge"
+            [matBadgeColor]="item.badgeColor || 'primary'"
+            [matBadgeHidden]="!item.badge">
+            {{ item.icon }}
+          </mat-icon>
+          @if (!isCollapsed()) {
+          <span matListItemTitle>{{ item.label }}</span>
+          }
+        </div>
       </a>
       }
     </mat-nav-list>
+
+    <!-- Footer do Sidenav (apenas desktop) -->
+    @if (!isHandset()) {
+    <div class="sidenav-footer">
+      <button
+        mat-icon-button
+        (click)="toggleSidenav()"
+        [matTooltip]="isCollapsed() ? 'Expandir menu' : 'Recolher menu'">
+        <mat-icon>{{ isCollapsed() ? "chevron_right" : "chevron_left" }}</mat-icon>
+      </button>
+    </div>
+    }
   </mat-sidenav>
 
+  <!-- Conteúdo Principal -->
   <mat-sidenav-content>
-    <mat-toolbar class="toolbar">
-      @if (isHandset()) {
-      <button type="button" mat-icon-button (click)="drawer.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      }
+    <!-- Toolbar Superior Integrada -->
+    <mat-toolbar class="toolbar-integrated">
+      <div class="toolbar-left">
+        @if (isHandset()) {
+        <button type="button" mat-icon-button (click)="drawer.toggle()" class="menu-toggle">
+          <mat-icon>menu</mat-icon>
+        </button>
+        }
 
-      <span class="spacer"></span>
+        <!-- Saudação e Info Contextual -->
+        <div class="greeting-section">
+          <h2 class="greeting">{{ saudacao() }}, {{ (usuarioAtual()?.nome?.split(" ") || [])[0] || "Usuário" }}!</h2>
+          <span class="date-time">{{ formatDate() }} • {{ formatTime() }}</span>
+        </div>
+      </div>
 
-      <div class="user-section">
-        <span class="user-name">{{ usuarioAtual()?.nome }}</span>
-        <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+      <div class="toolbar-right">
+        <!-- Ações Rápidas -->
+        <div class="quick-actions">
+          @for (action of quickActions; track action.tooltip) {
+          <button mat-icon-button [matTooltip]="action.tooltip" (click)="action.action()" class="action-button">
+            <mat-icon
+              [matBadge]="action.badge"
+              matBadgeColor="warn"
+              [matBadgeHidden]="!action.badge"
+              matBadgeSize="small">
+              {{ action.icon }}
+            </mat-icon>
+          </button>
+          }
+        </div>
+
+        <!-- Separador Visual -->
+        <div class="toolbar-divider"></div>
+
+        <!-- Menu do Usuário -->
+        <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-trigger">
           <div class="user-avatar">
             {{ obterIniciais() }}
           </div>
+          @if (!isHandset()) {
+          <div class="user-info-inline">
+            <span class="user-name">{{ usuarioAtual()?.nome }}</span>
+            <span class="user-role">{{ userRole() }}</span>
+          </div>
+          }
+          <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
         </button>
-      </div>
 
-      <mat-menu #userMenu="matMenu">
-        <div class="user-info">
-          <strong>{{ usuarioAtual()?.nome }}</strong>
-          <small>{{ usuarioAtual()?.tipo }}</small>
-        </div>
-        <mat-divider></mat-divider>
-        <button mat-menu-item (click)="logout()">
-          <mat-icon>logout</mat-icon>
-          <span>Sair</span>
-        </button>
-      </mat-menu>
+        <!-- Menu Dropdown do Usuário -->
+        <mat-menu #userMenu="matMenu" class="user-dropdown-menu">
+          <!-- Header do Menu -->
+          <div class="menu-header">
+            <div class="menu-avatar">{{ obterIniciais() }}</div>
+            <div class="menu-user-details">
+              <strong>{{ usuarioAtual()?.nome }}</strong>
+              <small>{{ usuarioAtual()?.email }}</small>
+              <span class="role-badge">{{ userRole() }}</span>
+            </div>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <!-- Opções do Menu -->
+          <button mat-menu-item (click)="navigateToProfile()">
+            <mat-icon>person</mat-icon>
+            <span>Meu Perfil</span>
+          </button>
+
+          <button mat-menu-item (click)="navigateToSettings()">
+            <mat-icon>settings</mat-icon>
+            <span>Configurações</span>
+          </button>
+
+          <button mat-menu-item (click)="openHelp()">
+            <mat-icon>help</mat-icon>
+            <span>Central de Ajuda</span>
+          </button>
+
+          <mat-divider></mat-divider>
+
+          <button mat-menu-item (click)="logout()" class="logout-option">
+            <mat-icon>logout</mat-icon>
+            <span>Sair do Sistema</span>
+          </button>
+        </mat-menu>
+      </div>
     </mat-toolbar>
 
+    <!-- Barra de Progresso -->
     @if (carregando()) {
-    <mat-progress-bar mode="indeterminate" />
+    <mat-progress-bar mode="indeterminate" class="loading-bar" />
     }
 
-    <main class="content">
-      <router-outlet />
+    <!-- Conteúdo da Página -->
+    <main class="main-content">
+      <div class="content-wrapper">
+        <router-outlet />
+      </div>
     </main>
+
+    <!-- Footer (opcional) -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <span class="copyright">© 2025 Instituto Virtus - Igreja Bethesda</span>
+        <span class="version">Versão 1.0.0</span>
+      </div>
+    </footer>
   </mat-sidenav-content>
 </mat-sidenav-container>

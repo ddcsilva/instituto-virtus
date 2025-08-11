@@ -1,157 +1,189 @@
 @if (carregando()) {
 <div class="loading-container">
-  <mat-spinner></mat-spinner>
+  <mat-spinner diameter="50"></mat-spinner>
   <p>Carregando dados do usuário...</p>
 </div>
 } @else {
-<div class="dashboard-container fade-in">
-  <!-- Seção de Boas-vindas -->
+<div class="dashboard-container">
+  <!-- Welcome Section -->
   <div class="welcome-section">
     <div class="welcome-content">
       <h1>Bem-vindo, {{ nomeUsuario() }}!</h1>
-      <p>{{ tipoUsuario() }} - Instituto Virtus</p>
+      <p>Instituto Virtus - Transformando vidas através da educação e da fé</p>
     </div>
   </div>
 
-  <!-- Cards de Resumo -->
-  <div class="dashboard-grid">
-    @for (card of cardsVisiveis(); track card.title) {
-    <mat-card
-      class="stat-card hover-lift"
-      [routerLink]="card.route"
-      [ngClass]="{
-               'students': card.title === 'Total de Alunos',
-               'classes': card.title === 'Turmas Ativas' || card.title === 'Minhas Turmas',
-               'revenue': card.title.includes('Mensalidades') || card.title.includes('R$'),
-               'attendance': card.title.includes('Presença') || card.title.includes('Frequência')
-             }">
-      <mat-card-content>
-        <div class="stat-header">
-          <div class="stat-icon">
-            <mat-icon>{{ card.icon }}</mat-icon>
-          </div>
-          @if (card.trend) {
-          <div class="stat-trend">
-            <mat-chip [ngClass]="card.trend > 0 ? 'positive' : 'negative'">
-              {{ card.trend > 0 ? '+' : '' }}{{ card.trend }}%
-            </mat-chip>
-          </div>
-          }
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon students">
+          <mat-icon>school</mat-icon>
         </div>
-        <div class="stat-value">{{ card.value }}</div>
-        <div class="stat-label">{{ card.title }}</div>
-      </mat-card-content>
-    </mat-card>
-    }
+        <span class="stat-change positive">+5%</span>
+      </div>
+      <div class="stat-value">245</div>
+      <div class="stat-label">Total de Alunos</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon classes">
+          <mat-icon>class</mat-icon>
+        </div>
+        <span class="stat-change positive">+2</span>
+      </div>
+      <div class="stat-value">18</div>
+      <div class="stat-label">Turmas Ativas</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon revenue">
+          <mat-icon>attach_money</mat-icon>
+        </div>
+        <span class="stat-change positive">+12%</span>
+      </div>
+      <div class="stat-value">R$ 15.480</div>
+      <div class="stat-label">Mensalidades em Aberto</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon attendance">
+          <mat-icon>trending_up</mat-icon>
+        </div>
+        <span class="stat-change negative">-2%</span>
+      </div>
+      <div class="stat-value">92%</div>
+      <div class="stat-label">Taxa de Presença</div>
+    </div>
   </div>
 
-  <!-- Ações Rápidas -->
-  <h2 class="section-title">Ações Rápidas</h2>
-  <div class="actions-grid">
-    @for (action of acoesVisiveis(); track action.label; let i = $index) {
-    <mat-card class="action-card hover-lift" [routerLink]="action.route">
-      <mat-card-content>
-        <div
-          class="action-icon"
-          [ngClass]="{
-               'primary': i % 4 === 0,
-               'secondary': i % 4 === 1,
-               'accent': i % 4 === 2,
-               'teal': i % 4 === 3
-             }">
-          <mat-icon>{{ action.icon }}</mat-icon>
-        </div>
-        <p class="action-label">{{ action.label }}</p>
-      </mat-card-content>
-    </mat-card>
-    }
-  </div>
-
-  <!-- Atividades Recentes -->
-  @if (ehAdministrador() || ehCoordenador()) {
-  <div class="content-section">
+  <!-- Quick Actions -->
+  <div class="quick-actions-section">
     <div class="section-header">
-      <mat-icon>history</mat-icon>
-      <h3>Atividades Recentes</h3>
+      <h2>Ações Rápidas</h2>
     </div>
-    <div class="activity-list">
-      @for (activity of atividadesRecentes(); track activity.id; let i = $index) {
-      <div class="activity-item">
-        <div
-          class="activity-icon"
-          [ngClass]="{
-               'success': i % 3 === 0,
-               'info': i % 3 === 1,
-               'warning': i % 3 === 2
-             }">
-          <mat-icon>{{ activity.icon }}</mat-icon>
+    <div class="actions-grid">
+      <div class="action-card">
+        <div class="action-icon-wrapper">
+          <mat-icon>person_add</mat-icon>
         </div>
-        <div class="activity-content">
-          <p>{{ activity.description }}</p>
-          <small>{{ activity.timestamp | date : 'dd/MM/yyyy HH:mm' }}</small>
+        <div class="action-label">Nova Matrícula</div>
+      </div>
+      <div class="action-card">
+        <div class="action-icon-wrapper">
+          <mat-icon>payment</mat-icon>
         </div>
+        <div class="action-label">Registrar Pagamento</div>
       </div>
-      } @empty {
-      <div class="empty-state">
-        <mat-icon>inbox</mat-icon>
-        <p>Nenhuma atividade recente</p>
-      </div>
-      }
-    </div>
-  </div>
-  }
-
-  <!-- Portal do Aluno/Responsável -->
-  @if (ehAluno() || ehResponsavel()) {
-  <div class="portal-grid">
-    <div class="portal-card">
-      <div class="portal-header">
-        <h4>Minhas Turmas</h4>
-      </div>
-      <div class="portal-content">
-        <div class="portal-list">
-          @for (turma of minhasTurmas(); track turma.id) {
-          <div class="portal-item">
-            <strong>{{ turma.nome }}</strong>
-            <span>{{ turma.horario }}</span>
-          </div>
-          } @empty {
-          <div class="empty-state">
-            <mat-icon>school</mat-icon>
-            <p>Nenhuma turma matriculada</p>
-          </div>
-          }
+      <div class="action-card">
+        <div class="action-icon-wrapper">
+          <mat-icon>how_to_reg</mat-icon>
         </div>
+        <div class="action-label">Lançar Presença</div>
       </div>
-      <div class="portal-actions">
-        <button mat-raised-button color="primary" routerLink="/portal/turmas">Ver Todas</button>
-      </div>
-    </div>
-
-    <div class="portal-card">
-      <div class="portal-header">
-        <h4>Próximos Pagamentos</h4>
-      </div>
-      <div class="portal-content">
-        <div class="portal-list">
-          @for (pagamento of proximosPagamentos(); track pagamento.id) {
-          <div class="portal-item">
-            <strong>{{ pagamento.competencia }}</strong>
-            <span [class.warn]="pagamento.vencido">R$ {{ pagamento.valor }}</span>
-          </div>
-          } @empty {
-          <div class="empty-state">
-            <mat-icon>account_balance_wallet</mat-icon>
-            <p>Nenhum pagamento pendente</p>
-          </div>
-          }
+      <div class="action-card">
+        <div class="action-icon-wrapper">
+          <mat-icon>assessment</mat-icon>
         </div>
-      </div>
-      <div class="portal-actions">
-        <button mat-raised-button color="primary" routerLink="/portal/financeiro">Ver Todos</button>
+        <div class="action-label">Gerar Relatório</div>
       </div>
     </div>
   </div>
-  }
+
+  <!-- Recent Activities -->
+  <div class="activities-section">
+    <div class="activity-card">
+      <div class="activity-header">
+        <h3>
+          <mat-icon>history</mat-icon>
+          Atividades Recentes
+        </h3>
+        <button class="view-all-btn" mat-button>Ver Todas</button>
+      </div>
+      <div class="activity-list">
+        @if (atividadesRecentes().length > 0) { @for (atividade of atividadesRecentes(); track atividade.id) {
+        <div class="activity-item">
+          <div class="activity-icon payment">
+            <mat-icon>{{ atividade.icon }}</mat-icon>
+          </div>
+          <div class="activity-content">
+            <p>{{ atividade.description }}</p>
+            <small>{{ atividade.timestamp | date : 'dd/MM/yyyy HH:mm' }}</small>
+          </div>
+        </div>
+        } } @else {
+        <div class="activity-item">
+          <div class="activity-icon payment">
+            <mat-icon>payments</mat-icon>
+          </div>
+          <div class="activity-content">
+            <p>Pagamento recebido - João Silva</p>
+            <small>Mensalidade de Dezembro • Há 2 horas</small>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon enrollment">
+            <mat-icon>person_add</mat-icon>
+          </div>
+          <div class="activity-content">
+            <p>Nova matrícula - Maria Santos</p>
+            <small>Curso de Teclado • Há 5 horas</small>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon grade">
+            <mat-icon>grade</mat-icon>
+          </div>
+          <div class="activity-content">
+            <p>Notas lançadas - Turma T3</p>
+            <small>Avaliação Bimestral • Ontem</small>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="activity-card">
+      <div class="activity-header">
+        <h3>
+          <mat-icon>warning</mat-icon>
+          Pendências
+        </h3>
+        <button class="view-all-btn" mat-button>Ver Todas</button>
+      </div>
+      <div class="activity-list">
+        <div class="activity-item">
+          <div class="activity-icon warning">
+            <mat-icon>schedule</mat-icon>
+          </div>
+          <div class="activity-content">
+            <p>5 mensalidades vencendo hoje</p>
+            <small>Necessita atenção imediata</small>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon danger">
+            <mat-icon>assignment_late</mat-icon>
+          </div>
+          <div class="activity-content">
+            <p>3 turmas sem presença lançada</p>
+            <small>Última aula: 15/12</small>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon pending">
+            <mat-icon>person_outline</mat-icon>
+          </div>
+          <div class="activity-content">
+            <p>2 matrículas pendentes de aprovação</p>
+            <small>Aguardando desde segunda-feira</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 }
