@@ -40,7 +40,7 @@ public static class SeedData
 
         var admin = new Pessoa(
             "Administrador Sistema",
-            new Cpf("11144477735"),
+            GerarCpf(),
             new Telefone("11999999999"),
             new Email("admin@institutovirtus.com.br"),
             dataNascAdmin,
@@ -51,7 +51,7 @@ public static class SeedData
 
         var coordenacao = new Pessoa(
             "Tairiny Oliveira",
-            new Cpf("39053344705"),
+            GerarCpf(),
             new Telefone("11988887777"),
             new Email("tairiny@institutovirtus.com.br"),
             new DateTime(1988, 5, 15),
@@ -63,7 +63,7 @@ public static class SeedData
         // === 3. CRIAR PROFESSORES ===
         var prof1 = new Professor(
             "João Silva",
-            new Cpf("15350946056"),
+            GerarCpf(),
             new Telefone("11999888777"),
             new Email("joao.silva@institutovirtus.com.br"),
             new DateTime(1985, 5, 15),
@@ -74,7 +74,7 @@ public static class SeedData
 
         var prof2 = new Professor(
             "Maria Santos",
-            new Cpf("04343558016"),
+            GerarCpf(),
             new Telefone("11999777666"),
             new Email("maria.santos@institutovirtus.com.br"),
             new DateTime(1990, 8, 22),
@@ -85,7 +85,7 @@ public static class SeedData
 
         var prof3 = new Professor(
             "Pedro Costa",
-            new Cpf("28625578060"),
+            GerarCpf(),
             new Telefone("11999666555"),
             new Email("pedro.costa@institutovirtus.com.br"),
             new DateTime(1988, 3, 10),
@@ -96,7 +96,7 @@ public static class SeedData
 
         var prof4 = new Professor(
             "Ana Paula Rodrigues",
-            new Cpf("74489823043"),
+            GerarCpf(),
             new Telefone("11999555444"),
             new Email("ana.rodrigues@institutovirtus.com.br"),
             new DateTime(1987, 7, 20),
@@ -107,7 +107,7 @@ public static class SeedData
 
         var prof5 = new Professor(
             "Carlos Mendes",
-            new Cpf("54121351002"),
+            GerarCpf(),
             new Telefone("11999444333"),
             new Email("carlos.mendes@institutovirtus.com.br"),
             new DateTime(1985, 11, 30),
@@ -118,7 +118,7 @@ public static class SeedData
 
         var prof6 = new Professor(
             "Pastor Roberto Lima",
-            new Cpf("83325718002"),
+            GerarCpf(),
             new Telefone("11999333222"),
             new Email("roberto.lima@institutovirtus.com.br"),
             new DateTime(1982, 2, 14),
@@ -130,7 +130,7 @@ public static class SeedData
         // === 4. CRIAR RESPONSÁVEIS ===
         var resp1 = new Responsavel(
             "José Oliveira Pai",
-            new Cpf("63733474088"),
+            GerarCpf(),
             new Telefone("11998765432"),
             new Email("jose.oliveira@gmail.com"),
             new DateTime(1983, 10, 20),
@@ -139,7 +139,7 @@ public static class SeedData
 
         var resp2 = new Responsavel(
             "Maria Silva Mãe",
-            new Cpf("51718257082"),
+            GerarCpf(),
             new Telefone("11997654321"),
             new Email("maria.silva@gmail.com"),
             new DateTime(1984, 3, 15),
@@ -148,7 +148,7 @@ public static class SeedData
 
         var resp3 = new Responsavel(
             "Ana Costa",
-            new Cpf("05458580002"),
+            GerarCpf(),
             new Telefone("11996543210"),
             new Email("ana.costa@gmail.com"),
             new DateTime(1986, 6, 25),
@@ -158,7 +158,7 @@ public static class SeedData
         // === 5. CRIAR ALUNOS ===
         var aluno1 = new Aluno(
             "Lucas Oliveira",
-            new Cpf("05694826009"),
+            GerarCpf(),
             new Telefone("11998765433"),
             null, // Menor de idade, email opcional
             new DateTime(2010, 4, 15),
@@ -167,7 +167,7 @@ public static class SeedData
 
         var aluno2 = new Aluno(
             "Julia Oliveira",
-            new Cpf("11739191004"),
+            GerarCpf(),
             new Telefone("11998765434"),
             null,
             new DateTime(2012, 8, 22),
@@ -176,7 +176,7 @@ public static class SeedData
 
         var aluno3 = new Aluno(
             "Pedro Silva",
-            new Cpf("66198675001"),
+            GerarCpf(),
             new Telefone("11997654322"),
             null,
             new DateTime(2011, 1, 10),
@@ -185,7 +185,7 @@ public static class SeedData
 
         var aluno4 = new Aluno(
             "Mariana Silva",
-            new Cpf("24057317004"),
+            GerarCpf(),
             new Telefone("11997654323"),
             null,
             new DateTime(2013, 5, 30),
@@ -194,7 +194,7 @@ public static class SeedData
 
         var aluno5 = new Aluno(
             "Gabriel Costa",
-            new Cpf("38621166000"),
+            GerarCpf(),
             new Telefone("11996543211"),
             new Email("gabriel.costa@gmail.com"), // Maior de idade
             new DateTime(2005, 11, 15),
@@ -204,7 +204,7 @@ public static class SeedData
 
         var aluno6 = new Aluno(
             "Beatriz Santos",
-            new Cpf("23100037000"),
+            GerarCpf(),
             new Telefone("11995432100"),
             new Email("beatriz.santos@gmail.com"), // Maior de idade
             new DateTime(2004, 9, 8),
@@ -488,5 +488,33 @@ public static class SeedData
         }
 
         return dataBase;
+    }
+
+    private static Cpf GerarCpf()
+    {
+        // Gera 9 dígitos aleatórios (não todos iguais) e calcula DV
+        var rnd = new Random();
+        string base9;
+        do
+        {
+            base9 = string.Concat(Enumerable.Range(0, 9).Select(_ => rnd.Next(0, 10).ToString()));
+        } while (base9.Distinct().Count() == 1);
+
+        int[] mult1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+        int[] mult2 = { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+
+        int soma = 0;
+        for (int i = 0; i < 9; i++) soma += int.Parse(base9[i].ToString()) * mult1[i];
+        int resto = soma % 11;
+        int dig1 = resto < 2 ? 0 : 11 - resto;
+
+        var temp = base9 + dig1.ToString();
+        soma = 0;
+        for (int i = 0; i < 10; i++) soma += int.Parse(temp[i].ToString()) * mult2[i];
+        resto = soma % 11;
+        int dig2 = resto < 2 ? 0 : 11 - resto;
+
+        var numero = base9 + dig1.ToString() + dig2.ToString();
+        return new Cpf(numero);
     }
 }
