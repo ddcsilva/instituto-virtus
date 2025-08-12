@@ -45,6 +45,11 @@
   animation: fadeInUp 0.6s ease-out;
 }
 
+/* Quando o sidenav estiver recolhido, use largura total como Pessoas/Cursos */
+:host-context(mat-sidenav-content.nav-collapsed) .dashboard-container {
+  max-width: 100% !important;
+}
+
 /* ===== WELCOME SECTION ===== */
 .welcome-section {
   background: linear-gradient(

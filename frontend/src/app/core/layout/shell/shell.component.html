@@ -1,9 +1,10 @@
-<mat-sidenav-container class="sidenav-container">
+<mat-sidenav-container class="sidenav-container" [autosize]="true">
   <!-- Sidenav Lateral -->
   <mat-sidenav
     #drawer
     class="sidenav"
     [class.sidenav-collapsed]="isCollapsed()"
+    [style.width.px]="isCollapsed() ? 72 : 280"
     [attr.role]="isHandset() ? 'dialog' : 'navigation'"
     [mode]="isHandset() ? 'over' : 'side'"
     [opened]="!isHandset()">
@@ -63,7 +64,7 @@
   </mat-sidenav>
 
   <!-- Conteúdo Principal -->
-  <mat-sidenav-content>
+  <mat-sidenav-content [class.nav-collapsed]="isCollapsed()">
     <!-- Toolbar Superior Integrada -->
     <mat-toolbar class="toolbar-integrated">
       <div class="toolbar-left">

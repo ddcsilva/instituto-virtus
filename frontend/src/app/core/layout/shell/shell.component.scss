@@ -70,6 +70,15 @@
   }
 }
 
+/* Ajuste do container do Angular Material para compensar a largura do sidenav aberto/fechado em telas desktop */
+:host ::ng-deep .mat-drawer-content {
+  transition: margin-left var(--transition-medium) !important;
+}
+
+:host ::ng-deep .mat-drawer-side {
+  transition: width var(--transition-medium) !important;
+}
+
 /* ===== HEADER DO SIDENAV COM LOGO ===== */
 .sidenav-header {
   background: linear-gradient(
@@ -620,6 +629,21 @@
       transform: translateY(0);
     }
   }
+}
+
+/* Quando o menu lateral estiver recolhido, liberar mais largura para o conteúdo */
+mat-sidenav-content.nav-collapsed .main-content .content-wrapper {
+  max-width: 100% !important;
+}
+
+/* Remover margem esquerda aplicada pelo container quando o sidenav está colapsado (modo side) */
+:host ::ng-deep .mat-drawer-content {
+  margin-left: 280px;
+}
+
+:host ::ng-deep .mat-drawer-content.nav-collapsed,
+mat-sidenav-content.nav-collapsed {
+  margin-left: 72px !important;
 }
 
 /* ===== FOOTER ===== */

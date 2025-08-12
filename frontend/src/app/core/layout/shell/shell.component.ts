@@ -206,6 +206,12 @@ export class ShellComponent implements OnInit, OnDestroy {
 
   toggleSidenav(): void {
     this.isCollapsed.update(v => !v);
+    // Forçar a classe no content via DOM para garantir ajuste de margem
+    const content = document.querySelector('mat-sidenav-content');
+    if (content) {
+      if (this.isCollapsed()) content.classList.add('nav-collapsed');
+      else content.classList.remove('nav-collapsed');
+    }
   }
 
   logout(): void {
