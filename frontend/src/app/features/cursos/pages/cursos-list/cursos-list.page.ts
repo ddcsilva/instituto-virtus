@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -28,6 +29,7 @@ import { debounceTime } from 'rxjs';
     MatCardModule,
     MatTableModule,
     MatPaginatorModule,
+    MatSortModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -55,6 +57,7 @@ import { debounceTime } from 'rxjs';
           <mat-form-field>
             <mat-label>Buscar</mat-label>
             <input matInput [formControl]="buscaControl" placeholder="Nome" />
+            <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
           <mat-form-field>
             <mat-label>Status</mat-label>
@@ -66,51 +69,62 @@ import { debounceTime } from 'rxjs';
           </mat-form-field>
         </div>
 
-        <table mat-table [dataSource]="cursos()" class="full-width">
-          <ng-container matColumnDef="nome">
-            <th mat-header-cell *matHeaderCellDef>Nome</th>
-            <td mat-cell *matCellDef="let c">{{ c.nome }}</td>
-          </ng-container>
-          <ng-container matColumnDef="valor">
-            <th mat-header-cell *matHeaderCellDef>Mensalidade</th>
-            <td mat-cell *matCellDef="let c">
-              {{ c.valorMensalidade | currency : 'BRL' : 'symbol-narrow' : '1.2-2' : 'pt-BR' }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="carga">
-            <th mat-header-cell *matHeaderCellDef>Carga Horária</th>
-            <td mat-cell *matCellDef="let c">{{ c.cargaHoraria }}h</td>
-          </ng-container>
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Status</th>
-            <td mat-cell *matCellDef="let c">
-              <mat-chip [ngStyle]="getStatusStyle(c.ativo)">{{
-                c.ativo ? 'Ativo' : 'Inativo'
-              }}</mat-chip>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="acoes">
-            <th mat-header-cell *matHeaderCellDef>Ações</th>
-            <td mat-cell *matCellDef="let c">
-              <button mat-icon-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_vert</mat-icon>
-              </button>
-              <mat-menu #menu="matMenu">
-                <a mat-menu-item [routerLink]="['/cursos', c.id, 'editar']">
-                  <mat-icon>edit</mat-icon>
-                  <span>Editar</span>
-                </a>
-                <button mat-menu-item (click)="confirmToggle(c)">
-                  <mat-icon>{{ c.ativo ? 'block' : 'check_circle' }}</mat-icon>
-                  <span>{{ c.ativo ? 'Desativar' : 'Ativar' }}</span>
+        <div class="table-container">
+          <table mat-table [dataSource]="cursos()" matSort class="full-width">
+            <ng-container matColumnDef="nome">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+              <td mat-cell *matCellDef="let c">{{ c.nome }}</td>
+            </ng-container>
+            <ng-container matColumnDef="valor">
+              <th mat-header-cell *matHeaderCellDef>Mensalidade</th>
+              <td mat-cell *matCellDef="let c">
+                {{ c.valorMensalidade | currency : 'BRL' : 'symbol-narrow' : '1.2-2' : 'pt-BR' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="carga">
+              <th mat-header-cell *matHeaderCellDef>Carga Horária</th>
+              <td mat-cell *matCellDef="let c">{{ c.cargaHoraria }}h</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let c">
+                <mat-chip [ngStyle]="getStatusStyle(c.ativo)">{{
+                  c.ativo ? 'Ativo' : 'Inativo'
+                }}</mat-chip>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="acoes">
+              <th mat-header-cell *matHeaderCellDef>Ações</th>
+              <td mat-cell *matCellDef="let c">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
                 </button>
-              </mat-menu>
-            </td>
-          </ng-container>
+                <mat-menu #menu="matMenu">
+                  <a mat-menu-item [routerLink]="['/cursos', c.id, 'editar']">
+                    <mat-icon>edit</mat-icon>
+                    <span>Editar</span>
+                  </a>
+                  <button mat-menu-item (click)="confirmToggle(c)">
+                    <mat-icon>{{ c.ativo ? 'block' : 'check_circle' }}</mat-icon>
+                    <span>{{ c.ativo ? 'Desativar' : 'Ativar' }}</span>
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="displayed"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayed"></tr>
-        </table>
+            <tr mat-header-row *matHeaderRowDef="displayed"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayed"></tr>
+
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" colspan="5">
+                <div class="empty-state">
+                  <mat-icon>menu_book</mat-icon>
+                  <p>Nenhum curso encontrado</p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
 
         <mat-paginator
           [length]="total()"
@@ -128,9 +142,26 @@ import { debounceTime } from 'rxjs';
         gap: 16px;
         margin-bottom: 24px;
         flex-wrap: wrap;
+        mat-form-field {
+          flex: 1;
+          min-width: 200px;
+        }
+      }
+      .table-container {
+        overflow-x: auto;
       }
       table {
         width: 100%;
+      }
+      .empty-state {
+        padding: 48px;
+        text-align: center;
+        color: #999;
+      }
+      .empty-state mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
       }
       .full-width {
         width: 100%;
