@@ -38,9 +38,11 @@ public class CriarPessoaCommandHandler : IRequestHandler<CriarPessoaCommand, Res
     {
         try
         {
-            // Unicidade básica por telefone
+            // Unicidade por telefone e CPF
             if (await _pessoaRepository.ExistsByTelefoneAsync(request.Telefone, cancellationToken))
                 return Result<PessoaDto>.Failure("Telefone já cadastrado");
+            if (!string.IsNullOrWhiteSpace(request.Cpf) && await _pessoaRepository.ExistsByCpfAsync(request.Cpf, cancellationToken))
+                return Result<PessoaDto>.Failure("CPF já cadastrado");
 
             var telefone = new Telefone(request.Telefone);
             Email? email = string.IsNullOrWhiteSpace(request.Email) ? null : new Email(request.Email);

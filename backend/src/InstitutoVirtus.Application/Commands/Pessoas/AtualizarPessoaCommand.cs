@@ -39,6 +39,12 @@ public class AtualizarPessoaCommandHandler : IRequestHandler<AtualizarPessoaComm
         if (pessoa == null)
             return Result<PessoaDto>.Failure("Pessoa não encontrada");
 
+        // Validar unicidade para outros registros
+        if (await _pessoaRepository.ExistsByTelefoneForOtherAsync(request.Id, request.Telefone, cancellationToken))
+            return Result<PessoaDto>.Failure("Telefone já cadastrado em outro registro");
+        if (!string.IsNullOrWhiteSpace(request.Cpf) && await _pessoaRepository.ExistsByCpfForOtherAsync(request.Id, request.Cpf, cancellationToken))
+            return Result<PessoaDto>.Failure("CPF já cadastrado em outro registro");
+
         var telefone = new Telefone(request.Telefone);
         Email? email = string.IsNullOrWhiteSpace(request.Email) ? null : new Email(request.Email);
         Cpf? cpf = string.IsNullOrWhiteSpace(request.Cpf) ? null : new Cpf(request.Cpf);

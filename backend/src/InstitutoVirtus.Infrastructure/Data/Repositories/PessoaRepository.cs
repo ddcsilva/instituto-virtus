@@ -30,6 +30,24 @@ public class PessoaRepository : BaseRepository<Pessoa>, IPessoaRepository
             .AnyAsync(p => p.Telefone.Numero == telefoneLimpo, cancellationToken);
     }
 
+    public async Task<bool> ExistsByCpfAsync(string cpf, CancellationToken cancellationToken = default)
+    {
+        var cpfLimpo = new string(cpf.Where(char.IsDigit).ToArray());
+        return await _context.Pessoas.AnyAsync(p => p.Cpf != null && p.Cpf.Numero == cpfLimpo, cancellationToken);
+    }
+
+    public async Task<bool> ExistsByTelefoneForOtherAsync(Guid id, string telefone, CancellationToken cancellationToken = default)
+    {
+        var telefoneLimpo = new string(telefone.Where(char.IsDigit).ToArray());
+        return await _context.Pessoas.AnyAsync(p => p.Id != id && p.Telefone.Numero == telefoneLimpo, cancellationToken);
+    }
+
+    public async Task<bool> ExistsByCpfForOtherAsync(Guid id, string cpf, CancellationToken cancellationToken = default)
+    {
+        var cpfLimpo = new string(cpf.Where(char.IsDigit).ToArray());
+        return await _context.Pessoas.AnyAsync(p => p.Id != id && p.Cpf != null && p.Cpf.Numero == cpfLimpo, cancellationToken);
+    }
+
     public async Task<IEnumerable<Aluno>> GetAlunosByResponsavelAsync(Guid responsavelId, CancellationToken cancellationToken = default)
     {
         return await _context.Alunos
@@ -57,6 +75,8 @@ public class PessoaRepository : BaseRepository<Pessoa>, IPessoaRepository
         string? nome,
         TipoPessoa? tipo,
         bool? ativo,
+        string? cpf,
+        string? telefone,
         int pageNumber,
         int pageSize,
         CancellationToken cancellationToken = default)
@@ -81,6 +101,18 @@ public class PessoaRepository : BaseRepository<Pessoa>, IPessoaRepository
         if (ativo.HasValue)
         {
             query = query.Where(p => p.Ativo == ativo.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(cpf))
+        {
+            var cpfLimpo = new string(cpf.Where(char.IsDigit).ToArray());
+            query = query.Where(p => p.Cpf != null && p.Cpf.Numero.Contains(cpfLimpo));
+        }
+
+        if (!string.IsNullOrWhiteSpace(telefone))
+        {
+            var telLimpo = new string(telefone.Where(char.IsDigit).ToArray());
+            query = query.Where(p => p.Telefone.Numero.Contains(telLimpo));
         }
 
         var total = await query.CountAsync(cancellationToken);

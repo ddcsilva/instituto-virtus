@@ -12,6 +12,8 @@ public class ListarPessoasQuery : IRequest<Result<PagedResult<PessoaDto>>>
     public string? Nome { get; set; }
     public string? Tipo { get; set; }
     public bool? Ativo { get; set; }
+    public string? Cpf { get; set; }
+    public string? Telefone { get; set; }
     public int Page { get; set; } = 0; // front usa 0-based
     public int PageSize { get; set; } = 10;
 }
@@ -41,6 +43,8 @@ public class ListarPessoasQueryHandler : IRequestHandler<ListarPessoasQuery, Res
             request.Nome,
             tipo,
             request.Ativo,
+            request.Cpf,
+            request.Telefone,
             pageNumber,
             request.PageSize,
             cancellationToken);

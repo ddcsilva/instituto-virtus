@@ -166,10 +166,16 @@ export class PessoasStore extends ComponentStore<PessoasState> {
                 duration: 3000,
               });
             },
-            error => {
-              this.setError('Erro ao criar pessoa');
+            (error: any) => {
+              const msg =
+                error && error.error && typeof error.error === 'string'
+                  ? error.error
+                  : (error && error.error && error.error.message) ||
+                    error?.message ||
+                    'Erro ao criar pessoa';
+              this.setError(msg);
               this.setLoading(false);
-              this.snackBar.open('Erro ao criar pessoa', 'Fechar', {
+              this.snackBar.open(msg, 'Fechar', {
                 duration: 3000,
               });
             }
@@ -193,10 +199,16 @@ export class PessoasStore extends ComponentStore<PessoasState> {
                   duration: 3000,
                 });
               },
-              error => {
-                this.setError('Erro ao atualizar pessoa');
+              (error: any) => {
+                const msg =
+                  error && error.error && typeof error.error === 'string'
+                    ? error.error
+                    : (error && error.error && error.error.message) ||
+                      error?.message ||
+                      'Erro ao atualizar pessoa';
+                this.setError(msg);
                 this.setLoading(false);
-                this.snackBar.open('Erro ao atualizar pessoa', 'Fechar', {
+                this.snackBar.open(msg, 'Fechar', {
                   duration: 3000,
                 });
               }
