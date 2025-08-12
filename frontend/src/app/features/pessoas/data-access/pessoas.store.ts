@@ -306,4 +306,28 @@ export class PessoasStore extends ComponentStore<PessoasState> {
       )
     )
   );
+
+  readonly desvincularAluno = this.effect(
+    (params$: Observable<{ responsavelId: string; alunoId: string }>) =>
+      params$.pipe(
+        switchMap(({ responsavelId, alunoId }) =>
+          this.pessoasService.desvincularAluno(responsavelId, alunoId).pipe(
+            tapResponse(
+              () => {
+                this.loadVinculos(responsavelId);
+                this.snackBar.open('Aluno desvinculado', 'Fechar', {
+                  duration: 3000,
+                });
+              },
+              () => {
+                this.setError('Erro ao desvincular aluno');
+                this.snackBar.open('Erro ao desvincular aluno', 'Fechar', {
+                  duration: 3000,
+                });
+              }
+            )
+          )
+        )
+      )
+  );
 }

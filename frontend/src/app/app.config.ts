@@ -4,15 +4,11 @@ import {
   LOCALE_ID,
   provideZoneChangeDetection,
 } from '@angular/core';
-import {
-  provideRouter,
-  withComponentInputBinding,
-  withViewTransitions,
-} from '@angular/router';
+import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
-import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
 
@@ -29,9 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
     provideAnimationsAsync(),
-    provideHttpClient(
-      withInterceptors([authInterceptor, errorInterceptor, loadingInterceptor])
-    ),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, loadingInterceptor])),
     {
       provide: LOCALE_ID,
       useValue: 'pt-BR',
@@ -39,6 +33,18 @@ export const appConfig: ApplicationConfig = {
     {
       provide: MAT_DATE_LOCALE,
       useValue: 'pt-BR',
+    },
+    {
+      provide: MAT_DATE_FORMATS,
+      useValue: {
+        parse: { dateInput: 'DD/MM/YYYY' },
+        display: {
+          dateInput: 'DD/MM/YYYY',
+          monthYearLabel: 'MMM YYYY',
+          dateA11yLabel: 'LL',
+          monthYearA11yLabel: 'MMMM YYYY',
+        },
+      },
     },
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,

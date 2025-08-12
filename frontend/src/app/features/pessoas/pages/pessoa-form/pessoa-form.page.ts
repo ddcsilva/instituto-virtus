@@ -12,11 +12,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { map, catchError, debounceTime, of } from 'rxjs';
 
 import { PageHeaderComponent } from '../../../../shared/ui/components/page-header/page-header.component';
 import { cpfValidator } from '../../../../shared/validators/cpf.validator';
 import { telefoneValidator } from '../../../../shared/validators/telefone.validator';
 import { PessoasStore } from '../../data-access/pessoas.store';
+import { PessoasService } from '../../data-access/pessoas.service';
 import { CreatePessoaRequest, UpdatePessoaRequest, TipoPessoa } from '../../models/pessoa.model';
 
 @Component({
@@ -73,14 +75,19 @@ import { CreatePessoaRequest, UpdatePessoaRequest, TipoPessoa } from '../../mode
               <mat-error>CPF é obrigatório</mat-error>
               } @if (form.get('cpf')?.hasError('cpf') && form.get('cpf')?.touched) {
               <mat-error>CPF inválido</mat-error>
+              } @if (form.get('cpf')?.hasError('cpfJaCadastrado') && form.get('cpf')?.touched) {
+              <mat-error>CPF já cadastrado</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field>
               <mat-label>Data de Nascimento</mat-label>
-              <input matInput [matDatepicker]="picker" formControlName="dataNascimento" />
-              <mat-datepicker-toggle matIconSuffix [for]="picker" />
-              <mat-datepicker #picker />
+              <input
+                matInput
+                formControlName="dataNascimento"
+                placeholder="dd/mm/aaaa"
+                mask="00/00/0000"
+              />
               @if (form.get('dataNascimento')?.hasError('required') &&
               form.get('dataNascimento')?.touched) {
               <mat-error>Data de nascimento é obrigatória</mat-error>
@@ -185,20 +192,24 @@ export class PessoaFormPage implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly store = inject(PessoasStore);
+  private readonly pessoasService = inject(PessoasService);
 
   readonly isEdit = signal(false);
   readonly loading = signal(false);
   readonly pessoaId = signal<string | null>(null);
 
-  readonly form = this.fb.nonNullable.group({
-    nome: ['', Validators.required],
-    cpf: ['', [Validators.required, cpfValidator()]],
-    dataNascimento: ['', Validators.required],
-    telefone: ['', [Validators.required, telefoneValidator()]],
-    email: ['', Validators.email],
-    tipo: ['Aluno' as TipoPessoa, Validators.required],
-    ativo: [true],
-  });
+  readonly form = this.fb.nonNullable.group(
+    {
+      nome: ['', Validators.required],
+      cpf: ['', [Validators.required, cpfValidator()], [this.cpfUnicoAsyncValidator()]],
+      dataNascimento: ['', Validators.required],
+      telefone: ['', [Validators.required, telefoneValidator()]],
+      email: ['', Validators.email],
+      tipo: ['Aluno' as TipoPessoa, Validators.required],
+      ativo: [true],
+    },
+    { updateOn: 'blur' }
+  );
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -291,5 +302,26 @@ export class PessoaFormPage implements OnInit {
     }
 
     return age;
+  }
+
+  private cpfUnicoAsyncValidator() {
+    return (control: any) => {
+      const value: string = control?.value;
+      if (!value) return of(null);
+      // normalizar cpf
+      const digits = value.replace(/\D/g, '');
+      if (digits.length !== 11) return of(null);
+
+      return this.pessoasService.getAll({ cpf: digits, page: 0, pageSize: 1 }).pipe(
+        map(res => {
+          const found = res.items?.[0];
+          if (!found) return null;
+          // Se edição e o mesmo registro, válido
+          if (this.isEdit() && this.pessoaId() === found.id) return null;
+          return { cpfJaCadastrado: true };
+        }),
+        catchError(() => of(null))
+      );
+    };
   }
 }
