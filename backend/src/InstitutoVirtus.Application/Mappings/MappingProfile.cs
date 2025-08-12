@@ -24,16 +24,39 @@ public class MappingProfile : Profile
             .ForMember(d => d.Cpf, opt => opt.MapFrom(s => s.Cpf != null ? s.Cpf.Numero : null))
             .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email != null ? s.Email.Endereco : null))
             .ForMember(d => d.TipoPessoa, opt => opt.MapFrom(s => s.TipoPessoa.ToString()))
-            .ForMember(d => d.Idade, opt => opt.MapFrom(s => s.CalcularIdade((DateTime?)null)));
+            .ForMember(d => d.Idade, opt => opt.MapFrom(s =>
+                (DateTime.Today.Year - s.DataNascimento.Year) -
+                ((DateTime.Today.Month < s.DataNascimento.Month ||
+                  (DateTime.Today.Month == s.DataNascimento.Month && DateTime.Today.Day < s.DataNascimento.Day)) ? 1 : 0)
+            ));
 
         CreateMap<Aluno, AlunoDto>()
-            .IncludeBase<Pessoa, PessoaDto>();
+            .IncludeBase<Pessoa, PessoaDto>()
+            .ForMember(d => d.Responsaveis, opt => opt.MapFrom(s => s.Responsaveis))
+            .ForMember(d => d.Matriculas, opt => opt.MapFrom(s => s.Matriculas));
+
+        CreateMap<ResponsavelAluno, ResponsavelResumoDto>()
+            .ForMember(d => d.Id, opt => opt.MapFrom(s => s.ResponsavelId))
+            .ForMember(d => d.Nome, opt => opt.MapFrom(s => s.Responsavel != null ? s.Responsavel.NomeCompleto : string.Empty))
+            .ForMember(d => d.Telefone, opt => opt.MapFrom(s => s.Responsavel != null ? s.Responsavel.Telefone.NumeroFormatado() : string.Empty))
+            .ForMember(d => d.Parentesco, opt => opt.MapFrom(s => s.Parentesco.ToString()));
 
         CreateMap<Professor, ProfessorDto>()
             .IncludeBase<Pessoa, PessoaDto>();
 
         CreateMap<Responsavel, ResponsavelDto>()
-            .IncludeBase<Pessoa, PessoaDto>();
+            .IncludeBase<Pessoa, PessoaDto>()
+            .ForMember(d => d.Alunos, opt => opt.MapFrom(s => s.Alunos))
+            .ForMember(d => d.SaldoCredito, opt => opt.MapFrom(s => s.SaldoCredito));
+
+        CreateMap<ResponsavelAluno, AlunoResumoDto>()
+            .ForMember(d => d.Id, opt => opt.MapFrom(s => s.AlunoId))
+            .ForMember(d => d.Nome, opt => opt.MapFrom(s => s.Aluno != null ? s.Aluno.NomeCompleto : string.Empty))
+            .ForMember(d => d.Idade, opt => opt.MapFrom(s => s.Aluno != null ?
+                (DateTime.Today.Year - s.Aluno.DataNascimento.Year) -
+                ((DateTime.Today.Month < s.Aluno.DataNascimento.Month ||
+                  (DateTime.Today.Month == s.Aluno.DataNascimento.Month && DateTime.Today.Day < s.Aluno.DataNascimento.Day)) ? 1 : 0)
+                : 0));
 
         // Curso mappings
         CreateMap<Curso, CursoDto>()

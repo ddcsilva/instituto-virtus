@@ -46,6 +46,16 @@ public class PessoasController : ControllerBase
         return Ok(result.Data);
     }
 
+    [HttpPost]
+    [Authorize(Policy = "Coordenacao")]
+    public async Task<IActionResult> Create([FromBody] CriarPessoaCommand command)
+    {
+        var result = await _mediator.Send(command);
+        if (!result.IsSuccess)
+            return BadRequest(result.Error);
+        return CreatedAtAction(nameof(GetById), new { id = result.Data!.Id }, result.Data);
+    }
+
     [HttpGet("{id}")]
     [Authorize(Policy = "Coordenacao")]
     public async Task<IActionResult> GetById(Guid id)
@@ -61,8 +71,8 @@ public class PessoasController : ControllerBase
     [Authorize(Policy = "Coordenacao")]
     public async Task<IActionResult> Update(Guid id, [FromBody] AtualizarPessoaCommand command)
     {
-        if (id != command.Id)
-            return BadRequest("ID inconsistente");
+        // Usar o ID da rota como fonte da verdade
+        command.Id = id;
 
         var result = await _mediator.Send(command);
         if (!result.IsSuccess)
