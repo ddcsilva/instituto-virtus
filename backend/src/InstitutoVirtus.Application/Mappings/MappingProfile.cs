@@ -21,6 +21,7 @@ public class MappingProfile : Profile
         // Pessoa mappings
         CreateMap<Pessoa, PessoaDto>()
             .ForMember(d => d.Telefone, opt => opt.MapFrom(s => s.Telefone.NumeroFormatado()))
+            .ForMember(d => d.Cpf, opt => opt.MapFrom(s => s.Cpf != null ? s.Cpf.Numero : null))
             .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email != null ? s.Email.Endereco : null))
             .ForMember(d => d.TipoPessoa, opt => opt.MapFrom(s => s.TipoPessoa.ToString()))
             .ForMember(d => d.Idade, opt => opt.MapFrom(s => s.CalcularIdade((DateTime?)null)));

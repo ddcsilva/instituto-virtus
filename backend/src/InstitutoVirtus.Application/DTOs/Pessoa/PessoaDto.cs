@@ -7,6 +7,7 @@ public class PessoaDto
 {
     public Guid Id { get; set; }
     public string NomeCompleto { get; set; } = string.Empty;
+    public string? Cpf { get; set; }
     public string Telefone { get; set; } = string.Empty;
     public string? Email { get; set; }
     public DateTime DataNascimento { get; set; }

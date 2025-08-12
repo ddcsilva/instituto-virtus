@@ -90,6 +90,7 @@ export function mapTipo(dtoTipo: string | undefined): TipoPessoa {
 export interface PessoaDtoBackend {
   Id: string;
   NomeCompleto: string;
+  Cpf?: string;
   Telefone: string;
   Email?: string;
   DataNascimento: string;
@@ -113,7 +114,7 @@ export function mapPessoa(dto: PessoaDtoBackend): Pessoa {
   return {
     id: (dto as any).id ?? dto.Id,
     nome: (dto as any).nomeCompleto ?? dto.NomeCompleto,
-    cpf: '',
+    cpf: (dto as any).cpf ?? dto.Cpf ?? '',
     dataNascimento: (dto as any).dataNascimento ?? dto.DataNascimento,
     telefone: (dto as any).telefone ?? dto.Telefone,
     email: (dto as any).email ?? dto.Email,

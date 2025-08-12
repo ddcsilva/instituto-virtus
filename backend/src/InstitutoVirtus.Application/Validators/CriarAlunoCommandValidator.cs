@@ -19,6 +19,10 @@ public class CriarAlunoCommandValidator : AbstractValidator<CriarAlunoCommand>
             .EmailAddress().When(x => !string.IsNullOrEmpty(x.Email))
             .WithMessage("Email inválido");
 
+        RuleFor(x => x.Cpf)
+            .Matches(@"^\d{11}$").When(x => !string.IsNullOrWhiteSpace(x.Cpf))
+            .WithMessage("CPF deve ter 11 dígitos");
+
         RuleFor(x => x.DataNascimento)
             .LessThan(DateTime.Today).WithMessage("Data de nascimento deve ser no passado")
             .GreaterThan(DateTime.Today.AddYears(-120)).WithMessage("Data de nascimento inválida");

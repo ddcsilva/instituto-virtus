@@ -10,6 +10,7 @@ using System.Text;
 public class Pessoa : AuditableEntity
 {
     public string NomeCompleto { get; private set; }
+    public Cpf? Cpf { get; private set; }
     public Telefone Telefone { get; private set; }
     public Email? Email { get; private set; }
     public DateTime DataNascimento { get; private set; }
@@ -25,18 +26,20 @@ public class Pessoa : AuditableEntity
     protected Pessoa() { }
 
     public Pessoa(
-        string nomeCompleto,
-        Telefone telefone,
-        Email? email,
-        DateTime dataNascimento,
-        TipoPessoa tipoPessoa,
-        string? observacoes = null,
-        string? senha = null)
+    string nomeCompleto,
+        Cpf? cpf,
+    Telefone telefone,
+    Email? email,
+    DateTime dataNascimento,
+    TipoPessoa tipoPessoa,
+    string? observacoes = null,
+    string? senha = null)
     {
         ValidarNome(nomeCompleto);
         ValidarIdade(dataNascimento, tipoPessoa);
 
         NomeCompleto = nomeCompleto;
+        Cpf = cpf;
         Telefone = telefone ?? throw new ArgumentNullException(nameof(telefone));
         Email = email;
         DataNascimento = dataNascimento;

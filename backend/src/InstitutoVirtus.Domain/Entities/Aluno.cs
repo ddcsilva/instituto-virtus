@@ -20,11 +20,12 @@ public class Aluno : Pessoa
 
     public Aluno(
         string nomeCompleto,
+        Cpf? cpf,
         Telefone telefone,
         Email? email,
         DateTime dataNascimento,
         string? observacoes = null)
-        : base(nomeCompleto, telefone, email, dataNascimento, TipoPessoa.Aluno, observacoes)
+        : base(nomeCompleto, cpf, telefone, email, dataNascimento, TipoPessoa.Aluno, observacoes)
     {
         if (EhMenorDeIdade() && email == null)
         {

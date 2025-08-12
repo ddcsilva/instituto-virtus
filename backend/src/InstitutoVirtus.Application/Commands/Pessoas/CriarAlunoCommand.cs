@@ -13,6 +13,7 @@ using MediatR;
 public class CriarAlunoCommand : IRequest<Result<AlunoDto>>
 {
     public string NomeCompleto { get; set; } = string.Empty;
+    public string? Cpf { get; set; }
     public string Telefone { get; set; } = string.Empty;
     public string? Email { get; set; }
     public DateTime DataNascimento { get; set; }
@@ -47,10 +48,12 @@ public class CriarAlunoCommandHandler : IRequestHandler<CriarAlunoCommand, Resul
 
             // Criar aluno
             var telefone = new Telefone(request.Telefone);
+            Cpf? cpf = !string.IsNullOrWhiteSpace(request.Cpf) ? new Cpf(request.Cpf) : null;
             Email? email = request.Email != null ? new Email(request.Email) : null;
 
             var aluno = new Aluno(
                 request.NomeCompleto,
+                cpf,
                 telefone,
                 email,
                 request.DataNascimento,

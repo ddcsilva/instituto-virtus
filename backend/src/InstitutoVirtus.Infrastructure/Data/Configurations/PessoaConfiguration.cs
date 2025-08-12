@@ -17,6 +17,14 @@ public class PessoaConfiguration : IEntityTypeConfiguration<Pessoa>
             .IsRequired()
             .HasMaxLength(200);
 
+        builder.OwnsOne(p => p.Cpf, cpf =>
+        {
+            cpf.Property(c => c.Numero)
+                .HasColumnName("Cpf")
+                .HasMaxLength(11);
+            cpf.HasIndex(c => c.Numero).IsUnique();
+        });
+
         builder.OwnsOne(p => p.Telefone, telefone =>
         {
             telefone.Property(t => t.Numero)

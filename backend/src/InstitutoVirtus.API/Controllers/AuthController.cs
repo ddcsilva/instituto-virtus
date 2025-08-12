@@ -97,9 +97,11 @@ public class AuthController : ControllerBase
             // Criar novo usuário (exemplo com Responsável)
             var telefone = new Telefone(request.Telefone);
             var email = new Email(request.Email);
+            Cpf? cpf = !string.IsNullOrWhiteSpace(request.Cpf) ? new Cpf(request.Cpf) : null;
 
             var pessoa = new Responsavel(
                 request.NomeCompleto,
+                cpf,
                 telefone,
                 email,
                 request.DataNascimento,

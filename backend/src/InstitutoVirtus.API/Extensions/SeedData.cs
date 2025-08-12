@@ -40,6 +40,7 @@ public static class SeedData
 
         var admin = new Pessoa(
             "Administrador Sistema",
+            new Cpf("11144477735"),
             new Telefone("11999999999"),
             new Email("admin@institutovirtus.com.br"),
             dataNascAdmin,
@@ -50,6 +51,7 @@ public static class SeedData
 
         var coordenacao = new Pessoa(
             "Tairiny Oliveira",
+            new Cpf("39053344705"),
             new Telefone("11988887777"),
             new Email("tairiny@institutovirtus.com.br"),
             new DateTime(1988, 5, 15),
@@ -61,6 +63,7 @@ public static class SeedData
         // === 3. CRIAR PROFESSORES ===
         var prof1 = new Professor(
             "João Silva",
+            new Cpf("15350946056"),
             new Telefone("11999888777"),
             new Email("joao.silva@institutovirtus.com.br"),
             new DateTime(1985, 5, 15),
@@ -71,6 +74,7 @@ public static class SeedData
 
         var prof2 = new Professor(
             "Maria Santos",
+            new Cpf("04343558016"),
             new Telefone("11999777666"),
             new Email("maria.santos@institutovirtus.com.br"),
             new DateTime(1990, 8, 22),
@@ -81,6 +85,7 @@ public static class SeedData
 
         var prof3 = new Professor(
             "Pedro Costa",
+            new Cpf("28625578060"),
             new Telefone("11999666555"),
             new Email("pedro.costa@institutovirtus.com.br"),
             new DateTime(1988, 3, 10),
@@ -91,6 +96,7 @@ public static class SeedData
 
         var prof4 = new Professor(
             "Ana Paula Rodrigues",
+            new Cpf("74489823043"),
             new Telefone("11999555444"),
             new Email("ana.rodrigues@institutovirtus.com.br"),
             new DateTime(1987, 7, 20),
@@ -101,6 +107,7 @@ public static class SeedData
 
         var prof5 = new Professor(
             "Carlos Mendes",
+            new Cpf("54121351002"),
             new Telefone("11999444333"),
             new Email("carlos.mendes@institutovirtus.com.br"),
             new DateTime(1985, 11, 30),
@@ -111,6 +118,7 @@ public static class SeedData
 
         var prof6 = new Professor(
             "Pastor Roberto Lima",
+            new Cpf("83325718002"),
             new Telefone("11999333222"),
             new Email("roberto.lima@institutovirtus.com.br"),
             new DateTime(1982, 2, 14),
@@ -122,6 +130,7 @@ public static class SeedData
         // === 4. CRIAR RESPONSÁVEIS ===
         var resp1 = new Responsavel(
             "José Oliveira Pai",
+            new Cpf("63733474088"),
             new Telefone("11998765432"),
             new Email("jose.oliveira@gmail.com"),
             new DateTime(1983, 10, 20),
@@ -130,6 +139,7 @@ public static class SeedData
 
         var resp2 = new Responsavel(
             "Maria Silva Mãe",
+            new Cpf("51718257082"),
             new Telefone("11997654321"),
             new Email("maria.silva@gmail.com"),
             new DateTime(1984, 3, 15),
@@ -138,6 +148,7 @@ public static class SeedData
 
         var resp3 = new Responsavel(
             "Ana Costa",
+            new Cpf("05458580002"),
             new Telefone("11996543210"),
             new Email("ana.costa@gmail.com"),
             new DateTime(1986, 6, 25),
@@ -147,6 +158,7 @@ public static class SeedData
         // === 5. CRIAR ALUNOS ===
         var aluno1 = new Aluno(
             "Lucas Oliveira",
+            new Cpf("05694826009"),
             new Telefone("11998765433"),
             null, // Menor de idade, email opcional
             new DateTime(2010, 4, 15),
@@ -155,6 +167,7 @@ public static class SeedData
 
         var aluno2 = new Aluno(
             "Julia Oliveira",
+            new Cpf("11739191004"),
             new Telefone("11998765434"),
             null,
             new DateTime(2012, 8, 22),
@@ -163,6 +176,7 @@ public static class SeedData
 
         var aluno3 = new Aluno(
             "Pedro Silva",
+            new Cpf("66198675001"),
             new Telefone("11997654322"),
             null,
             new DateTime(2011, 1, 10),
@@ -171,6 +185,7 @@ public static class SeedData
 
         var aluno4 = new Aluno(
             "Mariana Silva",
+            new Cpf("24057317004"),
             new Telefone("11997654323"),
             null,
             new DateTime(2013, 5, 30),
@@ -179,6 +194,7 @@ public static class SeedData
 
         var aluno5 = new Aluno(
             "Gabriel Costa",
+            new Cpf("38621166000"),
             new Telefone("11996543211"),
             new Email("gabriel.costa@gmail.com"), // Maior de idade
             new DateTime(2005, 11, 15),
@@ -188,6 +204,7 @@ public static class SeedData
 
         var aluno6 = new Aluno(
             "Beatriz Santos",
+            new Cpf("23100037000"),
             new Telefone("11995432100"),
             new Email("beatriz.santos@gmail.com"), // Maior de idade
             new DateTime(2004, 9, 8),

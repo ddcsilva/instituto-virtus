@@ -17,11 +17,12 @@ public class Responsavel : Pessoa
 
     public Responsavel(
         string nomeCompleto,
+        Cpf? cpf,
         Telefone telefone,
         Email email,
         DateTime dataNascimento,
         string? observacoes = null)
-        : base(nomeCompleto, telefone, email, dataNascimento, TipoPessoa.Responsavel, observacoes)
+        : base(nomeCompleto, cpf, telefone, email, dataNascimento, TipoPessoa.Responsavel, observacoes)
     {
         if (email == null)
             throw new ArgumentNullException(nameof(email), "Email é obrigatório para responsável");

@@ -3,6 +3,7 @@ using System;
 using InstitutoVirtus.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InstitutoVirtus.Infrastructure.Migrations
 {
     [DbContext(typeof(VirtusDbContext))]
-    partial class VirtusDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250812183643_AddCpfToPessoa")]
+    partial class AddCpfToPessoa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.19");

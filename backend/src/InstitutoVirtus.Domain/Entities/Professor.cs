@@ -14,12 +14,13 @@ public class Professor : Pessoa
 
     public Professor(
         string nomeCompleto,
+        Cpf? cpf,
         Telefone telefone,
         Email email,
         DateTime dataNascimento,
         string? especialidade = null,
         string? observacoes = null)
-        : base(nomeCompleto, telefone, email, dataNascimento, TipoPessoa.Professor, observacoes)
+        : base(nomeCompleto, cpf, telefone, email, dataNascimento, TipoPessoa.Professor, observacoes)
     {
         Especialidade = especialidade;
     }
