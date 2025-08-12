@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -31,7 +31,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class LoginPage {
   private readonly fb = inject(FormBuilder);
-  private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly snackBar = inject(MatSnackBar);
 
@@ -55,10 +54,10 @@ export class LoginPage {
 
     this.authService.login(credenciais).subscribe({
       next: () => {
+        this.carregando.set(false);
         this.snackBar.open('Login realizado com sucesso!', 'Fechar', {
           duration: 3000,
         });
-        this.router.navigate(['/']);
       },
       error: (error: HttpErrorResponse) => {
         this.carregando.set(false);

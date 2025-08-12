@@ -6,12 +6,12 @@ export class LoadingService {
   readonly isLoading = signal(false);
 
   show(): void {
-    this.loadingCount.update((count) => count + 1);
+    this.loadingCount.update(count => count + 1);
     this.isLoading.set(true);
   }
 
   hide(): void {
-    this.loadingCount.update((count) => Math.max(0, count - 1));
+    this.loadingCount.update(count => Math.max(0, count - 1));
     if (this.loadingCount() === 0) {
       this.isLoading.set(false);
     }

@@ -40,7 +40,10 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiConfig.baseUrl}/auth/login`, credenciais).pipe(
       tap(response => {
         this.definirSessao(response);
-        this.router.navigate(['/']);
+        // Navegação com timeout para garantir que o estado foi atualizado
+        setTimeout(() => {
+          this.router.navigate(['/dashboard']);
+        }, 100);
       }),
       catchError(error => {
         console.error('Erro ao realizar login:', error);
@@ -102,14 +105,28 @@ export class AuthService {
 
     this.sessionSignal.set(session);
     this.estaAutenticado.set(true);
-    this.usuarioAtual.set(normalizedResponse.user);
+
+    // Normalizar o usuário para camelCase
+    const normalizedUser = {
+      id: normalizedResponse.user.Id || normalizedResponse.user.id,
+      nome: normalizedResponse.user.Nome || normalizedResponse.user.nome,
+      email: normalizedResponse.user.Email || normalizedResponse.user.email,
+      tipo: normalizedResponse.user.Tipo || normalizedResponse.user.tipo,
+      pessoaId: normalizedResponse.user.PessoaId || normalizedResponse.user.pessoaId,
+      ativo:
+        normalizedResponse.user.Ativo !== undefined
+          ? normalizedResponse.user.Ativo
+          : normalizedResponse.user.ativo,
+    };
+
+    this.usuarioAtual.set(normalizedUser);
 
     // Só salva no localStorage se os dados são válidos
     localStorage.setItem('token', normalizedResponse.token);
     if (normalizedResponse.refreshToken) {
       localStorage.setItem('refreshToken', normalizedResponse.refreshToken);
     }
-    localStorage.setItem('user', JSON.stringify(normalizedResponse.user));
+    localStorage.setItem('user', JSON.stringify(normalizedUser));
   }
 
   private carregarSessaoDoStorage(): void {
