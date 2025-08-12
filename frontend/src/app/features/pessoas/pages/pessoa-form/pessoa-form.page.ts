@@ -17,11 +17,7 @@ import { PageHeaderComponent } from '../../../../shared/ui/components/page-heade
 import { cpfValidator } from '../../../../shared/validators/cpf.validator';
 import { telefoneValidator } from '../../../../shared/validators/telefone.validator';
 import { PessoasStore } from '../../data-access/pessoas.store';
-import {
-  CreatePessoaRequest,
-  UpdatePessoaRequest,
-  TipoPessoa,
-} from '../../models/pessoa.model';
+import { CreatePessoaRequest, UpdatePessoaRequest, TipoPessoa } from '../../models/pessoa.model';
 
 @Component({
   selector: 'app-pessoa-form',
@@ -45,9 +41,7 @@ import {
   template: `
     <app-page-header
       [title]="isEdit() ? 'Editar Pessoa' : 'Nova Pessoa'"
-      [subtitle]="
-        isEdit() ? 'Atualize os dados da pessoa' : 'Cadastre uma nova pessoa'
-      "
+      [subtitle]="isEdit() ? 'Atualize os dados da pessoa' : 'Cadastre uma nova pessoa'"
     />
 
     <mat-card>
@@ -61,13 +55,8 @@ import {
           <div class="form-grid">
             <mat-form-field>
               <mat-label>Nome Completo</mat-label>
-              <input
-                matInput
-                formControlName="nome"
-                placeholder="Digite o nome completo"
-              />
-              @if (form.get('nome')?.hasError('required') &&
-              form.get('nome')?.touched) {
+              <input matInput formControlName="nome" placeholder="Digite o nome completo" />
+              @if (form.get('nome')?.hasError('required') && form.get('nome')?.touched) {
               <mat-error>Nome é obrigatório</mat-error>
               }
             </mat-form-field>
@@ -80,22 +69,16 @@ import {
                 mask="000.000.000-00"
                 placeholder="000.000.000-00"
               />
-              @if (form.get('cpf')?.hasError('required') &&
-              form.get('cpf')?.touched) {
+              @if (form.get('cpf')?.hasError('required') && form.get('cpf')?.touched) {
               <mat-error>CPF é obrigatório</mat-error>
-              } @if (form.get('cpf')?.hasError('cpf') &&
-              form.get('cpf')?.touched) {
+              } @if (form.get('cpf')?.hasError('cpf') && form.get('cpf')?.touched) {
               <mat-error>CPF inválido</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field>
               <mat-label>Data de Nascimento</mat-label>
-              <input
-                matInput
-                [matDatepicker]="picker"
-                formControlName="dataNascimento"
-              />
+              <input matInput [matDatepicker]="picker" formControlName="dataNascimento" />
               <mat-datepicker-toggle matIconSuffix [for]="picker" />
               <mat-datepicker #picker />
               @if (form.get('dataNascimento')?.hasError('required') &&
@@ -112,11 +95,9 @@ import {
                 mask="(00) 00000-0000"
                 placeholder="(00) 00000-0000"
               />
-              @if (form.get('telefone')?.hasError('required') &&
-              form.get('telefone')?.touched) {
+              @if (form.get('telefone')?.hasError('required') && form.get('telefone')?.touched) {
               <mat-error>Telefone é obrigatório</mat-error>
-              } @if (form.get('telefone')?.hasError('telefone') &&
-              form.get('telefone')?.touched) {
+              } @if (form.get('telefone')?.hasError('telefone') && form.get('telefone')?.touched) {
               <mat-error>Telefone inválido</mat-error>
               }
             </mat-form-field>
@@ -129,8 +110,7 @@ import {
                 formControlName="email"
                 placeholder="email@exemplo.com"
               />
-              @if (form.get('email')?.hasError('email') &&
-              form.get('email')?.touched) {
+              @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
               <mat-error>E-mail inválido</mat-error>
               }
               <mat-hint>Opcional para alunos menores de 18 anos</mat-hint>
@@ -143,8 +123,7 @@ import {
                 <mat-option value="Responsavel">Responsável</mat-option>
                 <mat-option value="Professor">Professor</mat-option>
               </mat-select>
-              @if (form.get('tipo')?.hasError('required') &&
-              form.get('tipo')?.touched) {
+              @if (form.get('tipo')?.hasError('required') && form.get('tipo')?.touched) {
               <mat-error>Tipo é obrigatório</mat-error>
               }
             </mat-form-field>
@@ -161,9 +140,7 @@ import {
           </div>
 
           <div class="form-actions">
-            <button mat-button type="button" (click)="cancel()">
-              Cancelar
-            </button>
+            <button mat-button type="button" (click)="cancel()">Cancelar</button>
             <button
               mat-raised-button
               color="primary"
@@ -232,7 +209,7 @@ export class PessoaFormPage implements OnInit {
     }
 
     // Auto-validate email for adults
-    this.form.get('dataNascimento')?.valueChanges.subscribe((date) => {
+    this.form.get('dataNascimento')?.valueChanges.subscribe(date => {
       if (date) {
         const age = this.calculateAge(new Date(date));
         const emailControl = this.form.get('email');
@@ -251,7 +228,7 @@ export class PessoaFormPage implements OnInit {
     this.loading.set(true);
     this.store.loadPessoa(id);
 
-    this.store.selectedPessoa$.subscribe((pessoa) => {
+    this.store.selectedPessoa$.subscribe(pessoa => {
       if (pessoa) {
         this.form.patchValue({
           nome: pessoa.nome,
@@ -291,9 +268,10 @@ export class PessoaFormPage implements OnInit {
       this.store.createPessoa(createRequest);
     }
 
-    // Navigate back on success
-    this.store.loading$.subscribe((loading) => {
+    // Navega ao concluir
+    const sub = this.store.loading$.subscribe(loading => {
       if (!loading) {
+        sub.unsubscribe();
         this.router.navigate(['/pessoas']);
       }
     });
@@ -308,10 +286,7 @@ export class PessoaFormPage implements OnInit {
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
 
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
 

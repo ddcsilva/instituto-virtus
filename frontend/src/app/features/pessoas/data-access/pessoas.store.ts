@@ -41,24 +41,22 @@ export class PessoasStore extends ComponentStore<PessoasState> {
   }
 
   // Selectors
-  readonly pessoas$ = this.select((state) => state.pessoas);
-  readonly selectedPessoa$ = this.select((state) => state.selectedPessoa);
-  readonly vinculos$ = this.select((state) => state.vinculos);
-  readonly loading$ = this.select((state) => state.loading);
-  readonly error$ = this.select((state) => state.error);
-  readonly filter$ = this.select((state) => state.filter);
-  readonly total$ = this.select((state) => state.total);
+  readonly pessoas$ = this.select(state => state.pessoas);
+  readonly selectedPessoa$ = this.select(state => state.selectedPessoa);
+  readonly vinculos$ = this.select(state => state.vinculos);
+  readonly loading$ = this.select(state => state.loading);
+  readonly error$ = this.select(state => state.error);
+  readonly filter$ = this.select(state => state.filter);
+  readonly total$ = this.select(state => state.total);
 
-  readonly alunos$ = this.select(this.pessoas$, (pessoas) =>
-    pessoas.filter((p) => p.tipo === 'Aluno')
+  readonly alunos$ = this.select(this.pessoas$, pessoas => pessoas.filter(p => p.tipo === 'Aluno'));
+
+  readonly responsaveis$ = this.select(this.pessoas$, pessoas =>
+    pessoas.filter(p => p.tipo === 'Responsavel')
   );
 
-  readonly responsaveis$ = this.select(this.pessoas$, (pessoas) =>
-    pessoas.filter((p) => p.tipo === 'Responsavel')
-  );
-
-  readonly professores$ = this.select(this.pessoas$, (pessoas) =>
-    pessoas.filter((p) => p.tipo === 'Professor')
+  readonly professores$ = this.select(this.pessoas$, pessoas =>
+    pessoas.filter(p => p.tipo === 'Professor')
   );
 
   // Updaters
@@ -85,19 +83,15 @@ export class PessoasStore extends ComponentStore<PessoasState> {
     selectedPessoa: pessoa,
   }));
 
-  readonly setVinculos = this.updater(
-    (state, vinculos: ResponsavelAluno[]) => ({
-      ...state,
-      vinculos,
-    })
-  );
+  readonly setVinculos = this.updater((state, vinculos: ResponsavelAluno[]) => ({
+    ...state,
+    vinculos,
+  }));
 
-  readonly updateFilter = this.updater(
-    (state, filter: Partial<PessoaFilter>) => ({
-      ...state,
-      filter: { ...state.filter, ...filter },
-    })
-  );
+  readonly updateFilter = this.updater((state, filter: Partial<PessoaFilter>) => ({
+    ...state,
+    filter: { ...state.filter, ...filter },
+  }));
 
   readonly addPessoa = this.updater((state, pessoa: Pessoa) => ({
     ...state,
@@ -107,14 +101,13 @@ export class PessoasStore extends ComponentStore<PessoasState> {
 
   readonly updatePessoa = this.updater((state, pessoa: Pessoa) => ({
     ...state,
-    pessoas: state.pessoas.map((p) => (p.id === pessoa.id ? pessoa : p)),
-    selectedPessoa:
-      state.selectedPessoa?.id === pessoa.id ? pessoa : state.selectedPessoa,
+    pessoas: state.pessoas.map(p => (p.id === pessoa.id ? pessoa : p)),
+    selectedPessoa: state.selectedPessoa?.id === pessoa.id ? pessoa : state.selectedPessoa,
   }));
 
   readonly removePessoa = this.updater((state, id: string) => ({
     ...state,
-    pessoas: state.pessoas.filter((p) => p.id !== id),
+    pessoas: state.pessoas.filter(p => p.id !== id),
     total: state.total - 1,
   }));
 
@@ -122,11 +115,11 @@ export class PessoasStore extends ComponentStore<PessoasState> {
   readonly loadPessoas = this.effect((filter$: Observable<PessoaFilter>) =>
     filter$.pipe(
       tap(() => this.setLoading(true)),
-      switchMap((filter) =>
+      switchMap(filter =>
         this.pessoasService.getAll(filter).pipe(
           tapResponse(
-            (result) => this.setPessoas(result),
-            (error) => {
+            result => this.setPessoas(result),
+            error => {
               this.setError('Erro ao carregar pessoas');
               this.snackBar.open('Erro ao carregar pessoas', 'Fechar', {
                 duration: 3000,
@@ -141,14 +134,14 @@ export class PessoasStore extends ComponentStore<PessoasState> {
   readonly loadPessoa = this.effect((id$: Observable<string>) =>
     id$.pipe(
       tap(() => this.setLoading(true)),
-      switchMap((id) =>
+      switchMap(id =>
         this.pessoasService.getById(id).pipe(
           tapResponse(
-            (pessoa) => {
+            pessoa => {
               this.setSelectedPessoa(pessoa);
               this.setLoading(false);
             },
-            (error) => {
+            error => {
               this.setError('Erro ao carregar pessoa');
               this.snackBar.open('Erro ao carregar pessoa', 'Fechar', {
                 duration: 3000,
@@ -160,29 +153,30 @@ export class PessoasStore extends ComponentStore<PessoasState> {
     )
   );
 
-  readonly createPessoa = this.effect(
-    (pessoa$: Observable<CreatePessoaRequest>) =>
-      pessoa$.pipe(
-        tap(() => this.setLoading(true)),
-        switchMap((pessoa) =>
-          this.pessoasService.create(pessoa).pipe(
-            tapResponse(
-              (created) => {
-                this.addPessoa(created);
-                this.snackBar.open('Pessoa cadastrada com sucesso', 'Fechar', {
-                  duration: 3000,
-                });
-              },
-              (error) => {
-                this.setError('Erro ao criar pessoa');
-                this.snackBar.open('Erro ao criar pessoa', 'Fechar', {
-                  duration: 3000,
-                });
-              }
-            )
+  readonly createPessoa = this.effect((pessoa$: Observable<CreatePessoaRequest>) =>
+    pessoa$.pipe(
+      tap(() => this.setLoading(true)),
+      switchMap(pessoa =>
+        this.pessoasService.create(pessoa).pipe(
+          tapResponse(
+            created => {
+              this.addPessoa(created);
+              this.setLoading(false);
+              this.snackBar.open('Pessoa cadastrada com sucesso', 'Fechar', {
+                duration: 3000,
+              });
+            },
+            error => {
+              this.setError('Erro ao criar pessoa');
+              this.setLoading(false);
+              this.snackBar.open('Erro ao criar pessoa', 'Fechar', {
+                duration: 3000,
+              });
+            }
           )
         )
       )
+    )
   );
 
   readonly updatePessoaEffect = this.effect(
@@ -192,14 +186,16 @@ export class PessoasStore extends ComponentStore<PessoasState> {
         switchMap(({ id, pessoa }) =>
           this.pessoasService.update(id, pessoa).pipe(
             tapResponse(
-              (updated) => {
+              updated => {
                 this.updatePessoa(updated);
+                this.setLoading(false);
                 this.snackBar.open('Pessoa atualizada com sucesso', 'Fechar', {
                   duration: 3000,
                 });
               },
-              (error) => {
+              error => {
                 this.setError('Erro ao atualizar pessoa');
+                this.setLoading(false);
                 this.snackBar.open('Erro ao atualizar pessoa', 'Fechar', {
                   duration: 3000,
                 });
@@ -213,7 +209,7 @@ export class PessoasStore extends ComponentStore<PessoasState> {
   readonly deletePessoa = this.effect((id$: Observable<string>) =>
     id$.pipe(
       tap(() => this.setLoading(true)),
-      switchMap((id) =>
+      switchMap(id =>
         this.pessoasService.delete(id).pipe(
           tapResponse(
             () => {
@@ -222,7 +218,7 @@ export class PessoasStore extends ComponentStore<PessoasState> {
                 duration: 3000,
               });
             },
-            (error) => {
+            error => {
               this.setError('Erro ao excluir pessoa');
               this.snackBar.open('Erro ao excluir pessoa', 'Fechar', {
                 duration: 3000,
@@ -236,17 +232,17 @@ export class PessoasStore extends ComponentStore<PessoasState> {
 
   readonly toggleStatus = this.effect((id$: Observable<string>) =>
     id$.pipe(
-      switchMap((id) =>
+      switchMap(id =>
         this.pessoasService.toggleStatus(id).pipe(
           tapResponse(
-            (pessoa) => {
+            pessoa => {
               this.updatePessoa(pessoa);
               const status = pessoa.ativo ? 'ativada' : 'desativada';
               this.snackBar.open(`Pessoa ${status} com sucesso`, 'Fechar', {
                 duration: 3000,
               });
             },
-            (error) => {
+            error => {
               this.setError('Erro ao alterar status');
               this.snackBar.open('Erro ao alterar status', 'Fechar', {
                 duration: 3000,
@@ -260,11 +256,11 @@ export class PessoasStore extends ComponentStore<PessoasState> {
 
   readonly loadVinculos = this.effect((responsavelId$: Observable<string>) =>
     responsavelId$.pipe(
-      switchMap((responsavelId) =>
+      switchMap(responsavelId =>
         this.pessoasService.getVinculos(responsavelId).pipe(
           tapResponse(
-            (vinculos) => this.setVinculos(vinculos),
-            (error) => {
+            vinculos => this.setVinculos(vinculos),
+            error => {
               this.setError('Erro ao carregar vínculos');
               this.snackBar.open('Erro ao carregar vínculos', 'Fechar', {
                 duration: 3000,
@@ -276,27 +272,26 @@ export class PessoasStore extends ComponentStore<PessoasState> {
     )
   );
 
-  readonly vincularAlunos = this.effect(
-    (request$: Observable<VinculoResponsavelRequest>) =>
-      request$.pipe(
-        switchMap((request) =>
-          this.pessoasService.vincularAlunos(request).pipe(
-            tapResponse(
-              (vinculos) => {
-                this.setVinculos(vinculos);
-                this.snackBar.open('Alunos vinculados com sucesso', 'Fechar', {
-                  duration: 3000,
-                });
-              },
-              (error) => {
-                this.setError('Erro ao vincular alunos');
-                this.snackBar.open('Erro ao vincular alunos', 'Fechar', {
-                  duration: 3000,
-                });
-              }
-            )
+  readonly vincularAlunos = this.effect((request$: Observable<VinculoResponsavelRequest>) =>
+    request$.pipe(
+      switchMap(request =>
+        this.pessoasService.vincularAlunos(request).pipe(
+          tapResponse(
+            vinculos => {
+              this.setVinculos(vinculos);
+              this.snackBar.open('Alunos vinculados com sucesso', 'Fechar', {
+                duration: 3000,
+              });
+            },
+            error => {
+              this.setError('Erro ao vincular alunos');
+              this.snackBar.open('Erro ao vincular alunos', 'Fechar', {
+                duration: 3000,
+              });
+            }
           )
         )
       )
+    )
   );
 }
