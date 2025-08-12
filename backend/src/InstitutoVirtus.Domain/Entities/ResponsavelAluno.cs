@@ -27,4 +27,9 @@ public class ResponsavelAluno : BaseEntity
     {
         Principal = true;
     }
+
+    public void DefinirComoNaoPrincipal()
+    {
+        Principal = false;
+    }
 }

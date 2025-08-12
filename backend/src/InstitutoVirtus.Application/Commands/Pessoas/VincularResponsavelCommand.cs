@@ -41,7 +41,7 @@ public class VincularResponsavelCommandHandler : IRequestHandler<VincularRespons
                 return Result.Failure("Responsável não encontrado");
 
             var parentesco = Enum.Parse<Parentesco>(request.Parentesco);
-            ((Aluno)aluno).AdicionarResponsavel((Responsavel)responsavel, parentesco);
+            ((Aluno)aluno).AdicionarResponsavel((Responsavel)responsavel, parentesco, request.Principal);
 
             await _pessoaRepository.UpdateAsync(aluno, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

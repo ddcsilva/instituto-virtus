@@ -37,4 +37,6 @@ export interface ResponsavelAluno {
 export interface VinculoResponsavelRequest {
   responsavelId: string;
   alunoIds: string[];
+  parentesco?: string;
+  principal?: boolean;
 }

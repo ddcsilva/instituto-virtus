@@ -60,8 +60,28 @@ import { Pessoa, TipoPessoa } from '../../models/pessoa.model';
         <div class="filters">
           <mat-form-field>
             <mat-label>Buscar</mat-label>
-            <input matInput [formControl]="searchControl" placeholder="Nome ou CPF" />
+            <input matInput [formControl]="searchControl" placeholder="Nome" />
             <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>CPF</mat-label>
+            <input
+              matInput
+              [formControl]="cpfControl"
+              placeholder="000.000.000-00"
+              mask="000.000.000-00"
+            />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Telefone</mat-label>
+            <input
+              matInput
+              [formControl]="telControl"
+              placeholder="(00) 00000-0000"
+              mask="(00) 00000-0000"
+            />
           </mat-form-field>
 
           <mat-form-field>
@@ -227,6 +247,8 @@ export class PessoasListPage implements OnInit {
   readonly loading = signal(false);
 
   readonly searchControl = new FormControl('');
+  readonly cpfControl = new FormControl('');
+  readonly telControl = new FormControl('');
   readonly tipoControl = new FormControl('');
   readonly statusControl = new FormControl<boolean | null>(null);
 
@@ -242,6 +264,18 @@ export class PessoasListPage implements OnInit {
     // Setup filters
     this.searchControl.valueChanges.pipe(debounceTime(300)).subscribe(value => {
       this.store.updateFilter({ nome: value || undefined, page: 0 });
+      this.loadPessoas();
+    });
+
+    this.cpfControl.valueChanges.pipe(debounceTime(300)).subscribe(value => {
+      const digits = (value || '').replace(/\D/g, '');
+      this.store.updateFilter({ cpf: digits || undefined, page: 0 });
+      this.loadPessoas();
+    });
+
+    this.telControl.valueChanges.pipe(debounceTime(300)).subscribe(value => {
+      const digits = (value || '').replace(/\D/g, '');
+      this.store.updateFilter({ telefone: digits || undefined, page: 0 });
       this.loadPessoas();
     });
 

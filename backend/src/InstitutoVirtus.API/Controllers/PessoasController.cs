@@ -96,6 +96,7 @@ public class PessoasController : ControllerBase
         public Guid ResponsavelId { get; set; }
         public IEnumerable<Guid> AlunoIds { get; set; } = Enumerable.Empty<Guid>();
         public string Parentesco { get; set; } = "Responsavel";
+        public bool Principal { get; set; } = false;
     }
 
     [HttpPost("vincular")]
@@ -109,7 +110,7 @@ public class PessoasController : ControllerBase
                 AlunoId = alunoId,
                 ResponsavelId = request.ResponsavelId,
                 Parentesco = request.Parentesco,
-                Principal = false
+                Principal = request.Principal
             };
             var res = await _mediator.Send(cmd, ct);
             if (!res.IsSuccess) return BadRequest(res.Error);

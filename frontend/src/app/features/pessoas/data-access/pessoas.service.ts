@@ -14,6 +14,7 @@ import {
 export interface PessoaFilter {
   nome?: string;
   cpf?: string;
+  telefone?: string;
   tipo?: string;
   ativo?: boolean;
   page?: number;

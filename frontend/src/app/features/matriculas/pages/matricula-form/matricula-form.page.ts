@@ -48,10 +48,7 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
   ],
   providers: [PessoasStore],
   template: `
-    <app-page-header
-      title="Nova Matrícula"
-      subtitle="Matricule um aluno em uma turma"
-    />
+    <app-page-header title="Nova Matrícula" subtitle="Matricule um aluno em uma turma" />
 
     <div class="form-container">
       <mat-card>
@@ -79,9 +76,7 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
                     </ngx-mat-select-search>
                   </mat-option>
                   @for (aluno of filteredAlunos(); track aluno.id) {
-                  <mat-option [value]="aluno.id">
-                    {{ aluno.nome }} - {{ aluno.cpf }}
-                  </mat-option>
+                  <mat-option [value]="aluno.id"> {{ aluno.nome }} - {{ aluno.cpf }} </mat-option>
                   }
                 </mat-select>
                 @if (matriculaForm.get('alunoId')?.hasError('required')) {
@@ -140,10 +135,7 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
                   (selectionChange)="onTurmaChange($event.value)"
                 >
                   @for (turma of filteredTurmas(); track turma.id) {
-                  <mat-option
-                    [value]="turma.id"
-                    [disabled]="turma.vagasOcupadas >= turma.vagas"
-                  >
+                  <mat-option [value]="turma.id" [disabled]="turma.vagasOcupadas >= turma.vagas">
                     <div class="turma-option">
                       <span>{{ turma.nome }} - {{ turma.curso?.nome }}</span>
                       <span class="vagas-info">
@@ -176,13 +168,9 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
                   <div class="info-item">
                     <mat-icon>date_range</mat-icon>
                     <span
-                      >{{
-                        selectedTurma()!.periodoInicio | date : 'dd/MM/yyyy'
-                      }}
+                      >{{ selectedTurma()!.periodoInicio | date : 'dd/MM/yyyy' }}
                       -
-                      {{
-                        selectedTurma()!.periodoFim | date : 'dd/MM/yyyy'
-                      }}</span
+                      {{ selectedTurma()!.periodoFim | date : 'dd/MM/yyyy' }}</span
                     >
                   </div>
                 </div>
@@ -197,48 +185,30 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
               <div class="form-grid">
                 <mat-form-field>
                   <mat-label>Data da Matrícula</mat-label>
-                  <input
-                    matInput
-                    [matDatepicker]="picker"
-                    formControlName="dataMatricula"
-                  />
+                  <input matInput [matDatepicker]="picker" formControlName="dataMatricula" />
                   <mat-datepicker-toggle matIconSuffix [for]="picker" />
                   <mat-datepicker #picker />
-                  @if (matriculaForm.get('dataMatricula')?.hasError('required'))
-                  {
+                  @if (matriculaForm.get('dataMatricula')?.hasError('required')) {
                   <mat-error>Data é obrigatória</mat-error>
                   }
                 </mat-form-field>
 
                 <mat-form-field>
                   <mat-label>Valor da Mensalidade</mat-label>
-                  <input
-                    matInput
-                    type="number"
-                    formControlName="valorMensalidade"
-                  />
+                  <input matInput type="number" formControlName="valorMensalidade" />
                   <span matPrefix>R$ </span>
-                  @if
-                  (matriculaForm.get('valorMensalidade')?.hasError('required'))
-                  {
+                  @if (matriculaForm.get('valorMensalidade')?.hasError('required')) {
                   <mat-error>Valor é obrigatório</mat-error>
                   }
                 </mat-form-field>
               </div>
 
               <div class="desconto-section">
-                <mat-checkbox formControlName="aplicarDesconto">
-                  Aplicar Desconto
-                </mat-checkbox>
+                <mat-checkbox formControlName="aplicarDesconto"> Aplicar Desconto </mat-checkbox>
 
                 @if (matriculaForm.get('aplicarDesconto')?.value) {
                 <div class="desconto-controls">
-                  <mat-slider
-                    [min]="0"
-                    [max]="50"
-                    [step]="5"
-                    [displayWith]="formatPercent"
-                  >
+                  <mat-slider [min]="0" [max]="50" [step]="5" [displayWith]="formatPercent">
                     <input
                       matSliderThumb
                       formControlName="descontoPercentual"
@@ -247,14 +217,8 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
                   </mat-slider>
 
                   <div class="desconto-display">
-                    <span
-                      >{{ matriculaForm.get('descontoPercentual')?.value }}% de
-                      desconto</span
-                    >
-                    <strong
-                      >Valor final:
-                      {{ valorComDesconto() | currency : 'BRL' }}</strong
-                    >
+                    <span>{{ matriculaForm.get('descontoPercentual')?.value }}% de desconto</span>
+                    <strong>Valor final: {{ valorComDesconto() | currency : 'BRL' }}</strong>
                   </div>
                 </div>
                 }
@@ -262,11 +226,7 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
 
               <mat-form-field class="full-width">
                 <mat-label>Observações</mat-label>
-                <textarea
-                  matInput
-                  formControlName="observacao"
-                  rows="3"
-                ></textarea>
+                <textarea matInput formControlName="observacao" rows="3"></textarea>
               </mat-form-field>
             </div>
 
@@ -295,25 +255,17 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
                 <div class="preview-mensalidades">
                   <h4>Prévia das Mensalidades</h4>
                   <div class="mensalidades-list">
-                    @for (mensalidade of previewMensalidades(); track
-                    mensalidade.competencia) {
+                    @for (mensalidade of previewMensalidades(); track mensalidade.competencia) {
                     <div class="mensalidade-item">
                       <span>{{ mensalidade.competencia }}</span>
-                      <span
-                        >Vencimento:
-                        {{ mensalidade.vencimento | date : 'dd/MM/yyyy' }}</span
-                      >
-                      <strong>{{
-                        valorComDesconto() | currency : 'BRL'
-                      }}</strong>
+                      <span>Vencimento: {{ mensalidade.vencimento | date : 'dd/MM/yyyy' }}</span>
+                      <strong>{{ valorComDesconto() | currency : 'BRL' }}</strong>
                     </div>
                     }
                   </div>
                   <div class="total-preview">
                     <span>Total:</span>
-                    <strong>{{
-                      totalMensalidades() | currency : 'BRL'
-                    }}</strong>
+                    <strong>{{ totalMensalidades() | currency : 'BRL' }}</strong>
                   </div>
                 </div>
               </div>
@@ -341,21 +293,14 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
                 @if (matriculaForm.get('gerarMensalidades')?.value) {
                 <div class="resumo-item">
                   <span>Mensalidades a Gerar:</span>
-                  <strong
-                    >{{
-                      matriculaForm.get('quantidadeMeses')?.value
-                    }}
-                    meses</strong
-                  >
+                  <strong>{{ matriculaForm.get('quantidadeMeses')?.value }} meses</strong>
                 </div>
                 }
               </div>
             </div>
 
             <div class="form-actions">
-              <button mat-button type="button" (click)="cancel()">
-                Cancelar
-              </button>
+              <button mat-button type="button" (click)="cancel()">Cancelar</button>
               <button
                 mat-raised-button
                 color="primary"
@@ -585,8 +530,7 @@ export class MatriculaFormPage implements OnInit {
   readonly filteredAlunos = computed(() => {
     const filter = this.alunoFilterCtrl.value?.toLowerCase() || '';
     return this.alunos().filter(
-      (aluno) =>
-        aluno.nome.toLowerCase().includes(filter) || aluno.cpf.includes(filter)
+      aluno => aluno.nome.toLowerCase().includes(filter) || aluno.cpf.includes(filter)
     );
   });
 
@@ -596,10 +540,10 @@ export class MatriculaFormPage implements OnInit {
     const turno = this.turnoFilterCtrl.value;
 
     if (curso) {
-      turmas = turmas.filter((t) => t.cursoId === curso);
+      turmas = turmas.filter(t => t.cursoId === curso);
     }
     if (turno) {
-      turmas = turmas.filter((t) => t.turno === turno);
+      turmas = turmas.filter(t => t.turno === turno);
     }
 
     return turmas;
@@ -616,9 +560,7 @@ export class MatriculaFormPage implements OnInit {
 
   readonly previewMensalidades = computed(() => {
     const quantidade = this.matriculaForm.get('quantidadeMeses')?.value || 0;
-    const dataInicio = new Date(
-      this.matriculaForm.get('dataMatricula')?.value || new Date()
-    );
+    const dataInicio = new Date(this.matriculaForm.get('dataMatricula')?.value || new Date());
     const mensalidades = [];
 
     for (let i = 0; i < quantidade; i++) {
@@ -629,9 +571,7 @@ export class MatriculaFormPage implements OnInit {
       vencimentoDate.setDate(10); // Vencimento no dia 10
 
       mensalidades.push({
-        competencia: `${
-          competenciaDate.getMonth() + 1
-        }/${competenciaDate.getFullYear()}`,
+        competencia: `${competenciaDate.getMonth() + 1}/${competenciaDate.getFullYear()}`,
         vencimento: vencimentoDate,
       });
     }
@@ -652,11 +592,11 @@ export class MatriculaFormPage implements OnInit {
 
   loadAlunos(): void {
     this.pessoasStore.loadPessoas({ tipo: 'Aluno', ativo: true });
-    this.pessoasStore.alunos$.subscribe((alunos) => this.alunos.set(alunos));
+    this.pessoasStore.alunos$.subscribe(alunos => this.alunos.set(alunos));
   }
 
   loadTurmas(): void {
-    this.turmasService.getAll({ status: 'EmAndamento' }).subscribe((result) => {
+    this.turmasService.getAll({ status: 'EmAndamento' }).subscribe(result => {
       this.turmas.set(result.items || []);
     });
   }
@@ -671,17 +611,17 @@ export class MatriculaFormPage implements OnInit {
   }
 
   onAlunoChange(alunoId: string): void {
-    const aluno = this.alunos().find((a) => a.id === alunoId);
+    const aluno = this.alunos().find(a => a.id === alunoId);
     this.selectedAluno.set(aluno || null);
   }
 
   onTurmaChange(turmaId: string): void {
-    const turma = this.turmas().find((t) => t.id === turmaId);
+    const turma = this.turmas().find(t => t.id === turmaId);
     this.selectedTurma.set(turma || null);
 
     if (turma?.curso) {
       this.matriculaForm.patchValue({
-        valorMensalidade: turma.curso.valor || 0,
+        valorMensalidade: turma.curso.valorMensalidade || 0,
       });
     }
   }
@@ -705,9 +645,7 @@ export class MatriculaFormPage implements OnInit {
   formatHorarios(horarios: any[]): string {
     if (!horarios || horarios.length === 0) return '-';
 
-    return horarios
-      .map((h) => `${h.diaSemana.substr(0, 3)} ${h.horaInicio}`)
-      .join(', ');
+    return horarios.map(h => `${h.diaSemana.substr(0, 3)} ${h.horaInicio}`).join(', ');
   }
 
   onSubmit(): void {
@@ -721,14 +659,12 @@ export class MatriculaFormPage implements OnInit {
       turmaId: formValue.turmaId,
       dataMatricula: formValue.dataMatricula.toISOString(),
       valorMensalidade: formValue.valorMensalidade,
-      descontoPercentual: formValue.aplicarDesconto
-        ? formValue.descontoPercentual
-        : undefined,
+      descontoPercentual: formValue.aplicarDesconto ? formValue.descontoPercentual : undefined,
       observacao: formValue.observacao || undefined,
     };
 
     this.matriculasService.create(request).subscribe({
-      next: (matricula) => {
+      next: matricula => {
         if (formValue.gerarMensalidades) {
           this.financeiroService
             .gerarMensalidades(matricula.id, formValue.quantidadeMeses)

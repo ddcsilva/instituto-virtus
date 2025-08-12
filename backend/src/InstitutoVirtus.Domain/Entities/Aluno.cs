@@ -33,7 +33,7 @@ public class Aluno : Pessoa
         }
     }
 
-    public void AdicionarResponsavel(Responsavel responsavel, Parentesco parentesco)
+    public void AdicionarResponsavel(Responsavel responsavel, Parentesco parentesco, bool principal = false)
     {
         if (!EhMenorDeIdade())
             throw new BusinessRuleValidationException("Aluno maior de idade não precisa de responsável");
@@ -41,7 +41,18 @@ public class Aluno : Pessoa
         if (_responsaveis.Any(r => r.ResponsavelId == responsavel.Id))
             throw new BusinessRuleValidationException("Responsável já vinculado ao aluno");
 
-        var vinculo = new ResponsavelAluno(responsavel.Id, this.Id, parentesco);
+        if (principal)
+        {
+            foreach (var r in _responsaveis)
+            {
+                if (r.Principal)
+                {
+                    r.DefinirComoNaoPrincipal();
+                }
+            }
+        }
+
+        var vinculo = new ResponsavelAluno(responsavel.Id, this.Id, parentesco, principal);
         _responsaveis.Add(vinculo);
     }
 
