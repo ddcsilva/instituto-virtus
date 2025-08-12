@@ -1,0 +1,296 @@
+# Instituto Virtus --- Levantamento de Requisitos (MVP)
+
+> Baseado nas conversas com a Tairiny (áudios 1--6) e no contexto do
+> Instituto Virtus (cursos de teologia e música). Foco: reduzir trabalho
+> manual (principalmente pagamentos), organizar matrículas/turmas e dar
+> transparência ao aluno.
+
+## 1) Objetivos do MVP
+
+-   **Automatizar/organizar pagamentos mensais** por aluno/curso, com
+    marcação automática ou semi-automática de meses **"Pago/Em
+    aberto"**.
+-   **Permitir matrícula** (autocadastro) por responsáveis e alunos,
+    inclusive **um responsável inscrevendo dependentes** usando **o
+    mesmo e‑mail**.
+-   **Gerir turmas e horários** (aulas de 50 min) por
+    instrumento/professor.
+-   **Registrar presença e notas** (professor coordena), com **regra de
+    aprovação**: média ≥ **6,0** e frequência ≥ **75%**.
+-   **Portal do aluno/responsável**: visualizar mensalidades, presenças
+    e boletim.
+
+## 2) Papéis (perfis)
+
+-   **Admin**: configurações gerais; acesso total.
+-   **Coordenação (Tairiny)**: gestão de cursos/turmas; matrículas;
+    relatórios; conciliação de pagamentos; boletim global.
+-   **Professor**: registra **presença** e **notas** das suas turmas;
+    consulta lista de alunos.
+-   **Responsável/Aluno**: realiza **matrícula**; consulta status de
+    pagamento, presenças e notas.
+
+## 3) Requisitos Funcionais (priorização MoSCoW)
+
+### MUST (obrigatórios no MVP)
+
+1.  **Cadastro básico** de pessoas: Aluno, Responsável, Professor.
+    Campos mínimos: nome completo, **telefone** (obrigatório), e‑mail
+    (opcional para aluno \< 18), data de nascimento.
+2.  **Conta do Responsável** pode **gerenciar múltiplos alunos**
+    (dependentes) **com o mesmo e‑mail**.
+3.  **Catálogo de Cursos** (ex.: Teclado, Violão, Teologia) e
+    **Turmas/Ofertas** (professor + **dia/horário de 50 min** +
+    sala/opcional + capacidade).
+4.  **Matrícula** de aluno em uma **Turma** (por período letivo/ano) ---
+    aceitar múltiplas matrículas do mesmo aluno (ex.: teclado e teoria).
+5.  **Mensalidades por curso/turma**: gerar **lançamentos mensais** por
+    matrícula, com status **Em aberto/Pago**.
+6.  **Conciliação de Pagamentos**:
+    -   **Manual/Semi-automática**: registrar pagamentos (PIX/espécie) e
+        **vincular a um ou mais meses e/ou a múltiplos alunos** do mesmo
+        responsável.
+    -   Regra de **alocação**: por padrão, abate dos **meses mais
+        antigos**, com opção de selecionar meses específicos.
+    -   Suportar **pré-pagamento** (crédito) e **sobras** (ficam como
+        saldo do responsável para abater faturas futuras).
+7.  **Lista de Presença** por aula/turma (professor marca
+    Presente/Faltou/Justificou).
+8.  **Lançamento de Notas** por avaliação e cálculo de **média final**
+    por disciplina/turma.
+9.  **Regra de aprovação**: aprovado se **média ≥ 6,0** **e**
+    **frequência ≥ 75%**; caso contrário, reprovado.
+10. **Portal do Aluno/Responsável**: ver **mensalidades**, **presenças**
+    e **boletim** (somente do(s) próprio(s) aluno(s)).
+11. **Relatórios básicos**: inadimplentes por mês, presença por turma,
+    aprovados/reprovados.
+
+### SHOULD (importantes, pós-MVP curto)
+
+12. **PIX com referência** (QR/Copia e Cola) por responsável/mês para
+    **facilitar a conciliação** (campo de referência + webhook opcional;
+    se não houver gateway, usar conferência manual por comprovante).
+13. **Recibos/Comprovantes** de pagamento (PDF simples) por mês/aluno.
+14. **Exportação** para Excel/CSV de listas (alunos, turmas, pagamentos,
+    presença, notas).
+15. **Notificações** (e‑mail/WhatsApp\*) de cobrança e lembretes de
+    aula.
+
+> \*WhatsApp pode começar manual (lista de disparo) e virar integração
+> depois.
+
+### COULD (desejáveis, versão futura)
+
+16. **Boleto bancário** (custo) com baixa automática via gateway.
+17. Integração com Google Forms (importar notas) --- manter **provas via
+    Forms** como hoje; no futuro, importar por planilha.
+18. Aplicativo mobile (PWA já pode ser avaliado no MVP).
+
+### WON'T (fora do MVP)
+
+-   Split de pagamento entre múltiplos pagadores, antifraude avançado,
+    conciliação bancária automática sem gateway, emissão de NFe.
+
+## 4) Regras de Negócio
+
+-   **Idade mínima:** 7 anos para alunos de música (conforme áudio).
+-   **E‑mail não é único** para matrícula: permitir **um e‑mail**
+    gerenciar **várias pessoas** (responsável + filhos).
+-   **Identificação prática**: além do nome, **telefone** é obrigatório
+    para diferenciar homônimos (padrão atual).
+-   **Aulas**: 50 minutos; turmas nomeadas por **instrumento +
+    professor + horário** (ex.: *Teclado --- Prof. João ---
+    19:00--19:50*).
+-   **Mensalidade**: valor por turma/curso; pode variar por curso;
+    política de descontos (se existir) a definir.
+-   **Alocação de pagamentos**: um pagamento pode quitar **vários
+    meses** e **vários alunos** de um mesmo responsável.
+-   **Frequência**: cálculo por quantidade de presenças/aulas dadas no
+    período letivo.
+-   **Avaliação**: média final numérica (0--10). Componentes de nota a
+    definir por curso (pode iniciar simples: 1--3 avaliações com pesos
+    iguais).
+
+## 5) Fluxos Principais
+
+### 5.1 Matrícula (Responsável → Aluno)
+
+1.  Responsável cria conta (e‑mail/telefone) → 2) cadastra
+    **dependente(s)** → 3) escolhe **curso/turma/horário** → 4) confirma
+    matrícula → 5) sistema gera **mensalidades** do período.
+
+### 5.2 Pagamento e Conciliação
+
+-   **Sem gateway (MVP):** responsável paga via **PIX** e **anexa
+    comprovante**; coordenação lança pagamento e seleciona meses/alunos;
+    sistema marca **Pago** e atualiza saldo.
+-   **Com referência (SHOULD):** gerar **QR PIX** com **identificador**;
+    ao receber comprovante/webhook, sistema **aloca automaticamente** e
+    marca **Pago**.
+
+### 5.3 Presença e Notas
+
+-   Professor abre turma do dia → marca presença por aluno → lança notas
+    quando houver avaliações. Sistema calcula **frequência** e **média**
+    e exibe no portal.
+
+## 6) Modelo de Dados (conceitual)
+
+**Entidades principais**
+
+-   **Pessoa** (id, nome, telefone\*, e‑mail, dt_nasc, tipo:
+    aluno/professor/responsável, observações)
+-   **ResponsavelAluno** (responsavel_id, aluno_id, parentesco)
+-   **Curso** (id, nome, descrição, ativo)
+-   **Turma** (id, curso_id, professor_id, dia_semana, hora_início,
+    hora_fim, capacidade, local/sala, período/ano, ativo)
+-   **Matricula** (id, aluno_id, turma_id, status:
+    ativa/trancada/concluída)
+-   **Mensalidade** (id, matricula_id, competência AAAA‑MM, valor,
+    status: em_aberto/pago, dt_vencimento, dt_pagamento, forma_pagto,
+    observação)
+-   **Pagamento** (id, responsavel_id, valor_total, dt_pagto, meio:
+    pix/espécie/outro, ref_externa, comprovante_url)
+-   **PagamentoParcela** (pagamento_id, mensalidade_id, valor_alocado)
+-   **Aula** (id, turma_id, dt_aula, observação)
+-   **Presenca** (aula_id, aluno_id, status: presente/falta/justificada)
+-   **Avaliacao** (id, turma_id, nome/etapa, peso)
+-   **Nota** (avaliacao_id, aluno_id, valor)
+
+> \*Telefone obrigatório para Aluno e Responsável.
+
+**Observações**
+
+-   **Saldo do Responsável** pode ser derivado: (pagamentos --
+    mensalidades atribuídas).
+-   Se necessário, criar tabela **Saldo** para performance (com ajustes
+    em caso de estorno).
+
+## 7) Telas (MVP)
+
+-   **Login** (responsável/professor/coordenação).
+-   **Dashboard Coordenação**: resumo de inadimplência, presenças,
+    turmas ativas.
+-   **Pessoas**: CRUD de Aluno/Responsável/Professor.
+-   **Cursos e Turmas**: CRUD + grade de horários.
+-   **Matrículas**: criar/gerenciar por aluno.
+-   **Financeiro**:
+    -   Lista de **Mensalidades** com filtros (mês, turma, status,
+        aluno).
+    -   **Lançar Pagamento** (valor total, meio, anexar comprovante,
+        distribuir meses/alunos).
+    -   **Relatórios**: inadimplentes, histórico do responsável,
+        exportações.
+-   **Presenças** (por turma e data).
+-   **Avaliações/Notas** (por turma; configurar avaliações e lançar
+    notas).
+-   **Portal do Aluno/Responsável**:
+    -   **Minhas Matrículas**; **Minhas Mensalidades** (status, baixar
+        recibo); **Minhas Presenças**; **Meu Boletim**.
+
+## 8) Relatórios
+
+-   **Inadimplentes por competência** (com contato do responsável).
+-   **Presença por turma** (taxa de frequência por aluno, ordenado do
+    menor para o maior).
+-   **Resultados por turma** (aprovados/reprovados, médias finais).
+-   **Extrato do Responsável** (pagamentos, alocações, saldo/crédito).
+
+## 9) Integrações & Importações
+
+-   **Google Forms** (manter provas): MVP não integra; opcionalmente
+    aceitar **importação via CSV** no pós‑MVP.
+-   **PIX**: começar sem gateway (manual com comprovante). Fase 2: QR
+    com **referência** para facilitar a alocação (webhook se houver
+    provedor).
+
+## 10) Segurança, LGPD e Acesso
+
+-   Controle por **papéis** (Admin/Coord/Professor/Responsável/Aluno).
+-   **Cada usuário vê apenas seus dados** (responsável vê seus
+    dependentes).
+-   **LGPD**: consentimento do responsável para dados do menor; termo de
+    uso e política de privacidade; opção de exclusão/anonimização.
+-   **Auditoria**: registrar quem alterou presença/notas/pagamentos.
+
+## 11) Requisitos Não Funcionais
+
+-   **Simplicidade** e **baixo custo** (igreja pequena): priorizar
+    hospedagem barata e stack conhecida.
+-   **Performance**: páginas de lista com paginação e filtros.
+-   **Exportável** (CSV/Excel/PDF simples).
+-   **Backups** automáticos diários.
+-   **Acessibilidade** básica (teclado, contraste, rótulos).
+
+## 12) Critérios de Aceite (amostras em Gherkin)
+
+**Matrícula por responsável com mesmo e‑mail**
+
+    Dado que sou um Responsável autenticado
+    E possuo e‑mail já utilizado em outra matrícula
+    Quando cadastro um novo aluno dependente e escolho uma turma
+    Então o sistema deve permitir a matrícula
+    E vincular o novo aluno à minha conta
+
+**Pagamento que cobre múltiplos meses e alunos**
+
+    Dado um pagamento PIX de R$ 150,00 do Responsável X
+    E mensalidades em aberto: Aluno A (mar/abr) e Aluno B (mar)
+    Quando aloco R$ 100,00 para Aluno A (mar e abr) e R$ 50,00 para Aluno B (mar)
+    Então essas mensalidades ficam com status "Pago"
+    E o extrato do Responsável mostra o abatimento correto
+
+**Cálculo de aprovação**
+
+    Dado um aluno com média final 6,2 e frequência 78%
+    Quando o período encerra
+    Então o status do aluno é "Aprovado"
+
+## 13) Roadmap Proposto
+
+-   **Semana 1--2 (MVP 1):** Cadastros base, cursos/turmas, matrículas,
+    geração de mensalidades, lançamento manual de pagamentos, portal
+    aluno (somente mensalidades).
+-   **Semana 3 (MVP 2):** Presenças, notas, boletim com regra de
+    aprovação, relatórios básicos.
+-   **Semana 4 (Pós-MVP curto):** PIX com referência (sem gateway ou com
+    um provedor simples), recibos PDF, exportações.
+
+## 14) Stack Técnica Sugerida (enxuta)
+
+-   **Backend**: .NET 8 (Clean-ish), EF Core para CRUD simples, Dapper
+    se necessário.
+-   **DB**: Postgres (prod) / SQLite (dev).
+-   **Frontend**: Angular 17/18 standalone + Material; PWA opcional.
+-   **Auth**: e‑mail+senha ou OTP por e‑mail; futuro: telefone/WhatsApp.
+-   **Arquitetura**: API REST, domínio simples
+    (Curso/Turma/Matricula/Financeiro/Academico).
+
+## 15) Dúvidas Abertas para a Tairiny
+
+1.  **Valores das mensalidades** variam por curso? Há **descontos**
+    (irmãos/múltiplos cursos)?
+2.  **Política de inadimplência**: quantos dias de atraso? Bloqueia
+    acesso? Aplica multa/juros?
+3.  **Calendário letivo** (datas de início/fim) e **quantidade de
+    aulas** por mês.
+4.  **Estrutura das avaliações** (quantas por turma? pesos?).
+5.  **Capacidade das turmas** e faixa etária por curso.
+6.  **Comprovantes/Recibos**: precisam de algum layout/assinatura
+    específica?
+7.  **Dados obrigatórios** além de nome/telefone (CPF? endereço?
+    autorização de imagem?).
+8.  **Relatórios específicos** para pastor/tesouraria?
+9.  **Migração**: deseja importar a planilha atual (Forms)? Formato de
+    entrega?
+10. **Comunicações**: preferem e‑mail, WhatsApp, ambos?
+
+## 16) Próximos Passos
+
+1.  Validar **MUST/SHOULD** com a Tairiny.
+2.  Fechar **regras de pagamento** (descontos, inadimplência) e **modelo
+    de avaliação**.
+3.  Confirmar **dados mínimos** de cadastro para início.
+4.  Desenhar **ERD** e **contratos de API**.
+5.  Liberar **MVP 1** em ambiente de teste para prova de conceito com
+    1--2 turmas.

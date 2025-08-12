@@ -38,19 +38,19 @@ import { RouterLink } from '@angular/router';
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 24px;
-        padding-bottom: 16px;
+        margin: 0 0 24px 0;
+        padding: 8px 0 16px 0;
         border-bottom: 1px solid #e0e0e0;
       }
 
       h1 {
-        margin: 0;
+        margin: 0 0 4px 0;
         font-size: 24px;
         font-weight: 500;
       }
 
       .subtitle {
-        margin: 4px 0 0;
+        margin: 0;
         color: #666;
         font-size: 14px;
       }

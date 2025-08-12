@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\InstitutoVirtus.Application\InstitutoVirtus.Application.csproj" />
     <ProjectReference Include="..\InstitutoVirtus.Infrastructure\InstitutoVirtus.Infrastructure.csproj" />
   </ItemGroup>

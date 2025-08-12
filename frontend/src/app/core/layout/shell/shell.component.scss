@@ -604,6 +604,9 @@
   background: var(--bg-primary);
 
   .content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
     animation: fadeInUp 0.5s ease-out;
   }
 
@@ -687,6 +690,9 @@
 
   .main-content {
     min-height: calc(100vh - 64px - 48px);
+    .content-wrapper {
+      padding: 16px;
+    }
   }
 
   .app-footer {
