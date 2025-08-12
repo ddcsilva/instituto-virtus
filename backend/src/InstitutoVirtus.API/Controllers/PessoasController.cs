@@ -1,4 +1,5 @@
 using InstitutoVirtus.Application.Queries.Pessoas;
+using InstitutoVirtus.Application.Commands.Pessoas;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -53,6 +54,30 @@ public class PessoasController : ControllerBase
         if (!result.IsSuccess)
             return NotFound(result.Error);
 
+        return Ok(result.Data);
+    }
+
+    [HttpPut("{id}")]
+    [Authorize(Policy = "Coordenacao")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] AtualizarPessoaCommand command)
+    {
+        if (id != command.Id)
+            return BadRequest("ID inconsistente");
+
+        var result = await _mediator.Send(command);
+        if (!result.IsSuccess)
+            return BadRequest(result.Error);
+
+        return Ok(result.Data);
+    }
+
+    [HttpPatch("{id}/toggle-status")]
+    [Authorize(Policy = "Coordenacao")]
+    public async Task<IActionResult> ToggleStatus(Guid id)
+    {
+        var result = await _mediator.Send(new TogglePessoaStatusCommand { Id = id });
+        if (!result.IsSuccess)
+            return BadRequest(result.Error);
         return Ok(result.Data);
     }
 }

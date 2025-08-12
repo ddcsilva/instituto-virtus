@@ -167,6 +167,33 @@ public class Pessoa : AuditableEntity
         Observacoes = observacoes;
     }
 
+    public void AtualizarDadosComCpfData(
+        string nomeCompleto,
+        Cpf? cpf,
+        Telefone telefone,
+        Email? email,
+        DateTime dataNascimento,
+        string? observacoes,
+        bool? ativo = null)
+    {
+        ValidarNome(nomeCompleto);
+        ValidarIdade(dataNascimento, TipoPessoa);
+
+        NomeCompleto = nomeCompleto;
+        Cpf = cpf;
+        Telefone = telefone ?? throw new ArgumentNullException(nameof(telefone));
+        Email = email;
+        DataNascimento = dataNascimento;
+        Observacoes = observacoes;
+        if (ativo.HasValue)
+            Ativo = ativo.Value;
+    }
+
+    public void AlternarStatus()
+    {
+        Ativo = !Ativo;
+    }
+
     public void Ativar() => Ativo = true;
     public void Desativar() => Ativo = false;
 }

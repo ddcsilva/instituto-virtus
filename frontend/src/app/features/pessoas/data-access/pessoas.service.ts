@@ -52,11 +52,11 @@ export class PessoasService {
   }
 
   create(pessoa: CreatePessoaRequest): Observable<Pessoa> {
-    return this.http.post<Pessoa>(this.baseUrl, pessoa);
+    return this.http.post<any>(this.baseUrl, pessoa).pipe(map(dto => mapPessoa(dto)));
   }
 
   update(id: string, pessoa: UpdatePessoaRequest): Observable<Pessoa> {
-    return this.http.put<Pessoa>(`${this.baseUrl}/${id}`, pessoa);
+    return this.http.put<any>(`${this.baseUrl}/${id}`, pessoa).pipe(map(dto => mapPessoa(dto)));
   }
 
   delete(id: string): Observable<void> {
@@ -64,7 +64,9 @@ export class PessoasService {
   }
 
   toggleStatus(id: string): Observable<Pessoa> {
-    return this.http.patch<Pessoa>(`${this.baseUrl}/${id}/toggle-status`, {});
+    return this.http
+      .patch<any>(`${this.baseUrl}/${id}/toggle-status`, {})
+      .pipe(map(dto => mapPessoa(dto)));
   }
 
   getVinculos(responsavelId: string): Observable<ResponsavelAluno[]> {

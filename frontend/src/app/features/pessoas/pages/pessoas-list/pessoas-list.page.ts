@@ -60,11 +60,7 @@ import { Pessoa, TipoPessoa } from '../../models/pessoa.model';
         <div class="filters">
           <mat-form-field>
             <mat-label>Buscar</mat-label>
-            <input
-              matInput
-              [formControl]="searchControl"
-              placeholder="Nome ou CPF"
-            />
+            <input matInput [formControl]="searchControl" placeholder="Nome ou CPF" />
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
 
@@ -89,12 +85,7 @@ import { Pessoa, TipoPessoa } from '../../models/pessoa.model';
         </div>
 
         <div class="table-container">
-          <table
-            mat-table
-            [dataSource]="pessoas()"
-            matSort
-            (matSortChange)="onSort($event)"
-          >
+          <table mat-table [dataSource]="pessoas()" matSort (matSortChange)="onSort($event)">
             <ng-container matColumnDef="nome">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
               <td mat-cell *matCellDef="let pessoa">{{ pessoa.nome }}</td>
@@ -122,16 +113,14 @@ import { Pessoa, TipoPessoa } from '../../models/pessoa.model';
             <ng-container matColumnDef="tipo">
               <th mat-header-cell *matHeaderCellDef>Tipo</th>
               <td mat-cell *matCellDef="let pessoa">
-                <mat-chip [color]="getChipColor(pessoa.tipo)">
-                  {{ pessoa.tipo }}
-                </mat-chip>
+                <mat-chip [ngStyle]="getTipoStyle(pessoa.tipo)">{{ pessoa.tipo }}</mat-chip>
               </td>
             </ng-container>
 
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef>Status</th>
               <td mat-cell *matCellDef="let pessoa">
-                <mat-chip [color]="pessoa.ativo ? 'primary' : 'warn'">
+                <mat-chip [ngStyle]="getStatusStyle(pessoa.ativo)">
                   {{ pessoa.ativo ? 'Ativo' : 'Inativo' }}
                 </mat-chip>
               </td>
@@ -144,26 +133,18 @@ import { Pessoa, TipoPessoa } from '../../models/pessoa.model';
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                  <a
-                    mat-menu-item
-                    [routerLink]="['/pessoas', pessoa.id, 'editar']"
-                  >
+                  <a mat-menu-item [routerLink]="['/pessoas', pessoa.id, 'editar']">
                     <mat-icon>edit</mat-icon>
                     <span>Editar</span>
                   </a>
                   @if (pessoa.tipo === 'Responsavel') {
-                  <a
-                    mat-menu-item
-                    [routerLink]="['/pessoas', pessoa.id, 'vinculos']"
-                  >
+                  <a mat-menu-item [routerLink]="['/pessoas', pessoa.id, 'vinculos']">
                     <mat-icon>link</mat-icon>
                     <span>Vínculos</span>
                   </a>
                   }
                   <button mat-menu-item (click)="toggleStatus(pessoa)">
-                    <mat-icon>{{
-                      pessoa.ativo ? 'block' : 'check_circle'
-                    }}</mat-icon>
+                    <mat-icon>{{ pessoa.ativo ? 'block' : 'check_circle' }}</mat-icon>
                     <span>{{ pessoa.ativo ? 'Desativar' : 'Ativar' }}</span>
                   </button>
                   <button mat-menu-item (click)="confirmDelete(pessoa)">
@@ -249,37 +230,27 @@ export class PessoasListPage implements OnInit {
   readonly tipoControl = new FormControl('');
   readonly statusControl = new FormControl<boolean | null>(null);
 
-  readonly displayedColumns = [
-    'nome',
-    'cpf',
-    'telefone',
-    'email',
-    'tipo',
-    'status',
-    'acoes',
-  ];
+  readonly displayedColumns = ['nome', 'cpf', 'telefone', 'email', 'tipo', 'status', 'acoes'];
   readonly pageSize = 10;
 
   ngOnInit(): void {
     // Subscribe to store state
-    this.store.pessoas$.subscribe((pessoas) => this.pessoas.set(pessoas));
-    this.store.total$.subscribe((total) => this.total.set(total));
-    this.store.loading$.subscribe((loading) => this.loading.set(loading));
+    this.store.pessoas$.subscribe(pessoas => this.pessoas.set(pessoas));
+    this.store.total$.subscribe(total => this.total.set(total));
+    this.store.loading$.subscribe(loading => this.loading.set(loading));
 
     // Setup filters
-    this.searchControl.valueChanges
-      .pipe(debounceTime(300))
-      .subscribe((value) => {
-        this.store.updateFilter({ nome: value || undefined, page: 0 });
-        this.loadPessoas();
-      });
+    this.searchControl.valueChanges.pipe(debounceTime(300)).subscribe(value => {
+      this.store.updateFilter({ nome: value || undefined, page: 0 });
+      this.loadPessoas();
+    });
 
-    this.tipoControl.valueChanges.subscribe((value) => {
+    this.tipoControl.valueChanges.subscribe(value => {
       this.store.updateFilter({ tipo: value || undefined, page: 0 });
       this.loadPessoas();
     });
 
-    this.statusControl.valueChanges.subscribe((value) => {
+    this.statusControl.valueChanges.subscribe(value => {
       this.store.updateFilter({ ativo: value ?? undefined, page: 0 });
       this.loadPessoas();
     });
@@ -289,7 +260,7 @@ export class PessoasListPage implements OnInit {
   }
 
   loadPessoas(): void {
-    this.store.filter$.pipe(take(1)).subscribe((filter) => {
+    this.store.filter$.pipe(take(1)).subscribe(filter => {
       this.store.loadPessoas(filter);
     });
   }
@@ -319,6 +290,22 @@ export class PessoasListPage implements OnInit {
     }
   }
 
+  getTipoStyle(tipo: TipoPessoa) {
+    const palette: Record<TipoPessoa, { background: string; color: string; border: string }> = {
+      Aluno: { background: '#E3F2FD', color: '#0D47A1', border: '#90CAF9' },
+      Responsavel: { background: '#FFF3E0', color: '#E65100', border: '#FFCC80' },
+      Professor: { background: '#F3E5F5', color: '#4A148C', border: '#CE93D8' },
+    } as const;
+    const s = palette[tipo];
+    return { 'background-color': s.background, color: s.color, border: `1px solid ${s.border}` };
+  }
+
+  getStatusStyle(ativo: boolean) {
+    return ativo
+      ? { 'background-color': '#E8F5E9', color: '#1B5E20', border: '1px solid #A5D6A7' }
+      : { 'background-color': '#FFEBEE', color: '#B71C1C', border: '1px solid #EF9A9A' };
+  }
+
   toggleStatus(pessoa: Pessoa): void {
     this.store.toggleStatus(pessoa.id);
   }
@@ -333,7 +320,7 @@ export class PessoasListPage implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.store.deletePessoa(pessoa.id);
       }
