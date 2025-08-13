@@ -100,6 +100,9 @@
         <!-- Separador Visual -->
         <div class="toolbar-divider"></div>
 
+        <!-- Versão do app (compacta) -->
+        <span class="version-chip" matTooltip="Versão do sistema">v1.0.0</span>
+
         <!-- Menu do Usuário -->
         <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-trigger">
           <div class="user-avatar">
@@ -158,13 +161,5 @@
         <router-outlet />
       </div>
     </main>
-
-    <!-- Footer (opcional) -->
-    <footer class="app-footer">
-      <div class="footer-content">
-        <span class="copyright">© 2025 Instituto Virtus - Igreja Bethesda</span>
-        <span class="version">Versão 1.0.0</span>
-      </div>
-    </footer>
   </mat-sidenav-content>
 </mat-sidenav-container>

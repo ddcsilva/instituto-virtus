@@ -69,8 +69,8 @@ public class MappingProfile : Profile
             .ForMember(d => d.CursoNome, opt => opt.MapFrom(s => s.Curso != null ? s.Curso.Nome : string.Empty))
             .ForMember(d => d.ProfessorNome, opt => opt.MapFrom(s => s.Professor != null ? s.Professor.NomeCompleto : string.Empty))
             .ForMember(d => d.DiaSemana, opt => opt.MapFrom(s => s.DiaSemana.ToString()))
-            .ForMember(d => d.HorarioInicio, opt => opt.MapFrom(s => s.Horario.HoraInicio.ToString("hh:mm")))
-            .ForMember(d => d.HorarioFim, opt => opt.MapFrom(s => s.Horario.HoraFim.ToString("hh:mm")))
+            .ForMember(d => d.HorarioInicio, opt => opt.MapFrom(s => s.Horario.HoraInicio.ToString("hh\\:mm")))
+            .ForMember(d => d.HorarioFim, opt => opt.MapFrom(s => s.Horario.HoraFim.ToString("hh\\:mm")))
             .ForMember(d => d.AlunosMatriculados, opt => opt.MapFrom(s => s.Matriculas.Count(m => m.Status == StatusMatricula.Ativa)))
             .ForMember(d => d.VagasDisponiveis, opt => opt.MapFrom(s => s.VagasDisponiveis()));
 

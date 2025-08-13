@@ -2,11 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_CONFIG } from '../../../core/config/api.config';
-import {
-  Turma,
-  CreateTurmaRequest,
-  UpdateTurmaRequest,
-} from '../models/turma.model';
+import { Turma, CreateTurmaRequest, UpdateTurmaRequest } from '../models/turma.model';
 
 export interface TurmaFilter {
   nome?: string;
@@ -33,6 +29,11 @@ export class TurmasService {
           params = params.set(key, value.toString());
         }
       });
+    }
+
+    // Backend exige ao menos o ano letivo; define padrão para o ano corrente
+    if (!params.has('anoLetivo')) {
+      params = params.set('anoLetivo', new Date().getFullYear().toString());
     }
 
     return this.http.get<any>(this.baseUrl, { params });
@@ -63,6 +64,6 @@ export class TurmasService {
   }
 
   getGradeHorarios(turmaId: string): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/${turmaId}/grade`);
+    return this.http.get<any>(`${this.baseUrl}/${turmaId}/grade-horarios`);
   }
 }

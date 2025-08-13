@@ -70,11 +70,10 @@
   }
 }
 
-/* Ajuste do container do Angular Material para compensar a largura do sidenav aberto/fechado em telas desktop */
+/* Ajuste de transições do sidenav/content */
 :host ::ng-deep .mat-drawer-content {
   transition: margin-left var(--transition-medium) !important;
 }
-
 :host ::ng-deep .mat-drawer-side {
   transition: width var(--transition-medium) !important;
 }
@@ -410,6 +409,17 @@
   gap: 12px;
 }
 
+/* Chip de versão na toolbar */
+.version-chip {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--bethesda-white);
+  background: var(--bethesda-gold);
+  padding: 4px 10px;
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
 /* ===== AÇÕES RÁPIDAS ===== */
 .quick-actions {
   display: flex;
@@ -719,12 +729,7 @@ mat-sidenav-content.nav-collapsed {
     }
   }
 
-  .app-footer {
-    .footer-content {
-      flex-direction: column;
-      gap: 8px;
-    }
-  }
+  /* footer removido */
 }
 
 @media (max-width: 480px) {
