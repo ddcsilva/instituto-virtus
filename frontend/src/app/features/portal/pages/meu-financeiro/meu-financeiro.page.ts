@@ -337,9 +337,9 @@ export class MeuFinanceiroPage implements OnInit {
           this.processarMensalidadesResponsavel(mensalidades);
         });
 
-      // Carregar saldo
-      this.financeiroService.getSaldoResponsavel(usuario.pessoaId).subscribe(saldo => {
-        this.saldo.set(saldo.saldo);
+      // Carregar saldo (stub)
+      this.financeiroService.getSaldoResponsavel(usuario.pessoaId).subscribe((saldo: any) => {
+        this.saldo.set(saldo.saldo || 0);
       });
     } else {
       // Carregar mensalidades do próprio aluno

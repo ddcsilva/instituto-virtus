@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { API_CONFIG } from '../../../core/config/api.config';
 import {
   Mensalidade,
@@ -35,11 +35,13 @@ export interface PagedResult<T> {
 export class FinanceiroService {
   private readonly http = inject(HttpClient);
   private readonly apiConfig = inject(API_CONFIG);
-  private readonly baseUrl = `${this.apiConfig.baseUrl}/financeiro`;
+  private readonly baseUrl = `${this.apiConfig.baseUrl}`;
+  private readonly mensalidadesUrl = `${this.apiConfig.baseUrl}/mensalidades`;
+  private readonly pagamentosUrl = `${this.apiConfig.baseUrl}/pagamentos`;
 
   // Mensalidades
   getMensalidades(
-    filter?: MensalidadeFilter
+    filter?: MensalidadeFilter & { ano?: number; mes?: number; status?: string }
   ): Observable<PagedResult<Mensalidade>> {
     let params = new HttpParams();
 
@@ -51,41 +53,33 @@ export class FinanceiroService {
       });
     }
 
-    return this.http.get<PagedResult<Mensalidade>>(
-      `${this.baseUrl}/mensalidades`,
-      { params }
-    );
+    return this.http.get<PagedResult<Mensalidade>>(this.mensalidadesUrl, { params });
   }
 
   getMensalidadeById(id: string): Observable<Mensalidade> {
-    return this.http.get<Mensalidade>(`${this.baseUrl}/mensalidades/${id}`);
+    return this.http.get<Mensalidade>(`${this.mensalidadesUrl}/${id}`);
   }
 
-  getMensalidadesResponsavel(
-    responsavelId: string,
-    abertas = true
-  ): Observable<Mensalidade[]> {
-    const params = new HttpParams().set('abertas', abertas.toString());
-    return this.http.get<Mensalidade[]>(
-      `${this.baseUrl}/responsaveis/${responsavelId}/mensalidades`,
-      { params }
-    );
+  getMensalidadesResponsavel(responsavelId: string): Observable<Mensalidade[]> {
+    return this.http.get<Mensalidade[]>(`${this.mensalidadesUrl}/responsavel/${responsavelId}`);
   }
 
-  gerarMensalidades(
-    matriculaId: string,
-    meses: number
-  ): Observable<Mensalidade[]> {
-    return this.http.post<Mensalidade[]>(`${this.baseUrl}/mensalidades/gerar`, {
-      matriculaId,
-      meses,
-    });
+  // Opcional: gerar mensalidades (não há endpoint atual exposto no backend)
+
+  cancelarMensalidadePagamento(id: string): Observable<any> {
+    return this.http.put<any>(`${this.mensalidadesUrl}/${id}/cancelar-pagamento`, {});
   }
 
-  cancelarMensalidade(id: string, motivo: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/mensalidades/${id}/cancelar`, {
-      motivo,
-    });
+  registrarPagamentoMensalidade(
+    id: string,
+    payload: { meioPagamento: string; dataPagamento?: string; observacao?: string }
+  ): Observable<any> {
+    const body: any = {
+      MeioPagamento: payload.meioPagamento,
+      ...(payload.dataPagamento ? { DataPagamento: payload.dataPagamento } : {}),
+      ...(payload.observacao ? { Observacao: payload.observacao } : {}),
+    };
+    return this.http.put<any>(`${this.mensalidadesUrl}/${id}/pagar`, body);
   }
 
   // Pagamentos
@@ -102,30 +96,29 @@ export class FinanceiroService {
       });
     }
 
-    return this.http.get<PagedResult<Pagamento>>(`${this.baseUrl}/pagamentos`, {
+    return this.http.get<PagedResult<Pagamento>>(this.pagamentosUrl, {
       params,
     });
   }
 
   getPagamentoById(id: string): Observable<Pagamento> {
-    return this.http.get<Pagamento>(`${this.baseUrl}/pagamentos/${id}`);
+    return this.http.get<Pagamento>(`${this.pagamentosUrl}/${id}`);
   }
 
   criarPagamento(request: CreatePagamentoRequest): Observable<Pagamento> {
-    return this.http.post<Pagamento>(`${this.baseUrl}/pagamentos`, request);
+    return this.http.post<Pagamento>(this.pagamentosUrl, request);
   }
 
   estornarPagamento(id: string, motivo: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/pagamentos/${id}/estornar`, {
+    return this.http.post<void>(`${this.pagamentosUrl}/${id}/estornar`, {
       motivo,
     });
   }
 
   // Saldo
+  // Stub enquanto não houver endpoint no backend
   getSaldoResponsavel(responsavelId: string): Observable<SaldoResponsavel> {
-    return this.http.get<SaldoResponsavel>(
-      `${this.baseUrl}/responsaveis/${responsavelId}/saldo`
-    );
+    return of({ responsavelId, saldo: 0, ultimaAtualizacao: new Date().toISOString() });
   }
 
   getExtratoResponsavel(
@@ -145,17 +138,15 @@ export class FinanceiroService {
 
   // Relatórios
   getInadimplentes(competencia: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/relatorios/inadimplentes`, {
+    return this.http.get<any[]>(`${this.apiConfig.baseUrl}/relatorios/inadimplentes`, {
       params: new HttpParams().set('competencia', competencia),
     });
   }
 
   getRecebimentosPeriodo(dataInicio: string, dataFim: string): Observable<any> {
-    const params = new HttpParams()
-      .set('dataInicio', dataInicio)
-      .set('dataFim', dataFim);
+    const params = new HttpParams().set('dataInicio', dataInicio).set('dataFim', dataFim);
 
-    return this.http.get<any>(`${this.baseUrl}/relatorios/recebimentos`, {
+    return this.http.get<any>(`${this.apiConfig.baseUrl}/relatorios/recebimentos`, {
       params,
     });
   }

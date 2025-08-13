@@ -66,30 +66,22 @@
       <h2>Ações Rápidas</h2>
     </div>
     <div class="actions-grid">
-      <div class="action-card">
-        <div class="action-icon-wrapper">
-          <mat-icon>person_add</mat-icon>
-        </div>
+      <a class="action-card" [routerLink]="['/matriculas/nova']">
+        <div class="action-icon-wrapper"><mat-icon>person_add</mat-icon></div>
         <div class="action-label">Nova Matrícula</div>
-      </div>
-      <div class="action-card">
-        <div class="action-icon-wrapper">
-          <mat-icon>payment</mat-icon>
-        </div>
+      </a>
+      <a class="action-card" [routerLink]="['/financeiro/pagamentos/novo']">
+        <div class="action-icon-wrapper"><mat-icon>payment</mat-icon></div>
         <div class="action-label">Registrar Pagamento</div>
-      </div>
-      <div class="action-card">
-        <div class="action-icon-wrapper">
-          <mat-icon>how_to_reg</mat-icon>
-        </div>
+      </a>
+      <a class="action-card" [routerLink]="['/presencas']">
+        <div class="action-icon-wrapper"><mat-icon>how_to_reg</mat-icon></div>
         <div class="action-label">Lançar Presença</div>
-      </div>
-      <div class="action-card">
-        <div class="action-icon-wrapper">
-          <mat-icon>assessment</mat-icon>
-        </div>
+      </a>
+      <a class="action-card" [routerLink]="['/relatorios']">
+        <div class="action-icon-wrapper"><mat-icon>assessment</mat-icon></div>
         <div class="action-label">Gerar Relatório</div>
-      </div>
+      </a>
     </div>
   </div>
 

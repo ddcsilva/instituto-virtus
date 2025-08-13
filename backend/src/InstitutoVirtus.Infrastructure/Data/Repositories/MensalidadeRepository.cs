@@ -63,4 +63,18 @@ public class MensalidadeRepository : BaseRepository<Mensalidade>, IMensalidadeRe
             .OrderBy(m => m.DataVencimento)
             .ToListAsync(cancellationToken);
     }
+
+    public override async Task<IEnumerable<Mensalidade>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        // Inclui navegações necessárias para mapeamento de AlunoNome e CursoNome
+        return await _context.Mensalidades
+            .Include(m => m.Matricula)
+                .ThenInclude(mat => mat.Aluno)
+            .Include(m => m.Matricula)
+                .ThenInclude(mat => mat.Turma)
+                    .ThenInclude(t => t.Curso)
+            .OrderBy(m => m.Competencia.Ano)
+            .ThenBy(m => m.Competencia.Mes)
+            .ToListAsync(cancellationToken);
+    }
 }
