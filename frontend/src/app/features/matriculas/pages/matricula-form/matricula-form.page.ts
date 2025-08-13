@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -10,17 +10,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { PageHeaderComponent } from '../../../../shared/ui/components/page-header/page-header.component';
 import { MatriculasService } from '../../data-access/matriculas.service';
 import { PessoasStore } from '../../../pessoas/data-access/pessoas.store';
 import { TurmasService } from '../../../turmas/data-access/turmas.service';
-import { FinanceiroService } from '../../../financeiro/data-access/financeiro.service';
 import { CreateMatriculaRequest } from '../../models/matricula.model';
 import { Turma } from '../../../turmas/models/turma.model';
 import { Pessoa } from '../../../pessoas/models/pessoa.model';
@@ -39,11 +35,7 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
     MatNativeDateModule,
     MatButtonModule,
     MatIconModule,
-    MatCheckboxModule,
-    MatSliderModule,
     MatDividerModule,
-    MatChipsModule,
-    CurrencyPipe,
     PageHeaderComponent,
   ],
   providers: [PessoasStore],
@@ -67,34 +59,16 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
                   formControlName="alunoId"
                   (selectionChange)="onAlunoChange($event.value)"
                 >
-                  <mat-option>
-                    <ngx-mat-select-search
-                      [formControl]="alunoFilterCtrl"
-                      placeholderLabel="Buscar aluno..."
-                      noEntriesFoundLabel="Nenhum aluno encontrado"
-                    >
-                    </ngx-mat-select-search>
-                  </mat-option>
                   @for (aluno of filteredAlunos(); track aluno.id) {
-                  <mat-option [value]="aluno.id"> {{ aluno.nome }} - {{ aluno.cpf }} </mat-option>
+                  <mat-option [value]="aluno.id">
+                    {{ aluno.nome }} - {{ aluno.cpf || '-' }}
+                  </mat-option>
                   }
                 </mat-select>
                 @if (matriculaForm.get('alunoId')?.hasError('required')) {
                 <mat-error>Selecione um aluno</mat-error>
                 }
               </mat-form-field>
-
-              @if (selectedAluno()) {
-              <div class="aluno-info">
-                <mat-chip-set>
-                  <mat-chip>{{ selectedAluno()!.nome }}</mat-chip>
-                  <mat-chip>{{ selectedAluno()!.telefone }}</mat-chip>
-                  @if (selectedAluno()!.email) {
-                  <mat-chip>{{ selectedAluno()!.email }}</mat-chip>
-                  }
-                </mat-chip-set>
-              </div>
-              }
             </div>
 
             <!-- Seleção de Turma -->
@@ -103,10 +77,7 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
               <div class="form-grid">
                 <mat-form-field>
                   <mat-label>Curso</mat-label>
-                  <mat-select
-                    [formControl]="cursoFilterCtrl"
-                    (selectionChange)="filterTurmasByCurso($event.value)"
-                  >
+                  <mat-select [formControl]="cursoFilterCtrl">
                     <mat-option value="">Todos</mat-option>
                     @for (curso of cursos(); track curso.id) {
                     <mat-option [value]="curso.id">{{ curso.nome }}</mat-option>
@@ -116,10 +87,7 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
 
                 <mat-form-field>
                   <mat-label>Turno</mat-label>
-                  <mat-select
-                    [formControl]="turnoFilterCtrl"
-                    (selectionChange)="filterTurmasByTurno($event.value)"
-                  >
+                  <mat-select [formControl]="turnoFilterCtrl">
                     <mat-option value="">Todos</mat-option>
                     <mat-option value="Manha">Manhã</mat-option>
                     <mat-option value="Tarde">Tarde</mat-option>
@@ -149,127 +117,27 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
                 <mat-error>Selecione uma turma</mat-error>
                 }
               </mat-form-field>
-
-              @if (selectedTurma()) {
-              <div class="turma-info">
-                <div class="info-grid">
-                  <div class="info-item">
-                    <mat-icon>school</mat-icon>
-                    <span>{{ selectedTurma()!.curso?.nome }}</span>
-                  </div>
-                  <div class="info-item">
-                    <mat-icon>person</mat-icon>
-                    <span>Prof. {{ selectedTurma()!.professor?.nome }}</span>
-                  </div>
-                  <div class="info-item">
-                    <mat-icon>schedule</mat-icon>
-                    <span>{{ formatHorarios(selectedTurma()!.horarios) }}</span>
-                  </div>
-                  <div class="info-item">
-                    <mat-icon>date_range</mat-icon>
-                    <span
-                      >{{ selectedTurma()!.periodoInicio | date : 'dd/MM/yyyy' }}
-                      -
-                      {{ selectedTurma()!.periodoFim | date : 'dd/MM/yyyy' }}</span
-                    >
-                  </div>
-                </div>
-              </div>
-              }
             </div>
 
-            <!-- Dados Financeiros -->
+            <!-- Parâmetros de Geração -->
             <div class="form-section">
-              <h3>Informações Financeiras</h3>
-
+              <h3>Parâmetros de Geração</h3>
               <div class="form-grid">
-                <mat-form-field>
-                  <mat-label>Data da Matrícula</mat-label>
-                  <input matInput [matDatepicker]="picker" formControlName="dataMatricula" />
-                  <mat-datepicker-toggle matIconSuffix [for]="picker" />
-                  <mat-datepicker #picker />
-                  @if (matriculaForm.get('dataMatricula')?.hasError('required')) {
-                  <mat-error>Data é obrigatória</mat-error>
-                  }
-                </mat-form-field>
-
-                <mat-form-field>
-                  <mat-label>Valor da Mensalidade</mat-label>
-                  <input matInput type="number" formControlName="valorMensalidade" />
-                  <span matPrefix>R$ </span>
-                  @if (matriculaForm.get('valorMensalidade')?.hasError('required')) {
-                  <mat-error>Valor é obrigatório</mat-error>
-                  }
-                </mat-form-field>
-              </div>
-
-              <div class="desconto-section">
-                <mat-checkbox formControlName="aplicarDesconto"> Aplicar Desconto </mat-checkbox>
-
-                @if (matriculaForm.get('aplicarDesconto')?.value) {
-                <div class="desconto-controls">
-                  <mat-slider [min]="0" [max]="50" [step]="5" [displayWith]="formatPercent">
-                    <input
-                      matSliderThumb
-                      formControlName="descontoPercentual"
-                      (valueChange)="updateDesconto($event)"
-                    />
-                  </mat-slider>
-
-                  <div class="desconto-display">
-                    <span>{{ matriculaForm.get('descontoPercentual')?.value }}% de desconto</span>
-                    <strong>Valor final: {{ valorComDesconto() | currency : 'BRL' }}</strong>
-                  </div>
-                </div>
-                }
-              </div>
-
-              <mat-form-field class="full-width">
-                <mat-label>Observações</mat-label>
-                <textarea matInput formControlName="observacao" rows="3"></textarea>
-              </mat-form-field>
-            </div>
-
-            <!-- Geração de Mensalidades -->
-            <div class="form-section">
-              <h3>Geração de Mensalidades</h3>
-
-              <mat-checkbox formControlName="gerarMensalidades">
-                Gerar mensalidades automaticamente
-              </mat-checkbox>
-
-              @if (matriculaForm.get('gerarMensalidades')?.value) {
-              <div class="mensalidades-config">
                 <mat-form-field>
                   <mat-label>Quantidade de Meses</mat-label>
                   <input
                     matInput
                     type="number"
-                    formControlName="quantidadeMeses"
+                    formControlName="mesesQuantidade"
                     min="1"
                     max="12"
                   />
-                  <mat-hint>Número de mensalidades a gerar</mat-hint>
                 </mat-form-field>
-
-                <div class="preview-mensalidades">
-                  <h4>Prévia das Mensalidades</h4>
-                  <div class="mensalidades-list">
-                    @for (mensalidade of previewMensalidades(); track mensalidade.competencia) {
-                    <div class="mensalidade-item">
-                      <span>{{ mensalidade.competencia }}</span>
-                      <span>Vencimento: {{ mensalidade.vencimento | date : 'dd/MM/yyyy' }}</span>
-                      <strong>{{ valorComDesconto() | currency : 'BRL' }}</strong>
-                    </div>
-                    }
-                  </div>
-                  <div class="total-preview">
-                    <span>Total:</span>
-                    <strong>{{ totalMensalidades() | currency : 'BRL' }}</strong>
-                  </div>
-                </div>
+                <mat-form-field>
+                  <mat-label>Dia de Vencimento</mat-label>
+                  <input matInput type="number" formControlName="diaVencimento" min="1" max="28" />
+                </mat-form-field>
               </div>
-              }
             </div>
 
             <!-- Resumo -->
@@ -287,15 +155,12 @@ import { Pessoa } from '../../../pessoas/models/pessoa.model';
                   <strong>{{ selectedTurma()?.nome || '-' }}</strong>
                 </div>
                 <div class="resumo-item">
-                  <span>Mensalidade:</span>
-                  <strong>{{ valorComDesconto() | currency : 'BRL' }}</strong>
-                </div>
-                @if (matriculaForm.get('gerarMensalidades')?.value) {
-                <div class="resumo-item">
                   <span>Mensalidades a Gerar:</span>
-                  <strong>{{ matriculaForm.get('quantidadeMeses')?.value }} meses</strong>
+                  <strong
+                    >{{ matriculaForm.get('mesesQuantidade')?.value }} meses (venc. dia
+                    {{ matriculaForm.get('diaVencimento')?.value }})</strong
+                  >
                 </div>
-                }
               </div>
             </div>
 
@@ -501,7 +366,6 @@ export class MatriculaFormPage implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
   private readonly matriculasService = inject(MatriculasService);
   private readonly turmasService = inject(TurmasService);
-  private readonly financeiroService = inject(FinanceiroService);
   private readonly pessoasStore = inject(PessoasStore);
 
   readonly loading = signal(false);
@@ -518,19 +382,14 @@ export class MatriculaFormPage implements OnInit {
   readonly matriculaForm = this.fb.nonNullable.group({
     alunoId: ['', Validators.required],
     turmaId: ['', Validators.required],
-    dataMatricula: [new Date(), Validators.required],
-    valorMensalidade: [0, [Validators.required, Validators.min(0)]],
-    aplicarDesconto: [false],
-    descontoPercentual: [0, [Validators.min(0), Validators.max(50)]],
-    observacao: [''],
-    gerarMensalidades: [true],
-    quantidadeMeses: [12, [Validators.min(1), Validators.max(12)]],
+    mesesQuantidade: [12, [Validators.min(1), Validators.max(12)]],
+    diaVencimento: [10, [Validators.min(1), Validators.max(28)]],
   });
 
   readonly filteredAlunos = computed(() => {
     const filter = this.alunoFilterCtrl.value?.toLowerCase() || '';
     return this.alunos().filter(
-      aluno => aluno.nome.toLowerCase().includes(filter) || aluno.cpf.includes(filter)
+      aluno => aluno.nome.toLowerCase().includes(filter) || (aluno.cpf || '').includes(filter)
     );
   });
 
@@ -596,8 +455,33 @@ export class MatriculaFormPage implements OnInit {
   }
 
   loadTurmas(): void {
-    this.turmasService.getAll({ status: 'EmAndamento' }).subscribe(result => {
-      this.turmas.set(result.items || []);
+    // Carrega turmas do ano atual; mapeia DTO PascalCase do backend
+    this.turmasService.getAll({}).subscribe(resp => {
+      const list = Array.isArray(resp) ? resp : resp.items || resp.Items || [];
+      const items: Turma[] = list.map((t: any) => ({
+        id: t.Id ?? t.id,
+        cursoId: t.CursoId ?? t.cursoId,
+        nome: t.Nome ?? t.nome ?? t.CursoNome ?? t.cursoNome ?? 'Turma',
+        professorId: t.ProfessorId ?? t.professorId,
+        cursoNome: t.CursoNome ?? t.cursoNome,
+        professorNome: t.ProfessorNome ?? t.professorNome,
+        capacidade: t.Capacidade ?? t.capacidade,
+        sala: t.Sala ?? t.sala,
+        anoLetivo: t.AnoLetivo ?? t.anoLetivo,
+        periodo: t.Periodo ?? t.periodo,
+        periodoInicio: t.PeriodoInicio ?? t.periodoInicio ?? '',
+        periodoFim: t.PeriodoFim ?? t.periodoFim ?? '',
+        vagas: t.Capacidade ?? t.vagas ?? 0,
+        vagasOcupadas: t.AlunosMatriculados ?? t.vagasOcupadas ?? 0,
+        turno: (t.Turno ?? t.turno) as any,
+        status: t.Ativo ?? t.ativo ? 'Ativa' : 'Inativa',
+        horarios: [],
+        curso: { id: t.CursoId ?? t.cursoId, nome: t.CursoNome ?? t.cursoNome ?? '' },
+        professor: t.ProfessorNome
+          ? { id: t.ProfessorId ?? t.professorId, nome: t.ProfessorNome }
+          : undefined,
+      }));
+      this.turmas.set(items);
     });
   }
 
@@ -618,12 +502,6 @@ export class MatriculaFormPage implements OnInit {
   onTurmaChange(turmaId: string): void {
     const turma = this.turmas().find(t => t.id === turmaId);
     this.selectedTurma.set(turma || null);
-
-    if (turma?.curso) {
-      this.matriculaForm.patchValue({
-        valorMensalidade: turma.curso.valorMensalidade || 0,
-      });
-    }
   }
 
   filterTurmasByCurso(cursoId: string): void {
@@ -634,17 +512,8 @@ export class MatriculaFormPage implements OnInit {
     // Filtro reativo via computed signal
   }
 
-  updateDesconto(value: number): void {
-    this.matriculaForm.patchValue({ descontoPercentual: value });
-  }
-
-  formatPercent(value: number): string {
-    return `${value}%`;
-  }
-
   formatHorarios(horarios: any[]): string {
     if (!horarios || horarios.length === 0) return '-';
-
     return horarios.map(h => `${h.diaSemana.substr(0, 3)} ${h.horaInicio}`).join(', ');
   }
 
@@ -657,41 +526,16 @@ export class MatriculaFormPage implements OnInit {
     const request: CreateMatriculaRequest = {
       alunoId: formValue.alunoId,
       turmaId: formValue.turmaId,
-      dataMatricula: formValue.dataMatricula.toISOString(),
-      valorMensalidade: formValue.valorMensalidade,
-      descontoPercentual: formValue.aplicarDesconto ? formValue.descontoPercentual : undefined,
-      observacao: formValue.observacao || undefined,
+      mesesQuantidade: formValue.mesesQuantidade,
+      diaVencimento: formValue.diaVencimento,
     };
 
     this.matriculasService.create(request).subscribe({
       next: matricula => {
-        if (formValue.gerarMensalidades) {
-          this.financeiroService
-            .gerarMensalidades(matricula.id, formValue.quantidadeMeses)
-            .subscribe({
-              next: () => {
-                this.snackBar.open(
-                  'Matrícula realizada e mensalidades geradas com sucesso!',
-                  'Fechar',
-                  { duration: 5000 }
-                );
-                this.router.navigate(['/matriculas']);
-              },
-              error: () => {
-                this.snackBar.open(
-                  'Matrícula realizada, mas erro ao gerar mensalidades',
-                  'Fechar',
-                  { duration: 5000 }
-                );
-                this.router.navigate(['/matriculas']);
-              },
-            });
-        } else {
-          this.snackBar.open('Matrícula realizada com sucesso!', 'Fechar', {
-            duration: 3000,
-          });
-          this.router.navigate(['/matriculas']);
-        }
+        this.snackBar.open('Matrícula realizada com sucesso!', 'Fechar', {
+          duration: 3000,
+        });
+        this.router.navigate(['/matriculas']);
       },
       error: () => {
         this.loading.set(false);

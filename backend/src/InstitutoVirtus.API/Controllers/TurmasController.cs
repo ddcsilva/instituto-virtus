@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using InstitutoVirtus.Domain.Enums;
 using System.Globalization;
+using InstitutoVirtus.Domain.Interfaces.Repositories;
 
 namespace InstitutoVirtus.API.Controllers;
 
@@ -15,12 +16,14 @@ namespace InstitutoVirtus.API.Controllers;
 public class TurmasController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ITurmaRepository _turmaRepository;
     private readonly ILogger<TurmasController> _logger;
 
-    public TurmasController(IMediator mediator, ILogger<TurmasController> logger)
+    public TurmasController(IMediator mediator, ILogger<TurmasController> logger, ITurmaRepository turmaRepository)
     {
         _mediator = mediator;
         _logger = logger;
+        _turmaRepository = turmaRepository;
     }
 
     [HttpGet]

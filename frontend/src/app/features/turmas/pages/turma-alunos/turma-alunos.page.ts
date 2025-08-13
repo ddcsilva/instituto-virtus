@@ -30,21 +30,9 @@ import { TurmasService } from '../../data-access/turmas.service';
             <td mat-cell *matCellDef="let a">{{ a.nome }}</td>
           </ng-container>
 
-          <ng-container matColumnDef="cpf">
-            <th mat-header-cell *matHeaderCellDef>CPF</th>
-            <td mat-cell *matCellDef="let a">{{ a.cpf || '-' }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="telefone">
-            <th mat-header-cell *matHeaderCellDef>Telefone</th>
-            <td mat-cell *matCellDef="let a">{{ a.telefone }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Status</th>
-            <td mat-cell *matCellDef="let a">
-              <mat-chip [ngStyle]="{ background: '#e8f5e9', color: '#2e7d32' }">Ativa</mat-chip>
-            </td>
+          <ng-container matColumnDef="idade">
+            <th mat-header-cell *matHeaderCellDef>Idade</th>
+            <td mat-cell *matCellDef="let a">{{ a.idade }}</td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayed"></tr>
@@ -59,10 +47,17 @@ export class TurmaAlunosPage implements OnInit {
   private readonly service = inject(TurmasService);
 
   readonly alunos = signal<any[]>([]);
-  readonly displayed = ['nome', 'cpf', 'telefone', 'status'];
+  readonly displayed = ['nome', 'idade'];
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
-    this.service.getAlunos(id).subscribe(list => this.alunos.set(list || []));
+    this.service.getAlunos(id).subscribe(list => {
+      const mapped = (list || []).map((a: any) => ({
+        id: a.Id ?? a.id,
+        nome: a.Nome ?? a.nome,
+        idade: a.Idade ?? a.idade,
+      }));
+      this.alunos.set(mapped);
+    });
   }
 }

@@ -45,7 +45,14 @@ export class MatriculasService {
   }
 
   create(matricula: CreateMatriculaRequest): Observable<Matricula> {
-    return this.http.post<Matricula>(this.baseUrl, matricula);
+    // Converte para PascalCase aceito pelo backend
+    const payload: any = {
+      AlunoId: matricula.alunoId,
+      TurmaId: matricula.turmaId,
+      ...(matricula.mesesQuantidade ? { MesesQuantidade: matricula.mesesQuantidade } : {}),
+      ...(matricula.diaVencimento ? { DiaVencimento: matricula.diaVencimento } : {}),
+    };
+    return this.http.post<Matricula>(this.baseUrl, payload);
   }
 
   update(id: string, matricula: UpdateMatriculaRequest): Observable<Matricula> {
@@ -68,13 +75,5 @@ export class MatriculasService {
     return this.http.post<Matricula>(`${this.baseUrl}/${id}/reativar`, {});
   }
 
-  gerarMensalidades(
-    matriculaId: string,
-    quantidadeMeses: number
-  ): Observable<any> {
-    return this.http.post<any>(
-      `${this.baseUrl}/${matriculaId}/gerar-mensalidades`,
-      { quantidadeMeses }
-    );
-  }
+  // Backend já gera mensalidades na criação da matrícula; método desnecessário
 }

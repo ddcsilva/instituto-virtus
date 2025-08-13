@@ -58,6 +58,15 @@ public class MappingProfile : Profile
                   (DateTime.Today.Month == s.Aluno.DataNascimento.Month && DateTime.Today.Day < s.Aluno.DataNascimento.Day)) ? 1 : 0)
                 : 0));
 
+        // Aluno resumo direto (usado em /turmas/{id}/alunos)
+        CreateMap<Aluno, AlunoResumoDto>()
+            .ForMember(d => d.Nome, opt => opt.MapFrom(s => s.NomeCompleto))
+            .ForMember(d => d.Idade, opt => opt.MapFrom(s =>
+                (DateTime.Today.Year - s.DataNascimento.Year) -
+                ((DateTime.Today.Month < s.DataNascimento.Month ||
+                  (DateTime.Today.Month == s.DataNascimento.Month && DateTime.Today.Day < s.DataNascimento.Day)) ? 1 : 0)
+            ));
+
         // Curso mappings
         CreateMap<Curso, CursoDto>()
             .ForMember(d => d.TotalTurmas, opt => opt.MapFrom(s => s.Turmas.Count));

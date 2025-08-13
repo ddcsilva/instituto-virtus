@@ -60,4 +60,13 @@ public class MatriculaRepository : BaseRepository<Matricula>, IMatriculaReposito
             .Include(m => m.Mensalidades)
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
     }
+
+    public override async Task<IEnumerable<Matricula>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Matriculas
+            .Include(m => m.Aluno)
+            .Include(m => m.Turma)
+                .ThenInclude(t => t.Curso)
+            .ToListAsync(cancellationToken);
+    }
 }

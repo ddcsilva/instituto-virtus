@@ -381,7 +381,12 @@ export class TurmasListPage implements OnInit {
 
   private mapTurma(dto: any): Turma {
     // Backend atual retorna TurmaDto com propriedades PascalCase
-    const nome = dto.Nome ?? dto.nome ?? dto.CursoNome ?? dto.cursoNome ?? 'Turma';
+    // Corrige caso backend envie Nome como string vazia: usar CursoNome como fallback
+    const nomeCampo = dto.Nome ?? dto.nome ?? '';
+    const nome =
+      typeof nomeCampo === 'string' && nomeCampo.trim().length > 0
+        ? nomeCampo
+        : dto.CursoNome ?? dto.cursoNome ?? 'Turma';
     const horarioInicio = dto.HorarioInicio ?? dto.horarioInicio;
     const hour =
       typeof horarioInicio === 'string' ? parseInt(horarioInicio.split(':')[0] || '0', 10) : 0;
