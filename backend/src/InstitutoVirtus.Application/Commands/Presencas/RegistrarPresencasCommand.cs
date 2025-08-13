@@ -37,12 +37,12 @@ public class RegistrarPresencasCommandHandler : IRequestHandler<RegistrarPresenc
             foreach (var presenca in request.Presencas)
             {
                 var status = Enum.Parse<StatusPresenca>(presenca.Status);
-                aula.RegistrarPresenca(presenca.AlunoId, status);
+                aula.RegistrarPresenca(presenca.AlunoId, status, presenca.Justificativa);
             }
 
             aula.MarcarComoRealizada();
 
-            await _aulaRepository.UpdateAsync(aula, cancellationToken);
+            // Como o aggregate 'aula' está sendo rastreado pelo contexto, basta salvar
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

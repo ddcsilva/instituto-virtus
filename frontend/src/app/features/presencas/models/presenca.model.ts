@@ -31,13 +31,17 @@ export interface Presenca {
   };
 }
 
+// Status usado no UI
 export type StatusPresenca = 'Presente' | 'Ausente' | 'Justificado';
+
+// Status esperado pela API
+export type ApiStatusPresenca = 'Presente' | 'Falta' | 'Justificada';
 
 export interface CreatePresencaRequest {
   aulaId: string;
   presencas: {
     alunoId: string;
-    status: StatusPresenca;
+    status: ApiStatusPresenca;
     observacao?: string;
   }[];
 }

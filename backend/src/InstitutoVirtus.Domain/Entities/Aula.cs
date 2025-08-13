@@ -31,17 +31,17 @@ public class Aula : AuditableEntity
     Realizada = true;
   }
 
-  public void RegistrarPresenca(Guid alunoId, StatusPresenca status)
+  public void RegistrarPresenca(Guid alunoId, StatusPresenca status, string? justificativa = null)
   {
     var presencaExistente = _presencas.FirstOrDefault(p => p.AlunoId == alunoId);
 
     if (presencaExistente != null)
     {
-      presencaExistente.AtualizarStatus(status);
+      presencaExistente.AtualizarStatus(status, justificativa);
     }
     else
     {
-      var presenca = new Presenca(Id, alunoId, status);
+      var presenca = new Presenca(Id, alunoId, status, justificativa);
       _presencas.Add(presenca);
     }
   }
