@@ -34,8 +34,7 @@ public class ListarTurmasQueryHandler : IRequestHandler<ListarTurmasQuery, Resul
         }
         else
         {
-            turmas = await _turmaRepository.GetAllAsync(cancellationToken);
-            turmas = turmas.Where(t => t.AnoLetivo == request.AnoLetivo);
+            turmas = await _turmaRepository.GetByAnoLetivoAsync(request.AnoLetivo, cancellationToken);
         }
 
         var dto = _mapper.Map<List<TurmaDto>>(turmas);

@@ -39,6 +39,16 @@ public class TurmaRepository : BaseRepository<Turma>, ITurmaRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<Turma>> GetByAnoLetivoAsync(int ano, CancellationToken cancellationToken = default)
+    {
+        return await _context.Turmas
+            .Include(t => t.Curso)
+            .Include(t => t.Professor)
+            .Include(t => t.Matriculas)
+            .Where(t => t.AnoLetivo == ano && t.Ativo)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<IEnumerable<Turma>> GetComVagasAsync(CancellationToken cancellationToken = default)
     {
         var turmas = await _context.Turmas

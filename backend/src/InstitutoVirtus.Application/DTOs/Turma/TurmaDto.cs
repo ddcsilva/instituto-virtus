@@ -3,6 +3,7 @@ namespace InstitutoVirtus.Application.DTOs.Turma;
 public class TurmaDto
 {
     public Guid Id { get; set; }
+    public string Nome { get; set; } = string.Empty;
     public Guid CursoId { get; set; }
     public string CursoNome { get; set; } = string.Empty;
     public Guid ProfessorId { get; set; }
@@ -10,6 +11,7 @@ public class TurmaDto
     public string DiaSemana { get; set; } = string.Empty;
     public string HorarioInicio { get; set; } = string.Empty;
     public string HorarioFim { get; set; } = string.Empty;
+    public string Turno { get; set; } = string.Empty;
     public int Capacidade { get; set; }
     public string? Sala { get; set; }
     public int AnoLetivo { get; set; }

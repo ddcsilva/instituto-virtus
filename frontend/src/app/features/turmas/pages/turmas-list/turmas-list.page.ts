@@ -90,6 +90,20 @@ import { CursosService } from '../../../cursos/data-access/cursos.service';
               <mat-option value="Cancelada">Cancelada</mat-option>
             </mat-select>
           </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Ano letivo</mat-label>
+            <input matInput type="number" [formControl]="anoControl" placeholder="2025" />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Semestre</mat-label>
+            <mat-select [formControl]="periodoControl">
+              <mat-option [value]="null">Todos</mat-option>
+              <mat-option [value]="1">1º</mat-option>
+              <mat-option [value]="2">2º</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <div class="table-container">
@@ -100,7 +114,8 @@ import { CursosService } from '../../../cursos/data-access/cursos.service';
                 <div class="title-cell">
                   <div class="title">{{ t.nome }}</div>
                   <div class="subtitle">
-                    {{ t.curso?.nome || '-' }} — Prof. {{ t.professor?.nome || '-' }}
+                    {{ t.cursoNome || t.curso?.nome || '-' }} — Prof.
+                    {{ t.professorNome || t.professor?.nome || '-' }}
                   </div>
                 </div>
               </td>
@@ -114,6 +129,23 @@ import { CursosService } from '../../../cursos/data-access/cursos.service';
             <ng-container matColumnDef="vagas">
               <th mat-header-cell *matHeaderCellDef>Vagas</th>
               <td mat-cell *matCellDef="let t">{{ t.vagasOcupadas }}/{{ t.vagas }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="sala">
+              <th mat-header-cell *matHeaderCellDef>Sala</th>
+              <td mat-cell *matCellDef="let t">{{ t.sala || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="capacidade">
+              <th mat-header-cell *matHeaderCellDef>Capacidade</th>
+              <td mat-cell *matCellDef="let t">{{ t.capacidade ?? '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="periodoAno">
+              <th mat-header-cell *matHeaderCellDef>Período/Ano</th>
+              <td mat-cell *matCellDef="let t">
+                {{ t.periodo || '-' }} / {{ t.anoLetivo || '-' }}
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="status">
@@ -150,7 +182,7 @@ import { CursosService } from '../../../cursos/data-access/cursos.service';
             <tr mat-row *matRowDef="let row; columns: displayed"></tr>
 
             <tr class="mat-row" *matNoDataRow>
-              <td class="mat-cell" colspan="5">
+              <td class="mat-cell" [attr.colspan]="displayed.length">
                 <div class="empty-state">
                   <mat-icon>class</mat-icon>
                   <p>Nenhuma turma encontrada</p>
@@ -198,6 +230,11 @@ import { CursosService } from '../../../cursos/data-access/cursos.service';
         padding: 48px;
         text-align: center;
         color: #999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 160px;
       }
       .empty-state mat-icon {
         font-size: 48px;
@@ -220,8 +257,19 @@ export class TurmasListPage implements OnInit {
   readonly cursoControl = new FormControl('');
   readonly turnoControl = new FormControl('');
   readonly statusControl = new FormControl('');
+  readonly anoControl = new FormControl<number | null>(new Date().getFullYear());
+  readonly periodoControl = new FormControl<number | null>(null);
 
-  readonly displayed = ['nome', 'turno', 'vagas', 'status', 'acoes'];
+  readonly displayed = [
+    'nome',
+    'turno',
+    'vagas',
+    'sala',
+    'capacidade',
+    'periodoAno',
+    'status',
+    'acoes',
+  ];
   readonly pageSize = 10;
 
   ngOnInit(): void {
@@ -229,6 +277,8 @@ export class TurmasListPage implements OnInit {
     this.cursoControl.valueChanges.subscribe(() => this.load(0));
     this.turnoControl.valueChanges.subscribe(() => this.load(0));
     this.statusControl.valueChanges.subscribe(() => this.load(0));
+    this.anoControl.valueChanges.subscribe(() => this.load(0));
+    this.periodoControl.valueChanges.subscribe(() => this.load(0));
     this.loadCursos();
     this.load();
   }
@@ -238,6 +288,8 @@ export class TurmasListPage implements OnInit {
       nome: this.buscaControl.value || undefined,
       cursoId: this.cursoControl.value || undefined,
       turno: this.turnoControl.value || undefined,
+      anoLetivo: this.anoControl.value ?? new Date().getFullYear(),
+      periodo: this.periodoControl.value ?? undefined,
       // status ainda não está no service; enviar como nome genérico se backend aceitar
       page,
       pageSize: this.pageSize,
@@ -245,8 +297,11 @@ export class TurmasListPage implements OnInit {
 
     this.service.getAll(filter).subscribe({
       next: (resp: any) => {
-        const items: Turma[] = (resp.items || resp.Items || []).map((t: any) => this.mapTurma(t));
-        const total = resp.total ?? resp.TotalCount ?? items.length;
+        const list = Array.isArray(resp) ? resp : resp.items || resp.Items || [];
+        const items: Turma[] = list.map((t: any) => this.mapTurma(t));
+        const total = Array.isArray(resp)
+          ? items.length
+          : resp.total ?? resp.TotalCount ?? items.length;
         this.turmas.set(items);
         this.total.set(total);
       },
@@ -270,28 +325,26 @@ export class TurmasListPage implements OnInit {
   }
 
   mapStatus(s: string): string {
-    switch ((s || '').toLowerCase()) {
-      case 'planejada':
-        return 'Planejada';
-      case 'emandamento':
-        return 'Em andamento';
-      case 'concluida':
-        return 'Concluída';
-      case 'cancelada':
-        return 'Cancelada';
-      default:
-        return s || '-';
+    const v = (s || '').toLowerCase();
+    if (['planejada', 'emandamento', 'concluida', 'cancelada'].includes(v)) {
+      return v === 'emandamento' ? 'Em andamento' : v.charAt(0).toUpperCase() + v.slice(1);
     }
+    if (v === 'true') return 'Ativa';
+    if (v === 'false') return 'Inativa';
+    return s || '-';
   }
 
   getStatusStyle(s: string): any {
+    const key = (s || '').toLowerCase();
     const map: Record<string, { background: string; color: string }> = {
       planejada: { background: '#e3f2fd', color: '#1565c0' },
       emandamento: { background: '#e8f5e9', color: '#2e7d32' },
       concluida: { background: '#f3e5f5', color: '#6a1b9a' },
       cancelada: { background: '#ffebee', color: '#c62828' },
+      ativa: { background: '#e8f5e9', color: '#2e7d32' },
+      inativa: { background: '#ffebee', color: '#c62828' },
     };
-    return map[(s || '').toLowerCase()] || { background: '#eee', color: '#555' };
+    return map[key] || { background: '#eee', color: '#555' };
   }
 
   mapTurno(t: Turno | string): string {
@@ -308,26 +361,41 @@ export class TurmasListPage implements OnInit {
   }
 
   private mapTurma(dto: any): Turma {
-    return {
-      id: dto.id ?? dto.Id,
-      cursoId: dto.cursoId ?? dto.CursoId,
-      nome: dto.nome ?? dto.Nome,
-      professorId: dto.professorId ?? dto.ProfessorId,
-      periodoInicio: dto.periodoInicio ?? dto.PeriodoInicio,
-      periodoFim: dto.periodoFim ?? dto.PeriodoFim,
-      vagas: dto.vagas ?? dto.Vagas ?? 0,
-      vagasOcupadas: dto.vagasOcupadas ?? dto.VagasOcupadas ?? 0,
-      turno: dto.turno ?? dto.Turno,
-      status: dto.status ?? dto.Status ?? 'Planejada',
-      horarios: (dto.horarios ?? dto.Horarios ?? []).map((h: any) => ({
-        id: h.id ?? h.Id,
-        diaSemana: h.diaSemana ?? h.DiaSemana,
-        horaInicio: h.horaInicio ?? h.HoraInicio,
-        horaFim: h.horaFim ?? h.HoraFim,
-        sala: h.sala ?? h.Sala,
-      })),
-      curso: dto.curso ?? dto.Curso,
-      professor: dto.professor ?? dto.Professor,
-    } as Turma;
+    // Backend atual retorna TurmaDto com propriedades PascalCase
+    const nome = dto.Nome ?? dto.nome ?? dto.CursoNome ?? dto.cursoNome ?? 'Turma';
+    const horarioInicio = dto.HorarioInicio ?? dto.horarioInicio;
+    const hour =
+      typeof horarioInicio === 'string' ? parseInt(horarioInicio.split(':')[0] || '0', 10) : 0;
+    const turnoDerivado: Turno = hour < 12 ? 'Manha' : hour < 18 ? 'Tarde' : 'Noite';
+    const ativo = dto.Ativo ?? dto.ativo;
+    const mapped: any = {
+      id: dto.Id ?? dto.id,
+      cursoId: dto.CursoId ?? dto.cursoId,
+      nome,
+      professorId: dto.ProfessorId ?? dto.professorId,
+      cursoNome: dto.CursoNome ?? dto.cursoNome,
+      professorNome: dto.ProfessorNome ?? dto.professorNome,
+      capacidade: dto.Capacidade ?? dto.capacidade,
+      sala: dto.Sala ?? dto.sala,
+      anoLetivo: dto.AnoLetivo ?? dto.anoLetivo,
+      periodo: dto.Periodo ?? dto.periodo,
+      periodoInicio: dto.PeriodoInicio ?? dto.periodoInicio ?? '',
+      periodoFim: dto.PeriodoFim ?? dto.periodoFim ?? '',
+      vagas: dto.Capacidade ?? dto.vagas ?? 0,
+      vagasOcupadas: dto.AlunosMatriculados ?? dto.vagasOcupadas ?? 0,
+      turno: (dto.Turno ?? dto.turno ?? turnoDerivado) as Turno,
+      status:
+        typeof ativo === 'boolean'
+          ? ativo
+            ? 'Ativa'
+            : 'Inativa'
+          : dto.Status ?? dto.status ?? 'Ativa',
+      horarios: [],
+      curso: { id: dto.CursoId ?? dto.cursoId, nome: dto.CursoNome ?? dto.cursoNome ?? '' },
+      professor: dto.ProfessorNome
+        ? { id: dto.ProfessorId ?? dto.professorId, nome: dto.ProfessorNome }
+        : undefined,
+    };
+    return mapped as unknown as Turma;
   }
 }

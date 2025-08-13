@@ -3,6 +3,7 @@ using InstitutoVirtus.Application.Queries.Turmas;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace InstitutoVirtus.API.Controllers;
 
@@ -12,10 +13,12 @@ namespace InstitutoVirtus.API.Controllers;
 public class TurmasController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ILogger<TurmasController> _logger;
 
-    public TurmasController(IMediator mediator)
+    public TurmasController(IMediator mediator, ILogger<TurmasController> logger)
     {
         _mediator = mediator;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -28,6 +31,18 @@ public class TurmasController : ControllerBase
         };
         var result = await _mediator.Send(query);
 
+        try
+        {
+            var count = result.Data?.Count ?? 0;
+            _logger.LogInformation("[TurmasController.GetAll] AnoLetivo={Ano}, Periodo={Periodo}, Total={Total}", query.AnoLetivo, query.Periodo, count);
+            if (count > 0)
+            {
+                var t = result.Data![0];
+                _logger.LogInformation("[Turma 0] Nome={Nome}, CursoNome={Curso}, ProfessorNome={Prof}, Dia={Dia}, HIni={Ini}, HFim={Fim}, Ativo={Ativo}", t.Nome, t.CursoNome, t.ProfessorNome, t.DiaSemana, t.HorarioInicio, t.HorarioFim, t.Ativo);
+            }
+        }
+        catch { /* no-op */ }
+
         return Ok(result.Data);
     }
 
@@ -39,6 +54,13 @@ public class TurmasController : ControllerBase
 
         if (!result.IsSuccess)
             return NotFound(result.Error);
+
+        try
+        {
+            var t = result.Data!;
+            _logger.LogInformation("[TurmasController.GetById] Id={Id}, Nome={Nome}, CursoNome={Curso}, ProfessorNome={Prof}, Dia={Dia}, HIni={Ini}, HFim={Fim}, Ativo={Ativo}", id, t.Nome, t.CursoNome, t.ProfessorNome, t.DiaSemana, t.HorarioInicio, t.HorarioFim, t.Ativo);
+        }
+        catch { /* no-op */ }
 
         return Ok(result.Data);
     }

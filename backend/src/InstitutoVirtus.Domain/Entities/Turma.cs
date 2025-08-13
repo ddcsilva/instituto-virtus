@@ -58,7 +58,17 @@ public class Turma : AuditableEntity
 
     public string ObterNome()
     {
-        return $"{Curso?.Nome} - {Professor?.NomeCompleto} - {DiaSemana} {Horario.FormatoString()}";
+        var cursoNome = Curso?.Nome ?? string.Empty;
+        var profNome = Professor?.NomeCompleto ?? string.Empty;
+        var dia = DiaSemana.ToString();
+        var horario = Horario.FormatoString();
+
+        var partes = new List<string>();
+        if (!string.IsNullOrWhiteSpace(cursoNome)) partes.Add(cursoNome);
+        if (!string.IsNullOrWhiteSpace(profNome)) partes.Add(profNome);
+        partes.Add($"{dia} {horario}");
+
+        return string.Join(" — ", partes);
     }
 
     public bool TemVaga()

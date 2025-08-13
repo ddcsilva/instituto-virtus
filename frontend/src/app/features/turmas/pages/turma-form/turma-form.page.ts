@@ -17,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { PageHeaderComponent } from '../../../../shared/ui/components/page-header/page-header.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TurmasService } from '../../data-access/turmas.service';
 import { CursosService } from '../../../cursos/data-access/cursos.service';
 import { PessoasStore } from '../../../pessoas/data-access/pessoas.store';
@@ -40,6 +41,7 @@ import {
     MatButtonModule,
     MatIconModule,
     MatDividerModule,
+    MatSnackBarModule,
     PageHeaderComponent,
   ],
   providers: [PessoasStore],
@@ -90,13 +92,13 @@ import {
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>Início (AAAA-MM-DD)</mat-label>
-            <input matInput formControlName="periodoInicio" placeholder="2025-02-01" />
+            <mat-label>Início (dd/MM/aaaa)</mat-label>
+            <input matInput formControlName="periodoInicio" placeholder="01/02/2025" />
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>Fim (AAAA-MM-DD)</mat-label>
-            <input matInput formControlName="periodoFim" placeholder="2025-12-15" />
+            <mat-label>Fim (dd/MM/aaaa)</mat-label>
+            <input matInput formControlName="periodoFim" placeholder="15/12/2025" />
           </mat-form-field>
 
           <div class="grid-full">
@@ -208,6 +210,7 @@ export class TurmaFormPage implements OnInit {
   private readonly turmasService = inject(TurmasService);
   private readonly cursosService = inject(CursosService);
   private readonly pessoasStore = inject(PessoasStore);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly cursos = signal<{ id: string; nome: string }[]>([]);
   readonly professores = signal<{ id: string; nome: string }[]>([]);
@@ -289,12 +292,78 @@ export class TurmaFormPage implements OnInit {
 
   onSubmit(): void {
     if (this.form.invalid) return;
-    const payload = this.toPayload();
+    const v = this.form.value as any;
+    const firstHorario = this.horarios().controls[0];
+    const diaSemana = firstHorario.get('diaSemana')!.value as string;
+    const horaInicioStr = (firstHorario.get('horaInicio')!.value as string) || '';
+    const horaFimStr = (firstHorario.get('horaFim')!.value as string) || '';
+    const salaStr = (firstHorario.get('sala')!.value as string) || undefined;
+
+    const toHHmmss = (hhmm: string) => {
+      const parts = hhmm.split(':');
+      if (parts.length === 2) return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}:00`;
+      if (parts.length === 3)
+        return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}:${parts[2].padStart(
+          2,
+          '0'
+        )}`;
+      return hhmm;
+    };
+
+    const parseDate = (s: string | null | undefined): Date | null => {
+      if (!s) return null;
+      if (s.includes('-')) {
+        // ISO-like
+        const d = new Date(s);
+        return isNaN(d.getTime()) ? null : d;
+      }
+      const m = /^([0-3]?\d)\/([0-1]?\d)\/(\d{4})$/.exec(s);
+      if (!m) return null;
+      const dd = parseInt(m[1], 10);
+      const mm = parseInt(m[2], 10) - 1;
+      const yyyy = parseInt(m[3], 10);
+      const d = new Date(yyyy, mm, dd);
+      return isNaN(d.getTime()) ? null : d;
+    };
+
+    const dInicio = parseDate(v.periodoInicio) || new Date();
+    const anoLetivo = dInicio.getFullYear();
+    const periodo = dInicio.getMonth() <= 5 ? 1 : 2;
+
+    const payload = {
+      CursoId: v.cursoId,
+      ProfessorId: v.professorId,
+      DiaSemana: diaSemana,
+      HoraInicio: toHHmmss(horaInicioStr),
+      HoraFim: toHHmmss(horaFimStr),
+      Capacidade: Number(v.vagas) || 0,
+      Sala: salaStr,
+      AnoLetivo: anoLetivo,
+      Periodo: periodo,
+    };
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.turmasService.update(id, payload as UpdateTurmaRequest).subscribe(() => this.voltar());
+      const updatePayload = { Id: id, ...payload } as unknown as UpdateTurmaRequest;
+      this.turmasService.update(id, updatePayload).subscribe({
+        next: () => {
+          this.snackBar.open('Turma atualizada com sucesso', 'Fechar', { duration: 3000 });
+          this.voltar();
+        },
+        error: () => {
+          this.snackBar.open('Erro ao atualizar turma', 'Fechar', { duration: 3500 });
+        },
+      });
     } else {
-      this.turmasService.create(payload as CreateTurmaRequest).subscribe(() => this.voltar());
+      this.turmasService.create(payload as unknown as CreateTurmaRequest).subscribe({
+        next: () => {
+          this.snackBar.open('Turma criada com sucesso', 'Fechar', { duration: 3000 });
+          this.voltar();
+        },
+        error: () => {
+          this.snackBar.open('Erro ao criar turma', 'Fechar', { duration: 3500 });
+        },
+      });
     }
   }
 
@@ -302,26 +371,7 @@ export class TurmaFormPage implements OnInit {
     this.router.navigate(['/turmas']);
   }
 
-  private toPayload(): CreateTurmaRequest | UpdateTurmaRequest {
-    const v = this.form.value as any;
-    const horarios = this.horarios().controls.map(g => ({
-      diaSemana: g.get('diaSemana')!.value,
-      horaInicio: g.get('horaInicio')!.value,
-      horaFim: g.get('horaFim')!.value,
-      sala: g.get('sala')!.value || undefined,
-    }));
-    return {
-      cursoId: v.cursoId,
-      nome: v.nome,
-      professorId: v.professorId,
-      vagas: Number(v.vagas) || 0,
-      turno: v.turno,
-      periodoInicio: v.periodoInicio,
-      periodoFim: v.periodoFim,
-      horarios,
-      status: v.status,
-    } as UpdateTurmaRequest;
-  }
+  // Removido: transformação antiga não compatível com o backend
 
   private loadCursos(): void {
     this.cursosService.getAll({ page: 0, pageSize: 100, ativo: true }).subscribe(res => {

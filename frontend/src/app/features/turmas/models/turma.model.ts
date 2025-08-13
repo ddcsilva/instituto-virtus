@@ -4,7 +4,14 @@ export interface Turma {
   id: string;
   cursoId: string;
   nome: string;
+  cursoNome?: string;
   professorId: string;
+  professorNome?: string;
+  // Campos de exibição herdados do domínio
+  capacidade?: number;
+  sala?: string;
+  anoLetivo?: number;
+  periodo?: number; // 1 ou 2
   periodoInicio: string;
   periodoFim: string;
   vagas: number;
@@ -20,19 +27,8 @@ export interface Turma {
 }
 
 export type Turno = 'Manha' | 'Tarde' | 'Noite';
-export type StatusTurma =
-  | 'Planejada'
-  | 'EmAndamento'
-  | 'Concluida'
-  | 'Cancelada';
-export type DiaSemana =
-  | 'Segunda'
-  | 'Terca'
-  | 'Quarta'
-  | 'Quinta'
-  | 'Sexta'
-  | 'Sabado'
-  | 'Domingo';
+export type StatusTurma = 'Planejada' | 'EmAndamento' | 'Concluida' | 'Cancelada';
+export type DiaSemana = 'Segunda' | 'Terca' | 'Quarta' | 'Quinta' | 'Sexta' | 'Sabado' | 'Domingo';
 
 export interface HorarioAula {
   id?: string;

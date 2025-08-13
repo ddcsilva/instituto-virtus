@@ -10,6 +10,8 @@ export interface TurmaFilter {
   professorId?: string;
   status?: string;
   turno?: string;
+  anoLetivo?: number;
+  periodo?: number;
   page?: number;
   pageSize?: number;
 }

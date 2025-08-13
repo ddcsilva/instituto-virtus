@@ -71,6 +71,8 @@ public class MappingProfile : Profile
             .ForMember(d => d.DiaSemana, opt => opt.MapFrom(s => s.DiaSemana.ToString()))
             .ForMember(d => d.HorarioInicio, opt => opt.MapFrom(s => s.Horario.HoraInicio.ToString("hh\\:mm")))
             .ForMember(d => d.HorarioFim, opt => opt.MapFrom(s => s.Horario.HoraFim.ToString("hh\\:mm")))
+            .ForMember(d => d.Turno, opt => opt.MapFrom(s => s.Horario.HoraInicio.Hours < 12 ? "Manha" : s.Horario.HoraInicio.Hours < 18 ? "Tarde" : "Noite"))
+            .ForMember(d => d.Nome, opt => opt.MapFrom(s => s.ObterNome()))
             .ForMember(d => d.AlunosMatriculados, opt => opt.MapFrom(s => s.Matriculas.Count(m => m.Status == StatusMatricula.Ativa)))
             .ForMember(d => d.VagasDisponiveis, opt => opt.MapFrom(s => s.VagasDisponiveis()));
 
