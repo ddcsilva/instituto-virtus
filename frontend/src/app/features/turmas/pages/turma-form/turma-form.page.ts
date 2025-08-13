@@ -101,6 +101,19 @@ import {
             <input matInput formControlName="periodoFim" placeholder="15/12/2025" />
           </mat-form-field>
 
+          <mat-form-field>
+            <mat-label>Ano letivo</mat-label>
+            <input matInput type="number" formControlName="anoLetivo" />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Semestre</mat-label>
+            <mat-select formControlName="periodo">
+              <mat-option [value]="1">1º</mat-option>
+              <mat-option [value]="2">2º</mat-option>
+            </mat-select>
+          </mat-form-field>
+
           <div class="grid-full">
             <h3>Horários</h3>
             <div class="horarios-list" formArrayName="horarios">
@@ -221,6 +234,8 @@ export class TurmaFormPage implements OnInit {
     professorId: ['', Validators.required],
     vagas: [10, [Validators.required, Validators.min(1)]],
     turno: ['Manha', Validators.required],
+    anoLetivo: [new Date().getFullYear(), [Validators.required, Validators.min(2000)]],
+    periodo: [1, [Validators.required, Validators.min(1), Validators.max(2)]],
     periodoInicio: ['', Validators.required],
     periodoFim: ['', Validators.required],
     horarios: this.fb.array<FormGroup<HorarioGroup>>([]),
@@ -327,44 +342,53 @@ export class TurmaFormPage implements OnInit {
     };
 
     const dInicio = parseDate(v.periodoInicio) || new Date();
-    const anoLetivo = dInicio.getFullYear();
-    const periodo = dInicio.getMonth() <= 5 ? 1 : 2;
+    const anoLetivo = Number(v.anoLetivo) || dInicio.getFullYear();
+    const periodo = Number(v.periodo) || (dInicio.getMonth() <= 5 ? 1 : 2);
 
-    const payload = {
-      CursoId: v.cursoId,
-      ProfessorId: v.professorId,
-      DiaSemana: diaSemana,
-      HoraInicio: toHHmmss(horaInicioStr),
-      HoraFim: toHHmmss(horaFimStr),
-      Capacidade: Number(v.vagas) || 0,
-      Sala: salaStr,
-      AnoLetivo: anoLetivo,
-      Periodo: periodo,
-    };
+    // Verificar conflito antes de enviar
+    this.turmasService.confereConflito(v.professorId, diaSemana, horaInicioStr).subscribe({
+      next: res => {
+        if (res?.conflito) {
+          this.snackBar.open('Professor já tem aula neste horário', 'Fechar', { duration: 3500 });
+          return;
+        }
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      const updatePayload = { Id: id, ...payload } as unknown as UpdateTurmaRequest;
-      this.turmasService.update(id, updatePayload).subscribe({
-        next: () => {
-          this.snackBar.open('Turma atualizada com sucesso', 'Fechar', { duration: 3000 });
-          this.voltar();
-        },
-        error: () => {
-          this.snackBar.open('Erro ao atualizar turma', 'Fechar', { duration: 3500 });
-        },
-      });
-    } else {
-      this.turmasService.create(payload as unknown as CreateTurmaRequest).subscribe({
-        next: () => {
-          this.snackBar.open('Turma criada com sucesso', 'Fechar', { duration: 3000 });
-          this.voltar();
-        },
-        error: () => {
-          this.snackBar.open('Erro ao criar turma', 'Fechar', { duration: 3500 });
-        },
-      });
-    }
+        const payload = {
+          CursoId: v.cursoId,
+          ProfessorId: v.professorId,
+          DiaSemana: diaSemana,
+          HoraInicio: toHHmmss(horaInicioStr),
+          HoraFim: toHHmmss(horaFimStr),
+          Capacidade: Number(v.vagas) || 0,
+          Sala: salaStr,
+          AnoLetivo: anoLetivo,
+          Periodo: periodo,
+        };
+
+        const id = this.route.snapshot.paramMap.get('id');
+        if (id) {
+          const updatePayload = { Id: id, ...payload } as unknown as UpdateTurmaRequest;
+          this.turmasService.update(id, updatePayload).subscribe({
+            next: () => {
+              this.snackBar.open('Turma atualizada com sucesso', 'Fechar', { duration: 3000 });
+              this.voltar();
+            },
+            error: () =>
+              this.snackBar.open('Erro ao atualizar turma', 'Fechar', { duration: 3500 }),
+          });
+        } else {
+          this.turmasService.create(payload as unknown as CreateTurmaRequest).subscribe({
+            next: () => {
+              this.snackBar.open('Turma criada com sucesso', 'Fechar', { duration: 3000 });
+              this.voltar();
+            },
+            error: () => this.snackBar.open('Erro ao criar turma', 'Fechar', { duration: 3500 }),
+          });
+        }
+      },
+      error: () =>
+        this.snackBar.open('Erro ao validar conflito de horário', 'Fechar', { duration: 3500 }),
+    });
   }
 
   voltar(): void {

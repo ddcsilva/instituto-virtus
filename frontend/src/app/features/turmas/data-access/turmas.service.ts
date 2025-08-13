@@ -68,4 +68,22 @@ export class TurmasService {
   getGradeHorarios(turmaId: string): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/${turmaId}/grade-horarios`);
   }
+
+  toggleStatus(id: string): Observable<Turma> {
+    return this.http.patch<Turma>(`${this.baseUrl}/${id}/toggle-status`, {});
+  }
+
+  confereConflito(
+    professorId: string,
+    diaSemana: string,
+    horaInicioHHmm: string
+  ): Observable<{ conflito: boolean }> {
+    // Normaliza para HH:mm:ss
+    const hhmmss = /:\\d{2}$/.test(horaInicioHHmm) ? horaInicioHHmm : `${horaInicioHHmm}:00`;
+    const params = new HttpParams()
+      .set('professorId', professorId)
+      .set('diaSemana', diaSemana)
+      .set('horaInicio', hhmmss);
+    return this.http.get<{ conflito: boolean }>(`${this.baseUrl}/confere-conflito`, { params });
+  }
 }

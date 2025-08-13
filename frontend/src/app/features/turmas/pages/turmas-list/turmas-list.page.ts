@@ -166,6 +166,14 @@ import { CursosService } from '../../../cursos/data-access/cursos.service';
                     <mat-icon>edit</mat-icon>
                     <span>Editar</span>
                   </a>
+                  <button mat-menu-item (click)="confirmToggle(t)">
+                    <mat-icon>{{
+                      (t.status || '').toLowerCase() === 'ativa' ? 'block' : 'check_circle'
+                    }}</mat-icon>
+                    <span>{{
+                      (t.status || '').toLowerCase() === 'ativa' ? 'Desativar' : 'Ativar'
+                    }}</span>
+                  </button>
                   <a mat-menu-item [routerLink]="['/turmas', t.id, 'alunos']">
                     <mat-icon>group</mat-icon>
                     <span>Alunos</span>
@@ -313,6 +321,17 @@ export class TurmasListPage implements OnInit {
 
   onPage(event: PageEvent): void {
     this.load(event.pageIndex);
+  }
+
+  confirmToggle(t: Turma): void {
+    this.service.toggleStatus(t.id).subscribe({
+      next: (dto: any) => {
+        // Simplificado: recarrega a lista para refletir status
+        this.snackBar.open('Status da turma alterado', 'Fechar', { duration: 2500 });
+        this.load();
+      },
+      error: () => this.snackBar.open('Erro ao alterar status', 'Fechar', { duration: 3000 }),
+    });
   }
 
   loadCursos(): void {

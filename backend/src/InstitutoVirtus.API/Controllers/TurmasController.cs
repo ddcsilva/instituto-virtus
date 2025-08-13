@@ -4,6 +4,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using InstitutoVirtus.Domain.Enums;
+using System.Globalization;
 
 namespace InstitutoVirtus.API.Controllers;
 
@@ -118,5 +120,43 @@ public class TurmasController : ControllerBase
         var result = await _mediator.Send(query);
 
         return Ok(result.Data);
+    }
+
+    [HttpPatch("{id}/toggle-status")]
+    [Authorize(Policy = "Coordenacao")]
+    public async Task<IActionResult> ToggleStatus(Guid id)
+    {
+        var cmd = new ToggleTurmaStatusCommand { Id = id };
+        var result = await _mediator.Send(cmd);
+        if (!result.IsSuccess) return BadRequest(result.Error);
+        return Ok(result.Data);
+    }
+
+    [HttpGet("confere-conflito")]
+    [Authorize(Policy = "Coordenacao")]
+    public async Task<IActionResult> ConfereConflito([FromQuery] Guid professorId, [FromQuery] string diaSemana, [FromQuery] string horaInicio, CancellationToken ct)
+    {
+        try
+        {
+            if (professorId == Guid.Empty) return BadRequest("professorId inválido");
+            if (string.IsNullOrWhiteSpace(diaSemana)) return BadRequest("diaSemana é obrigatório");
+            if (string.IsNullOrWhiteSpace(horaInicio)) return BadRequest("horaInicio é obrigatório");
+
+            // Normalizar nome do dia para enum
+            var dia = Enum.Parse<DiaSemana>(diaSemana, true);
+            // Aceitar HH:mm ou HH:mm:ss
+            if (horaInicio.Length == 5) horaInicio += ":00";
+            if (!TimeSpan.TryParseExact(horaInicio, "hh\\:mm\\:ss", CultureInfo.InvariantCulture, out var ts))
+                return BadRequest("horaInicio inválido");
+
+            var existe = await _turmaRepository.ExisteConflitoHorarioAsync(professorId, dia, ts, ct);
+            _logger.LogInformation("[ConflitoHorario] Prof={Prof} Dia={Dia} Hora={Hora} -> {Existe}", professorId, dia, ts, existe);
+            return Ok(new { conflito = existe });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro ao conferir conflito de horário");
+            return StatusCode(500, "Erro ao conferir conflito");
+        }
     }
 }
