@@ -57,11 +57,11 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  atualizarToken(): Observable<LoginResponse> {
+  atualizarToken(): Observable<LoginResponse | null> {
     const refreshToken = this.session().refreshToken;
     if (!refreshToken) {
       this.logout();
-      return of();
+      return of(null);
     }
 
     return this.http
@@ -72,7 +72,7 @@ export class AuthService {
         tap(response => this.definirSessao(response)),
         catchError(() => {
           this.logout();
-          return of();
+          return of(null);
         })
       );
   }
