@@ -2,12 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_CONFIG } from '../../../core/config/api.config';
-import {
-  ConfiguracaoAvaliacao,
-  Nota,
-  CreateNotaRequest,
-  BoletimAluno,
-} from '../models/avaliacao.model';
+import { Avaliacao, Nota, LancarNotasRequest } from '../models/avaliacao.model';
 
 @Injectable({ providedIn: 'root' })
 export class AvaliacoesService {
@@ -15,32 +10,24 @@ export class AvaliacoesService {
   private readonly apiConfig = inject(API_CONFIG);
   private readonly baseUrl = `${this.apiConfig.baseUrl}/avaliacoes`;
 
-  // Configuração de Avaliações
-  getConfiguracoesByTurma(
-    turmaId: string
-  ): Observable<ConfiguracaoAvaliacao[]> {
-    return this.http.get<ConfiguracaoAvaliacao[]>(
-      `${this.baseUrl}/turmas/${turmaId}/configuracoes`
-    );
+  // Avaliações
+  getByTurma(turmaId: string): Observable<Avaliacao[]> {
+    return this.http.get<Avaliacao[]>(`${this.baseUrl}/turma/${turmaId}`);
   }
 
-  createConfiguracao(
-    config: Partial<ConfiguracaoAvaliacao>
-  ): Observable<ConfiguracaoAvaliacao> {
-    return this.http.post<ConfiguracaoAvaliacao>(
-      `${this.baseUrl}/configuracoes`,
-      config
-    );
+  getById(id: string): Observable<Avaliacao> {
+    return this.http.get<Avaliacao>(`${this.baseUrl}/${id}`);
   }
 
-  updateConfiguracao(
-    id: string,
-    config: Partial<ConfiguracaoAvaliacao>
-  ): Observable<ConfiguracaoAvaliacao> {
-    return this.http.put<ConfiguracaoAvaliacao>(
-      `${this.baseUrl}/configuracoes/${id}`,
-      config
-    );
+  create(avaliacao: Partial<Avaliacao>): Observable<Avaliacao> {
+    const payload: any = {
+      TurmaId: avaliacao.turmaId,
+      Nome: avaliacao.nome,
+      Peso: avaliacao.peso,
+      DataAplicacao: avaliacao.dataAplicacao,
+      Descricao: avaliacao.descricao,
+    };
+    return this.http.post<Avaliacao>(`${this.baseUrl}`, payload);
   }
 
   // Notas
@@ -57,27 +44,23 @@ export class AvaliacoesService {
     });
   }
 
-  lancarNotas(request: CreateNotaRequest): Observable<Nota[]> {
-    return this.http.post<Nota[]>(`${this.baseUrl}/lancar`, request);
+  lancarNotas(avaliacaoId: string, request: LancarNotasRequest): Observable<any> {
+    const payload = {
+      Notas: (request.notas || []).map(n => ({
+        AlunoId: n.alunoId,
+        Valor: n.valor,
+        Observacoes: n.observacoes,
+      })),
+    };
+    return this.http.post(`${this.baseUrl}/${avaliacaoId}/notas`, payload);
   }
 
-  updateNota(id: string, valor: number, observacao?: string): Observable<Nota> {
+  updateNota(id: string, valor: number, observacoes?: string): Observable<Nota> {
     return this.http.patch<Nota>(`${this.baseUrl}/notas/${id}`, {
-      valor,
-      observacao,
+      Valor: valor,
+      Observacoes: observacoes,
     });
   }
 
-  // Boletim
-  getBoletimAluno(alunoId: string, turmaId: string): Observable<BoletimAluno> {
-    return this.http.get<BoletimAluno>(
-      `${this.baseUrl}/boletim/${alunoId}/${turmaId}`
-    );
-  }
-
-  getBoletinsTurma(turmaId: string): Observable<BoletimAluno[]> {
-    return this.http.get<BoletimAluno[]>(
-      `${this.baseUrl}/turmas/${turmaId}/boletins`
-    );
-  }
+  // Boletins (poderão ser reintroduzidos depois conforme backend)
 }

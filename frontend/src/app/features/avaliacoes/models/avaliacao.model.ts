@@ -1,66 +1,35 @@
-export interface ConfiguracaoAvaliacao {
+export interface Avaliacao {
   id: string;
+  turmaId: string;
+  turmaNome: string;
+  nome: string;
+  peso: number;
+  dataAplicacao?: string;
+  descricao?: string;
+}
+
+export interface CreateAvaliacaoRequest {
   turmaId: string;
   nome: string;
   peso: number;
-  dataAvaliacao?: string;
-  tipoAvaliacao: TipoAvaliacao;
-  valorMaximo: number;
-  ativa: boolean;
+  dataAplicacao?: string;
+  descricao?: string;
 }
-
-export type TipoAvaliacao =
-  | 'Prova'
-  | 'Trabalho'
-  | 'Participacao'
-  | 'Projeto'
-  | 'Outro';
 
 export interface Nota {
   id: string;
   avaliacaoId: string;
+  avaliacaoNome: string;
   alunoId: string;
+  alunoNome: string;
   valor: number;
-  observacao?: string;
-  dataLancamento?: string;
-  lancadoPor?: string;
-  avaliacao?: ConfiguracaoAvaliacao;
-  aluno?: {
-    id: string;
-    nome: string;
-  };
+  observacoes?: string;
 }
 
-export interface CreateNotaRequest {
-  avaliacaoId: string;
+export interface LancarNotasRequest {
   notas: {
     alunoId: string;
     valor: number;
-    observacao?: string;
+    observacoes?: string;
   }[];
 }
-
-export interface BoletimAluno {
-  alunoId: string;
-  alunoNome: string;
-  turmaId: string;
-  turmaNome: string;
-  notas: NotaBoletim[];
-  mediaFinal: number;
-  frequencia: number;
-  situacao: SituacaoAluno;
-}
-
-export interface NotaBoletim {
-  avaliacaoNome: string;
-  peso: number;
-  valorMaximo: number;
-  valorObtido: number;
-  percentual: number;
-}
-
-export type SituacaoAluno =
-  | 'Aprovado'
-  | 'Reprovado'
-  | 'EmAndamento'
-  | 'Recuperacao';
