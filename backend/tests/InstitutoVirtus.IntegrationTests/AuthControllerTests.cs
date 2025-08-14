@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using InstitutoVirtus.API.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
+using InstitutoVirtus.API;
 using Xunit;
 
 namespace InstitutoVirtus.IntegrationTests;

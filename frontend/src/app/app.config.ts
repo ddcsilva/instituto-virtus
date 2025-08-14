@@ -11,6 +11,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/interceptors/auth.interceptor';
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
     provideAnimationsAsync(),
+    importProvidersFrom(MatSnackBarModule),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, loadingInterceptor])),
     {
       provide: LOCALE_ID,

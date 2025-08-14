@@ -191,3 +191,5 @@ await app.SeedDataAsync();
 
 Log.Information("API Instituto Virtus iniciada");
 await app.RunAsync();
+
+public partial class Program { }
