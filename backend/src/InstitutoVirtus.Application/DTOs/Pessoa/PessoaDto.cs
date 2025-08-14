@@ -15,6 +15,7 @@ public class PessoaDto
     public string? Observacoes { get; set; }
     public bool Ativo { get; set; }
     public int Idade { get; set; }
+    public bool TemAcesso { get; set; }
 }
 
 public class AlunoDto : PessoaDto

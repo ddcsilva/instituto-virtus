@@ -35,7 +35,8 @@ public class PessoasController : ControllerBase
         [FromQuery] string? cpf,
         [FromQuery] string? telefone,
         [FromQuery] int page = 0,
-        [FromQuery] int pageSize = 10)
+        [FromQuery] int pageSize = 10,
+        [FromQuery] bool somenteUsuarios = false)
     {
         var query = new ListarPessoasQuery
         {
@@ -45,7 +46,8 @@ public class PessoasController : ControllerBase
             Cpf = cpf,
             Telefone = telefone,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize,
+            SomenteUsuarios = somenteUsuarios
         };
 
         var result = await _mediator.Send(query);

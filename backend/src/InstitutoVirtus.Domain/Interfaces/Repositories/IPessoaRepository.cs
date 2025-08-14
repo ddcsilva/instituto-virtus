@@ -26,4 +26,12 @@ public interface IPessoaRepository : IBaseRepository<Pessoa>
         int pageNumber,
         int pageSize,
         CancellationToken cancellationToken = default);
+
+    Task<(IEnumerable<Pessoa> Items, int TotalCount)> SearchUsuariosAsync(
+        string? nome,
+        TipoPessoa? tipo,
+        bool? ativo,
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken = default);
 }

@@ -138,9 +138,14 @@ export class FinanceiroService {
 
   // Relatórios
   getInadimplentes(competencia: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiConfig.baseUrl}/relatorios/inadimplentes`, {
-      params: new HttpParams().set('competencia', competencia),
-    });
+    // competencia no formato YYYY-MM → backend espera mes/ano separados
+    const [anoStr, mesStr] = (competencia || '').split('-');
+    const ano = Number(anoStr);
+    const mes = Number(mesStr);
+    const params = new HttpParams()
+      .set('ano', String(ano || new Date().getFullYear()))
+      .set('mes', String(mes || new Date().getMonth() + 1));
+    return this.http.get<any[]>(`${this.apiConfig.baseUrl}/relatorios/inadimplentes`, { params });
   }
 
   getRecebimentosPeriodo(dataInicio: string, dataFim: string): Observable<any> {

@@ -9,6 +9,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../core/auth/services/auth.service';
+import { HttpClient } from '@angular/common/http';
+import { API_CONFIG } from '../../core/config/api.config';
 
 interface DashboardCard {
   title: string;
@@ -43,6 +45,8 @@ interface QuickAction {
 })
 export class DashboardPage implements OnInit {
   private readonly authService = inject(AuthService);
+  private readonly http = inject(HttpClient);
+  private readonly apiConfig = inject(API_CONFIG);
 
   readonly nomeUsuario = signal('');
   readonly tipoUsuario = signal('');
@@ -269,7 +273,16 @@ export class DashboardPage implements OnInit {
   }
 
   loadDashboardData(userType: string): void {
-    // Simulated data - replace with actual API calls
+    // Carregar dados reais do backend
+    this.http.get<any>(`${this.apiConfig.baseUrl}/dashboard/resumo`).subscribe({
+      next: resumo => {
+        // Poderíamos popular cards com valores reais aqui, por enquanto mantemos a UI e apenas desligamos o loading
+        this.carregando.set(false);
+      },
+      error: () => {
+        this.carregando.set(false);
+      },
+    });
     if (userType === 'Admin' || userType === 'Coordenador') {
       this.atividadesRecentes.set([
         {

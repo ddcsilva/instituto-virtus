@@ -7,6 +7,7 @@ export interface Pessoa {
   email?: string;
   tipo: TipoPessoa;
   ativo: boolean;
+  temAcesso?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

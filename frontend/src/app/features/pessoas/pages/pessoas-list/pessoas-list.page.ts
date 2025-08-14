@@ -340,6 +340,12 @@ export class PessoasListPage implements OnInit {
       : { 'background-color': '#FFEBEE', color: '#B71C1C', border: '1px solid #EF9A9A' };
   }
 
+  getAcessoStyle(temAcesso: boolean) {
+    return temAcesso
+      ? { 'background-color': '#E3F2FD', color: '#0D47A1', border: '1px solid #90CAF9' }
+      : { 'background-color': '#FFFDE7', color: '#F57F17', border: '1px solid #FFF59D' };
+  }
+
   toggleStatus(pessoa: Pessoa): void {
     this.store.toggleStatus(pessoa.id);
   }
@@ -359,5 +365,23 @@ export class PessoasListPage implements OnInit {
         this.store.deletePessoa(pessoa.id);
       }
     });
+  }
+
+  abrirResetSenha(pessoa: Pessoa): void {
+    const novaSenha = prompt(`Nova senha para ${pessoa.nome}`);
+    if (!novaSenha || novaSenha.length < 6) {
+      return;
+    }
+    // Chama endpoint de reset
+    fetch('/api/auth/set-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('access_token') || ''}`,
+      },
+      body: JSON.stringify({ pessoaId: pessoa.id, novaSenha }),
+    })
+      .then(() => alert('Senha atualizada'))
+      .catch(() => alert('Erro ao atualizar senha'));
   }
 }

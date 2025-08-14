@@ -85,6 +85,12 @@ export class ShellComponent implements OnInit, OnDestroy {
       roles: ['Admin', 'Coordenador'],
     },
     {
+      label: 'Usuários',
+      icon: 'person',
+      route: '/usuarios',
+      roles: ['Admin', 'Coordenador'],
+    },
+    {
       label: 'Cursos',
       icon: 'school',
       route: '/cursos',

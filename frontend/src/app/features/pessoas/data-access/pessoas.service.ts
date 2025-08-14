@@ -102,6 +102,7 @@ export interface PessoaDtoBackend {
   TipoPessoa: string;
   Observacoes?: string;
   Ativo: boolean;
+  TemAcesso?: boolean;
 }
 
 export interface PagedResultBackend<T> {
@@ -125,6 +126,7 @@ export function mapPessoa(dto: PessoaDtoBackend): Pessoa {
     email: (dto as any).email ?? dto.Email,
     tipo: mapTipo((dto as any).tipoPessoa ?? dto.TipoPessoa),
     ativo: (dto as any).ativo ?? dto.Ativo,
+    temAcesso: (dto as any).temAcesso ?? dto.TemAcesso ?? false,
     createdAt: undefined,
     updatedAt: undefined,
   };

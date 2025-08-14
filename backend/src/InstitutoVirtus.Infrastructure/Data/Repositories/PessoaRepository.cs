@@ -125,4 +125,47 @@ public class PessoaRepository : BaseRepository<Pessoa>, IPessoaRepository
 
         return (items, total);
     }
+
+    public async Task<(IEnumerable<Pessoa> Items, int TotalCount)> SearchUsuariosAsync(
+        string? nome,
+        TipoPessoa? tipo,
+        bool? ativo,
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _context.Pessoas.AsQueryable();
+
+        // Apenas quem possui acesso (PasswordHash != null)
+        query = query.Where(p => p.PasswordHash != null);
+
+        if (!string.IsNullOrWhiteSpace(nome))
+        {
+            var search = nome.Trim().ToLower();
+            query = query.Where(p =>
+                p.NomeCompleto.ToLower().Contains(search) ||
+                (p.Email != null && p.Email.Endereco.ToLower().Contains(search))
+            );
+        }
+
+        if (tipo.HasValue)
+        {
+            query = query.Where(p => p.TipoPessoa == tipo.Value);
+        }
+
+        if (ativo.HasValue)
+        {
+            query = query.Where(p => p.Ativo == ativo.Value);
+        }
+
+        var total = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderBy(p => p.NomeCompleto)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, total);
+    }
 }

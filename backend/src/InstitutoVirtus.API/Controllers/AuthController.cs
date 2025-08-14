@@ -6,6 +6,8 @@ using InstitutoVirtus.Domain.Interfaces;
 using InstitutoVirtus.Domain.Exceptions;
 using InstitutoVirtus.Domain.ValueObjects;
 using InstitutoVirtus.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
+using InstitutoVirtus.Domain.Enums;
 
 namespace InstitutoVirtus.API.Controllers;
 
@@ -85,6 +87,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
+    [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Coordenacao")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         try
@@ -94,19 +97,31 @@ public class AuthController : ControllerBase
             if (existente != null)
                 return BadRequest(new { message = "Email já cadastrado" });
 
-            // Criar novo usuário (exemplo com Responsável)
+            // Criar novo usuário conforme TipoPessoa
             var telefone = new Telefone(request.Telefone);
             var email = new Email(request.Email);
             Cpf? cpf = !string.IsNullOrWhiteSpace(request.Cpf) ? new Cpf(request.Cpf) : null;
 
-            var pessoa = new Responsavel(
-                request.NomeCompleto,
-                cpf,
-                telefone,
-                email,
-                request.DataNascimento,
-                $"Usuário registrado via API - Senha: {request.Senha}"
-            );
+            Pessoa pessoa;
+            var tipo = (request.TipoPessoa ?? "Responsavel").Trim();
+            switch (tipo)
+            {
+                case "Aluno":
+                    pessoa = new Aluno(request.NomeCompleto, cpf, telefone, email, request.DataNascimento, "Autocadastro");
+                    break;
+                case "Professor":
+                    pessoa = new Professor(request.NomeCompleto, cpf, telefone, email, request.DataNascimento, string.Empty, "Autocadastro");
+                    break;
+                case "Coordenador":
+                    pessoa = new Pessoa(request.NomeCompleto, cpf, telefone, email, request.DataNascimento, TipoPessoa.Coordenador, "Criado via API");
+                    break;
+                default:
+                    pessoa = new Responsavel(request.NomeCompleto, cpf, telefone, email, request.DataNascimento, "Autocadastro do responsável");
+                    break;
+            }
+
+            // Definir senha
+            pessoa.DefinirSenha(request.Senha);
 
             await _pessoaRepository.AddAsync(pessoa);
             await _unitOfWork.SaveChangesAsync();
@@ -120,6 +135,20 @@ public class AuthController : ControllerBase
             _logger.LogError(ex, "Erro ao registrar usuário");
             return BadRequest(new { message = ex.Message });
         }
+    }
+
+    public record SetPasswordRequest(Guid PessoaId, string NovaSenha);
+
+    [HttpPost("set-password")]
+    [Authorize(Policy = "Coordenacao")]
+    public async Task<IActionResult> SetPassword([FromBody] SetPasswordRequest request)
+    {
+        var pessoa = await _pessoaRepository.GetByIdAsync(request.PessoaId);
+        if (pessoa == null) return NotFound("Usuário não encontrado");
+        pessoa.ResetarSenha(request.NovaSenha);
+        await _pessoaRepository.UpdateAsync(pessoa);
+        await _unitOfWork.SaveChangesAsync();
+        return Ok(new { message = "Senha atualizada" });
     }
 
     [HttpPost("forgot-password")]

@@ -77,11 +77,7 @@ interface Inadimplente {
             Gerar Relatório
           </button>
 
-          <button
-            mat-button
-            (click)="exportarExcel()"
-            [disabled]="inadimplentes().length === 0"
-          >
+          <button mat-button (click)="exportarExcel()" [disabled]="inadimplentes().length === 0">
             <mat-icon>download</mat-icon>
             Exportar Excel
           </button>
@@ -114,9 +110,7 @@ interface Inadimplente {
             <mat-icon color="warn">attach_money</mat-icon>
             <div>
               <h3>Valor Total em Atraso</h3>
-              <strong class="valor-warn">{{
-                valorTotalAtraso() | currency : 'BRL'
-              }}</strong>
+              <strong class="valor-warn">{{ valorTotalAtraso() | currency : 'BRL' }}</strong>
             </div>
           </div>
         </mat-card-content>
@@ -174,9 +168,7 @@ interface Inadimplente {
           <ng-container matColumnDef="debito">
             <th mat-header-cell *matHeaderCellDef>Débito Total</th>
             <td mat-cell *matCellDef="let item">
-              <strong class="valor-warn">{{
-                item.totalDebito | currency : 'BRL'
-              }}</strong>
+              <strong class="valor-warn">{{ item.totalDebito | currency : 'BRL' }}</strong>
             </td>
           </ng-container>
 
@@ -184,14 +176,9 @@ interface Inadimplente {
             <th mat-header-cell *matHeaderCellDef>Situação</th>
             <td mat-cell *matCellDef="let item">
               <div class="atraso-info">
-                <mat-chip color="warn"
-                  >{{ item.mensalidadesAtraso }} mensalidade(s)</mat-chip
-                >
+                <mat-chip color="warn">{{ item.mensalidadesAtraso }} mensalidade(s)</mat-chip>
                 <small>{{ item.diasAtraso }} dias de atraso</small>
-                <small
-                  >Desde
-                  {{ formatCompetencia(item.competenciaMaisAntiga) }}</small
-                >
+                <small>Desde {{ formatCompetencia(item.competenciaMaisAntiga) }}</small>
               </div>
             </td>
           </ng-container>
@@ -199,18 +186,10 @@ interface Inadimplente {
           <ng-container matColumnDef="acoes">
             <th mat-header-cell *matHeaderCellDef>Ações</th>
             <td mat-cell *matCellDef="let item">
-              <button
-                mat-icon-button
-                (click)="enviarLembrete(item)"
-                matTooltip="Enviar Lembrete"
-              >
+              <button mat-icon-button (click)="enviarLembrete(item)" matTooltip="Enviar Lembrete">
                 <mat-icon>email</mat-icon>
               </button>
-              <button
-                mat-icon-button
-                (click)="enviarWhatsApp(item)"
-                matTooltip="WhatsApp"
-              >
+              <button mat-icon-button (click)="enviarWhatsApp(item)" matTooltip="WhatsApp">
                 <mat-icon>chat</mat-icon>
               </button>
             </td>
@@ -339,14 +318,7 @@ export class RelatorioInadimplentesPage implements OnInit {
   readonly valorTotalAtraso = signal(0);
   readonly mediaDiasAtraso = signal(0);
 
-  readonly displayedColumns = [
-    'aluno',
-    'responsavel',
-    'turmas',
-    'debito',
-    'atraso',
-    'acoes',
-  ];
+  readonly displayedColumns = ['aluno', 'responsavel', 'turmas', 'debito', 'atraso', 'acoes'];
 
   readonly filtroForm = this.fb.group({
     competencia: [this.getCompetenciaAtual()],
@@ -364,7 +336,7 @@ export class RelatorioInadimplentesPage implements OnInit {
     const competencia = this.filtroForm.get('competencia')?.value || '';
 
     this.financeiroService.getInadimplentes(competencia).subscribe({
-      next: (data) => {
+      next: data => {
         this.processarInadimplentes(data);
         this.loading.set(false);
       },
@@ -375,43 +347,52 @@ export class RelatorioInadimplentesPage implements OnInit {
   }
 
   processarInadimplentes(data: any[]): void {
-    // Simulated processing - adapt based on actual API response
-    const inadimplentes: Inadimplente[] = data.map((item) => ({
-      alunoId: item.alunoId,
-      alunoNome: item.alunoNome,
-      cpfAluno: item.cpfAluno,
-      responsavelNome: item.responsavelNome,
-      telefoneResponsavel: item.telefoneResponsavel,
-      emailResponsavel: item.emailResponsavel,
-      turmas: item.turmas,
-      totalDebito: item.totalDebito,
-      mensalidadesAtraso: item.mensalidadesAtraso,
-      competenciaMaisAntiga: item.competenciaMaisAntiga,
-      diasAtraso: item.diasAtraso,
-    }));
+    // Mapeia do DTO do backend (InadimplenciaDto)
+    // Backend retorna por responsável, agregando MensalidadesVencidas
+    const itens: Inadimplente[] = (data || []).flatMap((resp: any) => {
+      const mensalidades = resp.MensalidadesVencidas ?? resp.mensalidadesVencidas ?? [];
+      const totalDebito = Number(resp.TotalDevido ?? resp.totalDevido ?? 0);
+      const diasArray = mensalidades.map((m: any) => Number(m.DiasAtraso ?? m.diasAtraso ?? 0));
+      const maxDias = diasArray.length > 0 ? Math.max(...diasArray) : 0;
+      const compMaisAntiga =
+        mensalidades.map((m: any) => m.Competencia ?? m.competencia).sort()[0] ?? '';
+
+      return [
+        {
+          alunoId: '',
+          alunoNome: '',
+          cpfAluno: '',
+          responsavelNome: resp.ResponsavelNome ?? resp.responsavelNome ?? '',
+          telefoneResponsavel: resp.Telefone ?? resp.telefone ?? '',
+          emailResponsavel: resp.Email ?? resp.email ?? '',
+          turmas: Array.from(
+            new Set(mensalidades.map((m: any) => m.TurmaNome ?? m.turmaNome).filter(Boolean))
+          ),
+          totalDebito,
+          mensalidadesAtraso: mensalidades.length,
+          competenciaMaisAntiga: compMaisAntiga,
+          diasAtraso: maxDias,
+        },
+      ];
+    });
 
     // Aplicar filtro de dias se selecionado
-    const diasFiltro = this.filtroForm.get('diasAtraso')?.value;
+    const diasFiltro = this.filtroForm.get('diasAtraso')?.value as string | null;
     if (diasFiltro) {
-      const filtrados = inadimplentes.filter(
-        (i) => i.diasAtraso >= parseInt(diasFiltro)
-      );
+      const filtrados = itens.filter((i: Inadimplente) => i.diasAtraso >= parseInt(diasFiltro));
       this.inadimplentes.set(filtrados);
     } else {
-      this.inadimplentes.set(inadimplentes);
+      this.inadimplentes.set(itens);
     }
 
     // Calcular totais
-    const total = this.inadimplentes().reduce(
-      (acc, i) => acc + i.totalDebito,
-      0
-    );
+    const total = this.inadimplentes().reduce((acc, i) => acc + (Number(i.totalDebito) || 0), 0);
     this.valorTotalAtraso.set(total);
 
     const media =
       this.inadimplentes().length > 0
         ? Math.round(
-            this.inadimplentes().reduce((acc, i) => acc + i.diasAtraso, 0) /
+            this.inadimplentes().reduce((acc, i) => acc + (Number(i.diasAtraso) || 0), 0) /
               this.inadimplentes().length
           )
         : 0;
@@ -420,10 +401,7 @@ export class RelatorioInadimplentesPage implements OnInit {
 
   getCompetenciaAtual(): string {
     const hoje = new Date();
-    return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(
-      2,
-      '0'
-    )}`;
+    return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
   }
 
   getMesesDisponiveis(): any[] {
@@ -432,9 +410,7 @@ export class RelatorioInadimplentesPage implements OnInit {
 
     for (let i = 0; i < 12; i++) {
       const data = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
-      const value = `${data.getFullYear()}-${String(
-        data.getMonth() + 1
-      ).padStart(2, '0')}`;
+      const value = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}`;
       const label = `${this.getNomeMes(data.getMonth())}/${data.getFullYear()}`;
       meses.push({ value, label });
     }
@@ -484,9 +460,7 @@ export class RelatorioInadimplentesPage implements OnInit {
       inadimplente.totalDebito
     )}. Por favor, entre em contato conosco.`;
     const telefone = inadimplente.telefoneResponsavel.replace(/\D/g, '');
-    const url = `https://wa.me/55${telefone}?text=${encodeURIComponent(
-      mensagem
-    )}`;
+    const url = `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`;
     window.open(url, '_blank');
   }
 

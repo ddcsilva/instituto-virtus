@@ -16,6 +16,7 @@ public class ListarPessoasQuery : IRequest<Result<PagedResult<PessoaDto>>>
     public string? Telefone { get; set; }
     public int Page { get; set; } = 0; // front usa 0-based
     public int PageSize { get; set; } = 10;
+    public bool SomenteUsuarios { get; set; } = false;
 }
 
 public class ListarPessoasQueryHandler : IRequestHandler<ListarPessoasQuery, Result<PagedResult<PessoaDto>>>
@@ -39,15 +40,30 @@ public class ListarPessoasQueryHandler : IRequestHandler<ListarPessoasQuery, Res
 
         // converter página 0-based do front para 1-based no repositório
         var pageNumber = request.Page + 1;
-        var (items, total) = await _pessoaRepository.SearchAsync(
-            request.Nome,
-            tipo,
-            request.Ativo,
-            request.Cpf,
-            request.Telefone,
-            pageNumber,
-            request.PageSize,
-            cancellationToken);
+        IEnumerable<Domain.Entities.Pessoa> items;
+        int total;
+        if (request.SomenteUsuarios)
+        {
+            (items, total) = await _pessoaRepository.SearchUsuariosAsync(
+                request.Nome,
+                tipo,
+                request.Ativo,
+                pageNumber,
+                request.PageSize,
+                cancellationToken);
+        }
+        else
+        {
+            (items, total) = await _pessoaRepository.SearchAsync(
+                request.Nome,
+                tipo,
+                request.Ativo,
+                request.Cpf,
+                request.Telefone,
+                pageNumber,
+                request.PageSize,
+                cancellationToken);
+        }
 
         var dto = _mapper.Map<IEnumerable<PessoaDto>>(items).ToList();
         var result = new PagedResult<PessoaDto>(dto, total, request.Page, request.PageSize);

@@ -24,6 +24,7 @@ public class MappingProfile : Profile
             .ForMember(d => d.Cpf, opt => opt.MapFrom(s => s.Cpf != null ? s.Cpf.Numero : null))
             .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email != null ? s.Email.Endereco : null))
             .ForMember(d => d.TipoPessoa, opt => opt.MapFrom(s => s.TipoPessoa.ToString()))
+            .ForMember(d => d.TemAcesso, opt => opt.MapFrom(s => s.PasswordHash != null))
             .ForMember(d => d.Idade, opt => opt.MapFrom(s =>
                 (DateTime.Today.Year - s.DataNascimento.Year) -
                 ((DateTime.Today.Month < s.DataNascimento.Month ||
