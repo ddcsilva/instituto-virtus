@@ -40,7 +40,6 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiConfig.baseUrl}/auth/login`, credenciais).pipe(
       tap(response => {
         this.definirSessao(response);
-        // Navegação com timeout para garantir que o estado foi atualizado
         setTimeout(() => {
           this.router.navigate(['/dashboard']);
         }, 100);
@@ -83,50 +82,46 @@ export class AuthService {
   }
 
   private definirSessao(response: LoginResponse): void {
-    // Normaliza a resposta para lidar com PascalCase do backend
-    const normalizedResponse = {
+    const respostaNormalizada = {
       user: (response as any).User || response.user,
       token: (response as any).Token || response.token,
       refreshToken: (response as any).RefreshToken || response.refreshToken,
       expiresIn: (response as any).ExpiresIn || response.expiresIn,
     };
 
-    // Validação dos dados da resposta
-    if (!normalizedResponse.user || !normalizedResponse.token) {
+    if (!respostaNormalizada.user || !respostaNormalizada.token) {
       throw new Error('Dados de login inválidos');
     }
 
     const session: Session = {
-      user: normalizedResponse.user,
-      token: normalizedResponse.token,
-      refreshToken: normalizedResponse.refreshToken,
+      user: respostaNormalizada.user,
+      token: respostaNormalizada.token,
+      refreshToken: respostaNormalizada.refreshToken,
       isAuthenticated: true,
     };
 
     this.sessionSignal.set(session);
     this.estaAutenticado.set(true);
 
-    // Normalizar o usuário para camelCase
-    const normalizedUser = {
-      id: normalizedResponse.user.Id || normalizedResponse.user.id,
-      nome: normalizedResponse.user.Nome || normalizedResponse.user.nome,
-      email: normalizedResponse.user.Email || normalizedResponse.user.email,
-      tipo: normalizedResponse.user.Tipo || normalizedResponse.user.tipo,
-      pessoaId: normalizedResponse.user.PessoaId || normalizedResponse.user.pessoaId,
+    const usuarioNormalizado = {
+      id: respostaNormalizada.user.Id || respostaNormalizada.user.id,
+      nome: respostaNormalizada.user.Nome || respostaNormalizada.user.nome,
+      email: respostaNormalizada.user.Email || respostaNormalizada.user.email,
+      tipo: respostaNormalizada.user.Tipo || respostaNormalizada.user.tipo,
+      pessoaId: respostaNormalizada.user.PessoaId || respostaNormalizada.user.pessoaId,
       ativo:
-        normalizedResponse.user.Ativo !== undefined
-          ? normalizedResponse.user.Ativo
-          : normalizedResponse.user.ativo,
+        respostaNormalizada.user.Ativo !== undefined
+          ? respostaNormalizada.user.Ativo
+          : respostaNormalizada.user.ativo,
     };
 
-    this.usuarioAtual.set(normalizedUser);
+    this.usuarioAtual.set(usuarioNormalizado);
 
-    // Só salva no localStorage se os dados são válidos
-    localStorage.setItem('token', normalizedResponse.token);
-    if (normalizedResponse.refreshToken) {
-      localStorage.setItem('refreshToken', normalizedResponse.refreshToken);
+    localStorage.setItem('token', respostaNormalizada.token);
+    if (respostaNormalizada.refreshToken) {
+      localStorage.setItem('refreshToken', respostaNormalizada.refreshToken);
     }
-    localStorage.setItem('user', JSON.stringify(normalizedUser));
+    localStorage.setItem('user', JSON.stringify(usuarioNormalizado));
   }
 
   private carregarSessaoDoStorage(): void {
@@ -138,8 +133,7 @@ export class AuthService {
       try {
         const usuario = JSON.parse(usuarioString) as User;
 
-        // Normaliza o usuário para lidar com PascalCase do backend
-        const normalizedUser = {
+        const usuarioNormalizado = {
           id: (usuario as any).Id || usuario.id,
           nome: (usuario as any).Nome || usuario.nome,
           email: (usuario as any).Email || usuario.email,
@@ -148,24 +142,22 @@ export class AuthService {
           ativo: (usuario as any).Ativo !== undefined ? (usuario as any).Ativo : usuario.ativo,
         };
 
-        // Validação adicional do objeto usuário
-        if (!normalizedUser || !normalizedUser.nome || !normalizedUser.tipo) {
+        if (!usuarioNormalizado || !usuarioNormalizado.nome || !usuarioNormalizado.tipo) {
           this.limparSessao();
           return;
         }
 
-        // Verifica se o token não está expirado (validação básica)
         const tokenValido = this.isTokenValid(token);
 
         if (tokenValido) {
           this.sessionSignal.set({
-            user: normalizedUser,
+            user: usuarioNormalizado,
             token,
             refreshToken,
             isAuthenticated: true,
           });
           this.estaAutenticado.set(true);
-          this.usuarioAtual.set(normalizedUser);
+          this.usuarioAtual.set(usuarioNormalizado);
         } else {
           this.limparSessao();
         }
@@ -173,7 +165,6 @@ export class AuthService {
         this.limparSessao();
       }
     } else {
-      // Se não há token ou usuário, garante que está limpo
       this.estaAutenticado.set(false);
       this.usuarioAtual.set(null);
     }
@@ -181,11 +172,9 @@ export class AuthService {
 
   private isTokenValid(token: string): boolean {
     try {
-      // Decodifica o payload do JWT sem verificar a assinatura
       const payload = JSON.parse(atob(token.split('.')[1]));
       const now = Math.floor(Date.now() / 1000);
 
-      // Verifica se o token não expirou
       return payload.exp && payload.exp > now;
     } catch {
       return false;

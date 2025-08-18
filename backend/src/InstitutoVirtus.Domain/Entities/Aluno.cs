@@ -6,10 +6,10 @@ namespace InstitutoVirtus.Domain.Entities;
 
 public class Aluno : Pessoa
 {
-    private readonly List<ResponsavelAluno> _responsaveis = new();
-    private readonly List<Matricula> _matriculas = new();
-    private readonly List<Presenca> _presencas = new();
-    private readonly List<Nota> _notas = new();
+    private readonly List<ResponsavelAluno> _responsaveis = [];
+    private readonly List<Matricula> _matriculas = [];
+    private readonly List<Presenca> _presencas = [];
+    private readonly List<Nota> _notas = [];
 
     public IReadOnlyCollection<ResponsavelAluno> Responsaveis => _responsaveis;
     public IReadOnlyCollection<Matricula> Matriculas => _matriculas;
@@ -43,7 +43,7 @@ public class Aluno : Pessoa
 
         if (principal)
         {
-            foreach (var r in _responsaveis)
+            foreach (ResponsavelAluno r in _responsaveis)
             {
                 if (r.Principal)
                 {
@@ -52,13 +52,13 @@ public class Aluno : Pessoa
             }
         }
 
-        var vinculo = new ResponsavelAluno(responsavel.Id, this.Id, parentesco, principal);
+        ResponsavelAluno vinculo = new(responsavel.Id, this.Id, parentesco, principal);
         _responsaveis.Add(vinculo);
     }
 
     public void RemoverResponsavel(Guid responsavelId)
     {
-        var vinculo = _responsaveis.FirstOrDefault(r => r.ResponsavelId == responsavelId);
+        ResponsavelAluno? vinculo = _responsaveis.FirstOrDefault(r => r.ResponsavelId == responsavelId);
         if (vinculo != null)
             _responsaveis.Remove(vinculo);
     }
