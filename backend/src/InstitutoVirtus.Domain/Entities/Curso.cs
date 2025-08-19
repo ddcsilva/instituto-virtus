@@ -14,7 +14,9 @@ public class Curso : AuditableEntity
 
     public IReadOnlyCollection<Turma> Turmas => _turmas;
 
+#pragma warning disable CS8618
     protected Curso() { }
+#pragma warning restore CS8618
 
     public Curso(string nome, string? descricao, decimal valorMensalidade, int cargaHoraria = 0)
     {

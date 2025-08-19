@@ -4,7 +4,7 @@ public class Telefone : ValueObject
 {
     public string Numero { get; private set; }
 
-    protected Telefone() { }
+    protected Telefone() { Numero = string.Empty; }
 
     public Telefone(string numero)
     {

@@ -12,7 +12,9 @@ public class PagamentoParcela : BaseEntity
     public virtual Pagamento? Pagamento { get; private set; }
     public virtual Mensalidade? Mensalidade { get; private set; }
 
+#pragma warning disable CS8618
     protected PagamentoParcela() { }
+#pragma warning restore CS8618
 
     public PagamentoParcela(Guid pagamentoId, Guid mensalidadeId, Dinheiro valorAlocado)
     {

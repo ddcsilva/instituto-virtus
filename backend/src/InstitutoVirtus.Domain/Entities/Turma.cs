@@ -27,7 +27,9 @@ public class Turma : AuditableEntity
     public IReadOnlyCollection<Aula> Aulas => _aulas;
     public IReadOnlyCollection<Avaliacao> Avaliacoes => _avaliacoes;
 
+#pragma warning disable CS8618
     protected Turma() { }
+#pragma warning restore CS8618
 
     public Turma(
         Guid cursoId,

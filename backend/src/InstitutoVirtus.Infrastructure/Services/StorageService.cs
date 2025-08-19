@@ -36,7 +36,7 @@ public class StorageService : IStorageService
         return $"/uploads/{uniqueFileName}";
     }
 
-    public async Task<Stream> DownloadFileAsync(string fileUrl, CancellationToken cancellationToken = default)
+    public Task<Stream> DownloadFileAsync(string fileUrl, CancellationToken cancellationToken = default)
     {
         var fileName = Path.GetFileName(fileUrl);
         var filePath = Path.Combine(_basePath, fileName);
@@ -44,7 +44,7 @@ public class StorageService : IStorageService
         if (!File.Exists(filePath))
             throw new FileNotFoundException($"Arquivo não encontrado: {filePath}");
 
-        return new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        return Task.FromResult<Stream>(new FileStream(filePath, FileMode.Open, FileAccess.Read));
     }
 
     public Task DeleteFileAsync(string fileUrl, CancellationToken cancellationToken = default)

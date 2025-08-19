@@ -4,7 +4,7 @@ public class Email : ValueObject
 {
     public string Endereco { get; private set; }
 
-    protected Email() { }
+    protected Email() { Endereco = string.Empty; }
 
     public Email(string endereco)
     {

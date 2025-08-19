@@ -18,7 +18,9 @@ public class Mensalidade : AuditableEntity
 
     public virtual Matricula? Matricula { get; private set; }
 
+#pragma warning disable CS8618
     protected Mensalidade() { }
+#pragma warning restore CS8618
 
     public Mensalidade(
         Guid matriculaId,

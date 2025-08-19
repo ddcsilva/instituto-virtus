@@ -4,7 +4,7 @@ public class Cpf : ValueObject
 {
     public string Numero { get; private set; }
 
-    protected Cpf() { }
+    protected Cpf() { Numero = string.Empty; }
 
     public Cpf(string numero)
     {

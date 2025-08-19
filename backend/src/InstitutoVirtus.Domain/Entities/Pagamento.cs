@@ -20,7 +20,9 @@ public class Pagamento : AuditableEntity
     public virtual Responsavel? Responsavel { get; private set; }
     public IReadOnlyCollection<PagamentoParcela> Parcelas => _parcelas;
 
+#pragma warning disable CS8618
     protected Pagamento() { }
+#pragma warning restore CS8618
 
     public Pagamento(
         Guid responsavelId,

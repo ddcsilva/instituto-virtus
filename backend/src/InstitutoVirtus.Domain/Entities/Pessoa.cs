@@ -23,7 +23,9 @@ public class Pessoa : AuditableEntity
     public int TentativasLogin { get; private set; }
     public DateTime? BloqueadoAte { get; private set; }
 
+#pragma warning disable CS8618
     protected Pessoa() { }
+#pragma warning restore CS8618
 
     public Pessoa(
     string nomeCompleto,

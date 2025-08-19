@@ -9,6 +9,6 @@ export const USUARIOS_ROUTES: Routes = [
   {
     path: 'novo',
     loadComponent: () =>
-      import('../pessoas/pages/usuario-form/usuario-form.page').then(m => m.UsuarioFormPage),
+      import('./pages/usuario-form/usuario-form.page').then(m => m.UsuarioFormPage),
   },
 ];

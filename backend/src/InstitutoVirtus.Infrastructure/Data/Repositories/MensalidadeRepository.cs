@@ -58,7 +58,7 @@ public class MensalidadeRepository : BaseRepository<Mensalidade>, IMensalidadeRe
                 .ThenInclude(mat => mat.Turma)
                     .ThenInclude(t => t.Curso)
             .Where(m =>
-                alunosIds.Contains(m.Matricula.AlunoId) &&
+                m.Matricula != null && alunosIds.Contains(m.Matricula.AlunoId) &&
                 (m.Status == StatusMensalidade.EmAberto || m.Status == StatusMensalidade.Vencido))
             .OrderBy(m => m.DataVencimento)
             .ToListAsync(cancellationToken);

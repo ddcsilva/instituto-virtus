@@ -15,7 +15,9 @@ public class Avaliacao : AuditableEntity
     public virtual Turma? Turma { get; private set; }
     public IReadOnlyCollection<Nota> Notas => _notas;
 
+#pragma warning disable CS8618
     protected Avaliacao() { }
+#pragma warning restore CS8618
 
     public Avaliacao(Guid turmaId, string nome, decimal peso = 1, DateTime? dataAplicacao = null)
     {
